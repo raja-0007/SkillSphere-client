@@ -1,0 +1,139 @@
+[
+    
+            {
+                "topic": "javascript",
+                "description": "Take one of Udemy’s range of javascript courses and learn how to code using this incredibly useful language. Its simple syntax and readability makes javascript perfect for Flask, Django, data science, and machine learning. You’ll learn how to build everything from games to sites to apps.",
+                "category": "web development",
+                "title": "full javascript course",
+                "image": "/images/webdev.jpeg",
+                "author": "boyapati srinu",
+                "rating": "2",
+                "cost": "999"
+            },
+            {
+                "topic": "javascript",
+                "description": "Take one of Udemy’s range of javascript courses and learn how to code using this incredibly useful language. Its simple syntax and readability makes javascript perfect for Flask, Django, data science, and machine learning. You’ll learn how to build everything from games to sites to apps.",
+                "category": "web development",
+                "title": "full javascript course2",
+                "image": "/images/webdev.jpeg",
+                "author": "boyapati srinu",
+                "rating": "2.6",
+                "cost": "999"
+            },
+            {
+                "topic": "javascript",
+                "description": "Take one of Udemy’s range of javascript courses and learn how to code using this incredibly useful language. Its simple syntax and readability makes javascript perfect for Flask, Django, data science, and machine learning. You’ll learn how to build everything from games to sites to apps.",
+                "category": "web development",
+                "title": "full javascript course3",
+                "image": "/images/webdev.jpeg",
+                "author": "boyapati srinu",
+                "rating": "2",
+                "cost": "999"
+            },
+            {
+                "topic": "javascript",
+                "description": "Take one of Udemy’s range of javascript courses and learn how to code using this incredibly useful language. Its simple syntax and readability makes javascript perfect for Flask, Django, data science, and machine learning. You’ll learn how to build everything from games to sites to apps.",
+                "category": "web development",
+                "title": "full javascript course4",
+                "image": "/images/webdev.jpeg",
+                "author": "boyapati srinu",
+                "rating": "2",
+                "cost": "999"
+            },
+            {
+                "topic": "javascript",
+                "description": "Take one of Udemy’s range of javascript courses and learn how to code using this incredibly useful language. Its simple syntax and readability makes javascript perfect for Flask, Django, data science, and machine learning. You’ll learn how to build everything from games to sites to apps.",
+                "category": "web development",
+                "title": "full javascript course5",
+                "image": "/images/webdev.jpeg",
+                "author": "boyapati srinu",
+                "rating": "2",
+                "cost": "999"
+            },
+            {
+                "topic": "javascript",
+                "description": "Take one of Udemy’s range of javascript courses and learn how to code using this incredibly useful language. Its simple syntax and readability makes javascript perfect for Flask, Django, data science, and machine learning. You’ll learn how to build everything from games to sites to apps.",
+                "category": "web development",
+                "title": "full javascript course6",
+                "image": "/images/webdev.jpeg",
+                "author": "boyapati srinu",
+                "rating": "2",
+                "cost": "999"
+            },
+            {
+                "topic": "javascript",
+                "description": "Take one of Udemy’s range of javascript courses and learn how to code using this incredibly useful language. Its simple syntax and readability makes javascript perfect for Flask, Django, data science, and machine learning. You’ll learn how to build everything from games to sites to apps.",
+                "category": "web development",
+                "title": "full javascript course7",
+                "image": "/images/webdev.jpeg",
+                "author": "boyapati srinu",
+                "rating": "2",
+                "cost": "999"
+            },
+            {
+                "topic": "python",
+                "description": "Take one of Udemy’s range of Python courses and learn how to code using this incredibly useful language. Its simple syntax and readability makes Python perfect for Flask, Django, data science, and machine learning. You’ll learn how to build everything from games to sites to apps.",
+                "category": "programming languages",
+                "title": "full python course",
+                "image": "/images/webdev.jpeg",
+                "author": "meher ramesh",
+                "rating": "3.4",
+                "cost": "99"
+            },
+            {
+                "topic": "python",
+                "description": "Take one of Udemy’s range of Python courses and learn how to code using this incredibly useful language. Its simple syntax and readability makes Python perfect for Flask, Django, data science, and machine learning. You’ll learn how to build everything from games to sites to apps.",
+                "category": "programming languages",
+                "title": "full python course2",
+                "image": "/images/webdev.jpeg",
+                "author": "meher ramesh",
+                "rating": "3",
+                "cost": "99"
+            },{
+                "topic": "python",
+                "description": "Take one of Udemy’s range of Python courses and learn how to code using this incredibly useful language. Its simple syntax and readability makes Python perfect for Flask, Django, data science, and machine learning. You’ll learn how to build everything from games to sites to apps.",
+                "category": "programming languages",
+                "title": "full python course3",
+                "image": "/images/webdev.jpeg",
+                "author": "meher ramesh",
+                "rating": "4.2",
+                "cost": "99"
+            },{
+                "topic": "python",
+                "description": "Take one of Udemy’s range of Python courses and learn how to code using this incredibly useful language. Its simple syntax and readability makes Python perfect for Flask, Django, data science, and machine learning. You’ll learn how to build everything from games to sites to apps.",
+                "category": "programming languages",
+                "title": "full python course4",
+                "image": "/images/webdev.jpeg",
+                "author": "meher ramesh",
+                "rating": "1",
+                "cost": "99"
+            },{
+                "topic": "python",
+                "description": "Take one of Udemy’s range of Python courses and learn how to code using this incredibly useful language. Its simple syntax and readability makes Python perfect for Flask, Django, data science, and machine learning. You’ll learn how to build everything from games to sites to apps.",
+                "category": "programming languages",
+                "title": "full python course5",
+                "image": "/images/webdev.jpeg",
+                "author": "meher ramesh",
+                "rating": "2",
+                "cost": "99"
+            },{
+                "topic": "python",
+                "description": "Take one of Udemy’s range of Python courses and learn how to code using this incredibly useful language. Its simple syntax and readability makes Python perfect for Flask, Django, data science, and machine learning. You’ll learn how to build everything from games to sites to apps.",
+                "category": "programming languages",
+                "title": "full python course6",
+                "image": "/images/webdev.jpeg",
+                "author": "meher ramesh",
+                "rating": "5",
+                "cost": "99"
+            },{
+                "topic": "python",
+                "description": "Take one of Udemy’s range of Python courses and learn how to code using this incredibly useful language. Its simple syntax and readability makes Python perfect for Flask, Django, data science, and machine learning. You’ll learn how to build everything from games to sites to apps.",
+                "category": "programming languages",
+                "title": "full python course7",
+                "image": "/images/webdev.jpeg",
+                "author": "meher ramesh",
+                "rating": "1",
+                "cost": "99"
+            }
+            
+]

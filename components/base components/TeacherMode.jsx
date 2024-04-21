@@ -1,24 +1,22 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { FaArrowLeftLong } from "react-icons/fa6";
+import Sidebar from '../teacher components/Sidebar';
+import IntendedLearners from '../teacher components/course plan/IntendedLearners';
+import { useHomeContext } from '@/context/HomeContext';
+
 
 function TeacherMode() {
+  const [activeSection, setActiveSection] = useState('intended learners')
+  const {setActive} = useHomeContext()
   return (
-    <div className='p-5 flex flex-col items-center gap-5'>
-      <span className='text-red-500 font-semibold text-lg'> create course</span>
-      <form className='flex flex-col gap-3 flex-wrap'>
-        <div className='flex flex-col'>
-            <span>title:</span>
-            <input type="text" className='p-2 bg-slate-100' placeholder='enter title'/>
-        </div>
-        <div className='flex flex-col'>
-            <span>catagory:</span>
-            <input type="text" className='p-2 bg-slate-100' placeholder='enter title'/>
-        </div>
-        <div className='flex flex-col'>
-            <span>number of chapters:</span>
-            <input type="text" className='p-2 bg-slate-100' placeholder='enter title'/>
-        </div>
-        <button type='submit' className='p-3 bg-yellow-400 border-2 border-yellow-400 text-white hover:bg-white hover:text-yellow-400 mt-5'>done</button>
-      </form>
+    <div className='flex flex-col items-center'>
+      <div className='w-full bg-slate-800 text-gray-400 py-2 px-4 h-[8vh] shadow-md  shadow-gray-300 flex items-center ' >
+        <span className='flex items-center gap-2 cursor-pointer' onClick={()=>setActive('home')}><FaArrowLeftLong/><span className='text-sm'>back to courses</span></span>
+      </div>
+      <div className='flex w-full px-40 py-20'>
+        <Sidebar setActiveSection={setActiveSection}/>
+        {activeSection == 'intended learners' && <IntendedLearners/>}
+      </div>
     </div>
   )
 }

@@ -8,12 +8,14 @@ import { AiOutlineClose } from "react-icons/ai";
 import Home from "@/components/base components/Home";
 import { useHomeContext } from "@/context/HomeContext";
 import TeacherMode from "@/components/base components/TeacherMode";
+import Authentication from "@/components/base components/Authentication";
 
 
 export default function Page() {
   const [scrollpos, setScrollpos] = useState(0)
   const [isopen, setIsopen] = useState(false)
   const {active} = useHomeContext()
+  const [authType, setAuthType] = useState('')
   const sideref = useRef()
   let handleopen = () => {
     console.log(window.scrollY)
@@ -84,9 +86,16 @@ export default function Page() {
           </div>
 
         </div> */}
-      <Navbar isopened={isopen} handleopen={handleopen} handleclose={handleclose} />
+        {active !== 'teacher' && <Navbar setAuthType={setAuthType}/>}
+      
         {active == 'home' ?
+        
         <Home /> 
+       
+        :active == 'authentication' ? 
+       
+        <Authentication type={authType} setAuthType={setAuthType}/>
+        
         : active == 'teacher' && <TeacherMode/>
         }
       

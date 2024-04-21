@@ -1,5 +1,3 @@
-"use client"
-
 
 import Navbar from '@/components/base components/Navbar';
 import axios from 'axios';
@@ -15,16 +13,18 @@ import { GiFertilizerBag } from "react-icons/gi";
 import { GiWheat } from "react-icons/gi";
 import { GrPieChart } from "react-icons/gr";
 import Footer from '@/components/base components/Footer';
+import { useHomeContext } from '@/context/HomeContext';
 
 
 
 
 
-function Authentication({ params }) {
+function Authentication({ type,setAuthType }) {
   const router = useRouter()
   const regform = useRef()
-  const [isOtpVerify, setIsOtpVerify] = useState(false)
   
+  const [isOtpVerify, setIsOtpVerify] = useState(false)
+  const {setActive, setUserDetails} = useHomeContext()
   const [otp, setOtp] = useState('')
   const [isLoggedIn, setIsLoggedIn] = useState({})
   const [isEmail, setIsEmail] = useState(false)
@@ -152,21 +152,23 @@ function Authentication({ params }) {
   },[otp])
   useEffect(() => {
 
-    console.log(params.type, isLoggedIn)
-    if (params.type === 'login') {
+    console.log(type, isLoggedIn, isLoggedIn.token)
+    if (type === 'login') {
       if (isLoggedIn.status === 'authorised') {
+        setUserDetails(isLoggedIn)
         sessionStorage.setItem('userdetails', JSON.stringify(isLoggedIn))
-
-        router.push('/')
+        setActive('home')
+        // router.push('/')
       }
       else if (isLoggedIn.status === false) alert('please register to login')
       else if (isLoggedIn.status === 'unauthorised') alert('wrong email and password combination')
     }
-    else if (params.type === 'register') {
+    else if (type === 'register') {
       if (isLoggedIn.status === 'success') {
-        console.log('new user reg success and pushing to /')
+        setUserDetails(isLoggedIn)
         sessionStorage.setItem('userdetails', JSON.stringify(isLoggedIn))
-        router.push('/')
+        setActive('home')
+        // router.push('/')
       }
       else if (isLoggedIn.status === 'already exists') {
         alert('email already exists'); 
@@ -187,11 +189,11 @@ function Authentication({ params }) {
   return (
     <div className=' flex flex-col relative'>
       {/* <img src="/home_bg3.jpg" className='absolute h-full z-0 w-full object-cover top-0' alt="" /> */}
-      <Navbar />
+      {/* <Navbar /> */}
       <section className='flex justify-evenly  items-center h-[90vh]'>
         <div className={`py-24 px-5 z-10 flex items-center justify-center bg-white w-[max-content] ${!isOtpVerify?'rounded-full':'rounded-2xl my-auto'} shadow-md shadow-gray-700 bg-opacity-80`}>
           {!isOtpVerify ? 
-          params.type == 'login' ?
+          type == 'login' ?
             <div className='p-5 flex flex-col items-center justify-center gap-4'>
 
               <span className='self-center text-md font-bold'>login to your account</span>
@@ -199,7 +201,7 @@ function Authentication({ params }) {
                 <FaRegCircleUser className='text-7xl text-orange-400' />
                 <span className='text-sm font-semibold text-gray-500 text-center'>
                   <p>
-                    welcome to Agro
+                    welcome to SkillSphere
                   </p>
                   <p className='font-semibold text-sm text-blue-300 '>
                     Crop Yield and Fertilizer Recommendation
@@ -244,12 +246,12 @@ function Authentication({ params }) {
                 <button type='button' className='w-full bg-green-400 text-center text-white font-semibold py-2 mt-1 hover:bg-green-500 transition-all duration-100' onClick={makeLogin}>Login</button>
               </form>
 
-              <span>are you a new user? <Link href={'/authentication/register'} className='text-red-500 underline-offset-2 underline'>click here to register</Link></span>
+              <span>are you a new user? <span  onClick={()=>setAuthType('register')} className='text-red-500 underline-offset-2 underline'>click here to register</span></span>
             </div>
-            : params.type == 'register' &&
+            : type == 'register' &&
             <div className='px-5 flex flex-col items-center justify-center gap-4'>
 
-              <span className=' text-md font-bold'>register to Agro</span>
+              <span className=' text-md font-bold'>register to SkillSphere</span>
               <span className='flex flex-col gap-2 justify-center items-center'>
                 <FaRegCircleUser className='text-7xl text-orange-400' />
                 <span className='text-sm text-gray-500 text-center'>
@@ -305,7 +307,7 @@ function Authentication({ params }) {
                 </span>
                 <button type='button' className='w-full bg-green-400 text-white font-semibold text-center py-2 mt-1 hover:bg-green-500 transition-all duration-100' onClick={makeRegisterPreload}>register</button>
               </form>
-              <span>already a user? <Link href={'/authentication/login'} className='text-red-500 underline-offset-2 underline'>click here to login</Link></span>
+              <span>already a user? <span onClick={()=>setAuthType('login')} className='text-red-500 underline-offset-2 underline'>click here to login</span></span>
 
             </div>
             :<OtpVerify otp={otp} setIsOtpVerify={setIsOtpVerify} makeregister={makeregister} />
@@ -317,7 +319,7 @@ function Authentication({ params }) {
         
         <div className='z-10 flex flex-col gap-2 self-start mt-24 items-center justify-center'>
           <div className='flex flex-col gap-0 items-center justify-center'>
-            <span className='text-9xl text-blue-400'>AGRO</span>
+            <span className='text-9xl text-blue-400'>SkillSphere</span>
             <span className='font-semibold text-white px-4 py-1 bg-slate-400 rounded-full bg-opacity-50'>Crop Yield And Fertilizer Recommendation</span>
           </div>
           <div className='w-full flex flex-col gap-4 mt-5 items-center justify-center bg-slate-300 rounded-md bg-opacity-50 px-5 py-5'>
@@ -335,7 +337,7 @@ function Authentication({ params }) {
         </div>
       </section>
       {/* <Footer/> */}
-    
+      {/* <Footer/> */}
     </div>
   )
 }

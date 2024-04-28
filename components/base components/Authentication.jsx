@@ -1,18 +1,15 @@
 
-import Navbar from '@/components/base components/Navbar';
 import axios from 'axios';
-import { Emilys_Candy } from 'next/font/google';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+
 import React, { useEffect, useRef, useState } from 'react'
-import { FaRegCircleUser } from "react-icons/fa6";
+import { FaUserCircle } from "react-icons/fa";
+
 import emailjs from '@emailjs/browser';
 import OtpVerify from '@/components/OtpVerify';
 import { TiWeatherPartlySunny } from "react-icons/ti";
 import { GiFertilizerBag } from "react-icons/gi";
 import { GiWheat } from "react-icons/gi";
 import { GrPieChart } from "react-icons/gr";
-import Footer from '@/components/base components/Footer';
 import { useHomeContext } from '@/context/HomeContext';
 
 
@@ -20,7 +17,7 @@ import { useHomeContext } from '@/context/HomeContext';
 
 
 function Authentication({ type,setAuthType }) {
-  const router = useRouter()
+  
   const regform = useRef()
   
   const [isOtpVerify, setIsOtpVerify] = useState(false)
@@ -190,22 +187,20 @@ function Authentication({ type,setAuthType }) {
     <div className=' flex flex-col relative'>
       {/* <img src="/home_bg3.jpg" className='absolute h-full z-0 w-full object-cover top-0' alt="" /> */}
       {/* <Navbar /> */}
-      <section className='flex justify-evenly  items-center h-[90vh]'>
-        <div className={`py-24 px-5 z-10 flex items-center justify-center bg-white w-[max-content] ${!isOtpVerify?'rounded-full':'rounded-2xl my-auto'} shadow-md shadow-gray-700 bg-opacity-80`}>
+      <section className='flex justify-evenly  items-center '>
+        <div className={`py-10 my-5 px-5 z-10 flex items-center justify-center bg-white w-[max-content]  .shadow-md .shadow-gray-700 .bg-opacity-80`}>
           {!isOtpVerify ? 
           type == 'login' ?
             <div className='p-5 flex flex-col items-center justify-center gap-4'>
 
-              <span className='self-center text-md font-bold'>login to your account</span>
+              <span className=' self-start text-md font-bold'>Login to your account</span>
               <span className='flex flex-col gap-2 justify-center items-center'>
-                <FaRegCircleUser className='text-7xl text-orange-400' />
-                <span className='text-sm font-semibold text-gray-500 text-center'>
+                <FaUserCircle className='text-7xl text-slate-800' />
+                <span className='text-sm font-light text-center '>
                   <p>
                     welcome to SkillSphere
                   </p>
-                  <p className='font-semibold text-sm text-blue-300 '>
-                    Crop Yield and Fertilizer Recommendation
-                  </p>
+                  
                 </span>
 
               </span>
@@ -213,11 +208,11 @@ function Authentication({ type,setAuthType }) {
               <form className='flex flex-col gap-4'>
 
                 <span ref={emailref}
-                  className={`border-[1px] border-orange-400 bg-white bg-opacity-20 shadow-sm shadow-gray-400 ${isEmail ? 'rounded-full' : 'rounded-md'} flex flex-col cursor-text h-[50px] w-[300px] justify-center relative`}
+                  className={`border-[1px] border-slate-800 bg-white bg-opacity-20 .shadow-sm .shadow-gray-400 ${isEmail ? 'rounded-md' : 'rounded-none'} flex flex-col cursor-text h-[55px] w-[350px] justify-center relative`}
                   onClick={() => { setIsEmail(true) }}>
                   <label
                     htmlFor='email'
-                    className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isEmail ? 'text-sm  transform -translate-y-[25px] left-3 rounded-full text-white border-[1px] border-orange-400 bg-orange-300 px-2' : 'text-md top-auto left-5 bottom-auto text-orange-500'}`} >
+                    className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isEmail ? 'text-xs  transform -translate-y-[25px] left-0 rounded-full text-white border-[1px]  bg-slate-600 px-2' : 'text-md top-auto left-5 bottom-auto text-slate-800'}`} >
                     Email</label>
 
                   <input type="email"
@@ -230,10 +225,10 @@ function Authentication({ type,setAuthType }) {
 
                 </span>
                 <span ref={pwordref}
-                  className={`border-[1px] border-orange-400 bg-white bg-opacity-20 shadow-sm shadow-gray-400 ${isPword ? 'rounded-full' : 'rounded-md'} flex flex-col cursor-text h-[50px] w-[300px] justify-center relative`}
+                  className={`border-[1px] border-slate-800 bg-white bg-opacity-20 .shadow-sm .shadow-gray-400 ${isPword ? 'rounded-md' : 'rounded-none'} flex flex-col cursor-text h-[55px] w-[350px] justify-center relative`}
                   onClick={() => setIsPword(true)}>
                   <label htmlFor='password'
-                    className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isPword ? 'text-sm  transform -translate-y-[25px] left-3 rounded-full text-white border-[1px] border-orange-400 bg-orange-300 px-2' : 'text-md top-auto left-5 bottom-auto text-orange-500'}`} >
+                    className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isPword ? 'text-xs transform -translate-y-[25px] left-0 rounded-full text-white border-[1px]  bg-slate-600 px-2' : 'text-md top-auto left-5 bottom-auto text-slate-800'}`} >
                     Password</label>
                   <input type="password"
                     value={password}
@@ -243,17 +238,17 @@ function Authentication({ type,setAuthType }) {
                     name="" id="password" />
 
                 </span>
-                <button type='button' className='w-full bg-green-400 text-center text-white font-semibold py-2 mt-1 hover:bg-green-500 transition-all duration-100' onClick={makeLogin}>Login</button>
+                <button type='button' className='w-full bg-purple-600 text-center text-white font-bold py-3 mt-1 hover:bg-purple-700 transition-all duration-100' onClick={makeLogin}>Log in</button>
               </form>
 
-              <span>are you a new user? <span  onClick={()=>setAuthType('register')} className='text-red-500 underline-offset-2 underline'>click here to register</span></span>
+              <span className='text-sm'>Don't have an account? <span  onClick={()=>setAuthType('register')} className='text-purple-700 cursor-pointer font-semibold underline-offset-2 underline'>Sign up</span></span>
             </div>
             : type == 'register' &&
             <div className='px-5 flex flex-col items-center justify-center gap-4'>
 
-              <span className=' text-md font-bold'>register to SkillSphere</span>
-              <span className='flex flex-col gap-2 justify-center items-center'>
-                <FaRegCircleUser className='text-7xl text-orange-400' />
+              <span className=' text-md self-start font-bold'>Signup and start learning</span>
+              {/* <span className='flex flex-col gap-2 justify-center items-center'>
+                <FaUserCircle className='text-7xl text-slate-800' />
                 <span className='text-sm text-gray-500 text-center'>
                   <p>
                     welcome
@@ -262,14 +257,14 @@ function Authentication({ type,setAuthType }) {
                     Crop Yield and Fertilizer Recommendation
                   </p>
                 </span>
-              </span>
+              </span> */}
 
               <form className='flex flex-col gap-4' ref={regform}>
                 <span ref={userref}
-                  className={`border-[1px] border-orange-400 bg-white bg-opacity-20 shadow-sm shadow-gray-400 ${isUser ? 'rounded-full' : 'rounded-md'} flex flex-col cursor-text h-[50px] w-[300px] justify-center relative`}
+                  className={`border-[1px] border-slate-800 bg-white bg-opacity-20 .shadow-sm .shadow-gray-400 ${isUser ? 'rounded-md' : 'rounded-none'} flex flex-col cursor-text h-[55px] w-[350px] justify-center relative`}
                   onClick={() => { setIsUser(true) }}>
                   <label htmlFor='username'
-                    className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isUser ? 'text-sm  transform -translate-y-[25px] left-3 rounded-full text-white border-[1px] border-orange-400 bg-orange-300 px-2' : 'text-md top-auto left-5 bottom-auto text-orange-500'}`} >
+                    className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isUser ? 'text-xs  transform -translate-y-[25px] left-0 rounded-full text-white border-[1px]  bg-slate-600 px-2' : 'text-md top-auto left-5 bottom-auto text-slate-800'}`} >
                     username</label>
                   <input type="text"
                     value={username}
@@ -280,10 +275,10 @@ function Authentication({ type,setAuthType }) {
 
                 </span>
                 <span ref={emailref2}
-                  className={`border-[1px] border-orange-400 bg-white bg-opacity-20 shadow-sm shadow-gray-400 ${isEmail2 ? 'rounded-full' : 'rounded-md'} flex flex-col cursor-text h-[50px] w-[300px] justify-center relative`}
+                  className={`border-[1px] border-slate-800 bg-white bg-opacity-20 .shadow-sm .shadow-gray-400 ${isEmail2 ? 'rounded-md' : 'rounded-none'} flex flex-col cursor-text h-[55px] w-[350px] justify-center relative`}
                   onClick={() => { setIsEmail2(true) }}>
                   <label htmlFor='email2'
-                    className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isEmail2 ? 'text-sm  transform -translate-y-[25px] left-3 rounded-full text-white border-[1px] border-orange-400 bg-orange-300 px-2' : 'text-md top-auto left-5 bottom-auto text-orange-500'}`} >
+                    className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isEmail2 ? 'text-xs  transform -translate-y-[25px] left-0 rounded-full text-white border-[1px]  bg-slate-600 px-2' : 'text-md top-auto left-5 bottom-auto text-slate-800'}`} >
                     email</label>
                   <input type="email"
                     value={rEmail}
@@ -293,10 +288,10 @@ function Authentication({ type,setAuthType }) {
                   <input type="text" value={'1234'} name="message" className='hidden' id="" />
                 </span>
                 <span ref={pwordref2}
-                  className={`border-[1px] border-orange-400 bg-white bg-opacity-20 shadow-sm shadow-gray-400 ${isPword2 ? 'rounded-full' : 'rounded-md'} flex flex-col cursor-text h-[50px] w-[300px] justify-center relative`}
+                  className={`border-[1px] border-slate-800 bg-white bg-opacity-20 .shadow-sm .shadow-gray-400 ${isPword2 ? 'rounded-md' : 'rounded-none'} flex flex-col cursor-text h-[55px] w-[350px] justify-center relative`}
                   onClick={() => setIsPword2(true)}>
                   <label htmlFor='password2'
-                    className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isPword2 ? 'text-sm  transform -translate-y-[25px] left-3 rounded-full text-white border-[1px] border-orange-400 bg-orange-300 px-2' : 'text-md top-auto left-5 bottom-auto text-orange-500'}`} >
+                    className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isPword2 ? 'text-xs  transform -translate-y-[25px] left-0 rounded-full text-white border-[1px]  bg-slate-600 px-2' : 'text-md top-auto left-5 bottom-auto text-slate-800'}`} >
                     password</label>
                   <input type="password"
                     value={rPassword}
@@ -305,9 +300,10 @@ function Authentication({ type,setAuthType }) {
                     name="" id="password2" />
 
                 </span>
-                <button type='button' className='w-full bg-green-400 text-white font-semibold text-center py-2 mt-1 hover:bg-green-500 transition-all duration-100' onClick={makeRegisterPreload}>register</button>
+                <button type='button' className='w-full bg-purple-600 text-white font-bold text-center py-3 mt-1 hover:bg-purple-700 transition-all duration-100' onClick={makeRegisterPreload}>Sign up</button>
               </form>
-              <span>already a user? <span onClick={()=>setAuthType('login')} className='text-red-500 underline-offset-2 underline'>click here to login</span></span>
+              <p className='text-xs py-2 border-b-[1px] border-gray-300 '>By signing up, you agree to our Terms of Use and Privacy Policy.</p>
+              <span className='text-sm'>Already have an account? <span onClick={()=>setAuthType('login')} className='text-purple-700 cursor-pointer font-semibold underline-offset-2 underline'>log in</span></span>
 
             </div>
             :<OtpVerify otp={otp} setIsOtpVerify={setIsOtpVerify} makeregister={makeregister} />
@@ -317,7 +313,7 @@ function Authentication({ type,setAuthType }) {
         </div>
         
         
-        <div className='z-10 flex flex-col gap-2 self-start mt-24 items-center justify-center'>
+        {/* <div className='z-10 flex flex-col gap-2 self-start mt-24 items-center justify-center'>
           <div className='flex flex-col gap-0 items-center justify-center'>
             <span className='text-9xl text-blue-400'>SkillSphere</span>
             <span className='font-semibold text-white px-4 py-1 bg-slate-400 rounded-full bg-opacity-50'>Crop Yield And Fertilizer Recommendation</span>
@@ -334,7 +330,7 @@ function Authentication({ type,setAuthType }) {
 
           </div>
 
-        </div>
+        </div> */}
       </section>
       {/* <Footer/> */}
       {/* <Footer/> */}

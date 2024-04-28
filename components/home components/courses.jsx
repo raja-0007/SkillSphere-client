@@ -14,11 +14,11 @@ export const printRating=(rating)=>{
   let result = []
   
   for(let i=0;i<parseInt(rating);i++){
-    result.push(<IoIosStar  className='text-yellow-400'/>)
+    result.push(<IoIosStar key={i} className='text-yellow-400'/>)
     
   }
   if(parseInt(rating)!== parseFloat(rating)){
-    result.push(<IoIosStarHalf className='text-yellow-400'/>)
+    result.push(<IoIosStarHalf key={999} className='text-yellow-400'/>)
   }
   return  result
   

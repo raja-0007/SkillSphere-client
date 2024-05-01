@@ -2,11 +2,13 @@ import React, { useState } from 'react'
 import { IoMdAdd } from "react-icons/io";
 import SectionHeader from '../SectionHeader';
 import SectionLayout from '../SectionLayout';
+import { useTeacherContext } from '@/context/TeacherContext';
 
 function IntendedLearners({activeSection}) {
-    const [outcomes, setOutcomes] = useState(['', '', '', ''])
-    const [requirements, setRequirements] = useState([''])
-    const [intended, setIntended] = useState([''])
+    const {outcomes, setOutcomes, requirements, setRequirements, intended, setIntended} = useTeacherContext()
+    // const [outcomes, setOutcomes] = useState(['', '', '', ''])
+    // const [requirements, setRequirements] = useState([''])
+    // const [intended, setIntended] = useState([''])
     const addField = (type) => {
         if (type == 'outcome') {
             setOutcomes([...outcomes, ''])

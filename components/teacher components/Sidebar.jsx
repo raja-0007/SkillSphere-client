@@ -1,8 +1,10 @@
+import { useTeacherContext } from '@/context/TeacherContext';
 import React from 'react'
 import { IoMdCheckmark } from "react-icons/io";
 
 
 function Sidebar({setActiveSection, activeSection}) {
+    const {submitHandler, filledStatus} = useTeacherContext()
     const sections = [
         {
             name:'plan your course',
@@ -26,7 +28,7 @@ function Sidebar({setActiveSection, activeSection}) {
                 {section.subsections.map((subsec, sub_i)=>{
                     return (
                         <span key={sub_i} className={`flex cursor-pointer items-center py-1 px-3 ${activeSection == subsec ? 'border-l-4 border-slate-600' : 'border-l-4 border-white'}`} onClick={()=>setActiveSection(subsec)}>
-                            <span className={`p-1 rounded-full ${sub_i%2 !=0 ? 'bg-slate-700':'bg-gray-300'} me-2  text-white`}>
+                            <span className={`p-1 rounded-full ${filledStatus.includes(subsec) ? 'bg-slate-700':'bg-gray-300'} me-2  text-white`}>
                             <IoMdCheckmark/>
                             </span>
                              {subsec}</span>
@@ -36,7 +38,7 @@ function Sidebar({setActiveSection, activeSection}) {
             </div>
         )
       })}
-      <button type='button' className='py-4 px-6 w-[max-content] bg-violet-500 text-white font-semibold'>Submit for review</button>
+      <button type='button' className='py-4 px-6 w-[max-content] bg-violet-500 text-white font-semibold' onClick={submitHandler}>Submit for review</button>
     </div>
   )
 }

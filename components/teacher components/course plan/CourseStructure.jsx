@@ -1,9 +1,17 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import QandA from './QandA'
 import SectionHeader from '../SectionHeader'
 import SectionLayout from '../SectionLayout'
+import { useTeacherContext } from '@/context/TeacherContext'
 
-function CourseStructure({activeSection}) {
+function CourseStructure({ activeSection }) {
+    const { filledStatus, setFilledStatus } = useTeacherContext()
+    useEffect(() => {
+        
+            if (!filledStatus.includes(activeSection)) setFilledStatus([...filledStatus, activeSection])
+
+        
+    }, [activeSection])
     const QandAs = [
         {
             q: 'Start with your goals.',
@@ -42,7 +50,7 @@ function CourseStructure({activeSection}) {
     return (
 
         <SectionLayout>
-            <SectionHeader activeSection={activeSection}/>
+            <SectionHeader activeSection={activeSection} />
             <div className='w-full px-10 flex items-center bg-slate-50 '>
                 <div className='w-[65%] pe-14'>
                     <p className='text-xl font-semibold  mb-5 '>There's a course in you. Plan it out.</p>
@@ -50,7 +58,7 @@ function CourseStructure({activeSection}) {
                     </p>
                 </div>
                 <div className='w-[35%] shadow-md shadow-gray-300 mt-7 mb-7 gap-7 flex flex-col items-center bg-white pt-7'>
-                    <img src={`${activeSection == 'course structure' ? '/images/library.jpg':'/images/video-help.jpg'}`} alt="" />
+                    <img src={`${activeSection == 'course structure' ? '/images/library.jpg' : '/images/video-help.jpg'}`} alt="" />
                     <div className='text-center pb-7 px-5'>
                         <p className='text-xl font-semibold mb-6'>Our library of resources</p>
                         <p>
@@ -62,7 +70,7 @@ function CourseStructure({activeSection}) {
             <div className='pt-14 px-10 pe-20 flex flex-col gap-6'>
                 <p className='text-2xl font-bold'>Tips</p>
                 {QandAs.map((qA, i) => {
-                    return (<QandA q={qA.q} a={qA.a} />)
+                    return (<QandA key={i} q={qA.q} a={qA.a} />)
                 })}
             </div>
             <div className='py-14 px-10 pe-20 flex flex-col gap-6'>

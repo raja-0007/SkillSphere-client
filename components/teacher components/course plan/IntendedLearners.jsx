@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { IoMdAdd } from "react-icons/io";
 import SectionHeader from '../SectionHeader';
 import SectionLayout from '../SectionLayout';
 import { useTeacherContext } from '@/context/TeacherContext';
 
 function IntendedLearners({activeSection}) {
-    const {outcomes, setOutcomes, requirements, setRequirements, intended, setIntended} = useTeacherContext()
+    const {outcomes, setOutcomes, requirements, setRequirements, intended, setIntended, filledStatus, setFilledStatus} = useTeacherContext()
     // const [outcomes, setOutcomes] = useState(['', '', '', ''])
     // const [requirements, setRequirements] = useState([''])
     // const [intended, setIntended] = useState([''])
@@ -43,6 +43,18 @@ function IntendedLearners({activeSection}) {
         }
 
     }
+    useEffect(() => {
+        if (!outcomes.includes('') && !requirements.includes('') && !intended.includes('')) {
+            if (!filledStatus.includes('intended learners')) setFilledStatus([...filledStatus, 'intended learners'])
+
+
+        }
+        else {
+            if (filledStatus.includes('intended learners')) {
+                setFilledStatus(filledStatus.filter(stat => stat !== 'intended learners'))
+            }
+        }
+    }, [outcomes, requirements, intended])
     return (
         <SectionLayout>
             <SectionHeader activeSection={activeSection}/>

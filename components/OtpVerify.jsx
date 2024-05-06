@@ -19,11 +19,11 @@ function OtpVerify({otp,setIsOtpVerify, makeregister}) {
         }
     }
   return (
-    <div className='flex flex-col items-center w-[max-content] px-8'>
+    <div className='flex flex-col gap-3 items-center w-[max-content] px-8 py-10 shadow-md shadow-gray-500'>
       <img src="/agro-logo-transparent.png" className='mb-3' width={'150px'} alt="" />
       <span>we have sent an otp to your email address</span>
       <span>Please enter the otp to activate your account</span>
-      <input type="text" name="" id="" className='p-2 outline-none rounded-md text-center mt-2 mb-2' placeholder='Enter OTP'  maxLength={4} value={otp2} onChange={(e) => setOtp2(e.target.value)} />
+      <input type="text" name="" id="" className='p-2 bg-slate-100 outline-none border rounded-md text-center mt-2 mb-2' placeholder='Enter OTP'  maxLength={4} value={otp2} onChange={(e) => setOtp2(e.target.value)} />
       <button type='button' className='p-2 px-3 bg-red-400 hover:bg-red-500 rounded-lg text-white' onClick={handleClick}>verify</button>
     </div>
   )

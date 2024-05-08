@@ -8,31 +8,28 @@ import { useTeacherContext } from '@/context/TeacherContext';
 function LandingPage({ activeSection }) {
     const { landingDetails, setLandingDetails, filledStatus, setFilledStatus } = useTeacherContext()
     const [saved, setSaved] = useState(false)
-    // const [landingDetails, setLandingDetails] = useState({
-    //     title: '',
-    //     subtitle: '',
-    //     description: '',
-    //     language: '',
-    //     level: '',
-    //     category: '',
-    //     image: ''
-    // })
+    
     const languages = ['english', 'hindi', 'telugu']
     const levels = ['beginner level', 'intermediate level', 'expert level', 'all levels']
     const categories = ['web development', 'machine learning']
     const saveIntoFilled = () => {
         // console.log(landingDetails)
-        if (!filledStatus.includes('course landing page')) {
+        if (!filledStatus.includes('course landing page') && !Object.values(landingDetails).includes('')) {
             setFilledStatus([...filledStatus, 'course landing page'])
             setSaved(true)
         }
-    }
-    useEffect(() => {
-        setSaved(false)
-        if (filledStatus.includes('course landing page')) {
-            setFilledStatus(filledStatus.filter(stat => stat !== 'course landing page'))
+        else if(Object.values(landingDetails).includes('')){
+            alert('please enter all fields')
         }
-    }, [landingDetails])
+    }
+    
+    useEffect(()=>{
+        
+        if (filledStatus.includes('course landing page')) {
+            setSaved(true)
+        }
+        else setSaved(false)
+    },[])
     return (
         <SectionLayout>
             <SectionHeader activeSection={activeSection} />
@@ -43,7 +40,7 @@ function LandingPage({ activeSection }) {
                         return (
                             <div key={i} className='flex flex-col gap-1 w-full'>
                                 <label htmlFor={item} className='font-semibold'>course {item} :</label>
-                                {item !== 'description' ? <input id={item} type='text' placeholder={`Insert your course ${item}`} value={landingDetails[item]} className='border outline-none border-black py-2 px-2 ' onChange={(e) => setLandingDetails({ ...landingDetails, [item]: e.target.value })} /> : <textarea name="" id={item} value={landingDetails[item]} placeholder='Insert your course description' className='w-full h-[70px] outline-none px-3 py-1 resize-none border border-black' onChange={(e) => setLandingDetails({ ...landingDetails, [item]: e.target.value })}></textarea>}
+                                {item !== 'description' ? <input id={item} type='text' placeholder={`Insert your course ${item}`} value={landingDetails[item]} className='border outline-none border-black py-2 px-2 ' onChange={(e) => {setLandingDetails({ ...landingDetails, [item]: e.target.value }); setSaved(false)}} /> : <textarea name="" id={item} value={landingDetails[item]} placeholder='Insert your course description' className='w-full h-[70px] outline-none px-3 py-1 resize-none border border-black' onChange={(e) => {setLandingDetails({ ...landingDetails, [item]: e.target.value }); setSaved(false)}}></textarea>}
                             </div>
                         )
                     })}
@@ -53,7 +50,7 @@ function LandingPage({ activeSection }) {
                             {Object.keys(landingDetails).slice(3, 6).map((item, i) => {
                                 return (
                                     <div key={i} className='flex flex-col gap-1 '>
-                                        <select name="" id="" className='border w-72 border-black outline-none py-2 px-4' onChange={(e) => setLandingDetails({ ...landingDetails, [item]: e.target.value })}>
+                                        <select name="" id="" className='border w-72 border-black outline-none py-2 px-4' value={landingDetails[item]} onChange={(e) => {setLandingDetails({ ...landingDetails, [item]: e.target.value }); setSaved(false)}}>
                                             <option value="placeholder" className='text-gray-500'>-- select {item} --</option>
                                             {item == 'language' ? languages.map((lang, lang_i) => {
                                                 return (
@@ -82,7 +79,7 @@ function LandingPage({ activeSection }) {
                     <div className='w-full flex flex-col gap-6'>
                         <div className='w-full'>
                             <p className='flex items-center font-bold gap-2'>What is primarily taught in your course? <IoIosInformationCircle className='text-[1.3em] text-black' /></p>
-                            <input type="text" name="" id="" value={landingDetails.primary} placeholder='ex., web development' onChange={(e) => setLandingDetails({ ...landingDetails, primary: e.target.value })} className='w-[60%] border border-black py-2 px-2' />
+                            <input type="text" name="" id="" value={landingDetails.primary} placeholder='ex., web development' onChange={(e) => {setLandingDetails({ ...landingDetails, primary: e.target.value }); setSaved(false)}} className='w-[60%] border border-black py-2 px-2' />
                         </div>
                         <div className='flex w-full justify-between items-start'>
                             <div className='w-[49%]'>
@@ -97,7 +94,7 @@ function LandingPage({ activeSection }) {
                                         <span className='py-2 w-[25%] bg-white text-center font-bold border-l border-black'>{landingDetails.image ? 'replace ':'upload '}file</span>
                                     </label>
 
-                                    <input type="file" name="" id="course_image" className='hidden'  onChange={(e)=>setLandingDetails({...landingDetails,image:e.target.files[0]})} />
+                                    <input type="file" name="" id="course_image" className='hidden'  onChange={(e)=>{setLandingDetails({...landingDetails,image:e.target.files[0]}); setSaved(false)}} />
 
                                 </div>
                             </div>

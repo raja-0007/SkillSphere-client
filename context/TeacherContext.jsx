@@ -25,11 +25,13 @@ function TeacherProvider({ children }) {
                     type: 'lecture',
                     content: '',
                     content_type: '',
-                    resources: '',
-                    description: '',
+                    resources: null,
+                    description: null,
                     currId: 'sect1cur1'
                 }]
         }])
+    const [conditionsSatisfied, setConditionsSatisfied] = useState(false)
+
     const [landingDetails, setLandingDetails] = useState({
         title: '',
         subtitle: '',
@@ -38,7 +40,7 @@ function TeacherProvider({ children }) {
         level: '',
         category: '',
         primary: '',
-        image: null
+        image: ''
     })
     const [price, setPrice] = useState('')
     const [messages, setMessages] = useState({
@@ -63,19 +65,46 @@ function TeacherProvider({ children }) {
 
         for (const entry of formdata.entries()) {
             console.log(entry);
-        } 
+        }
         const difference = requiredStatus.filter(stat => !filledStatus.includes(stat))
         // await axios.post('http://localhost:3000/api/test', formdata)
         await axios.post('http://localhost:7777/api/createcourse', formdata)
-        .then(res => console.log(res.data))
+            .then(res => console.log(res.data))
         // alert(`please complete ${difference.join(', ')} stages`,)
 
 
     }
 
-    // useEffect(() => {
-    //     console.log('>>>>>>>>>>>>>>>>>>.', filledStatus)
-    // }, [filledStatus])
+
+    useEffect(() => {
+        // console.log('changed>>>>>>>>>>>>>>>>>>.',landingDetails)
+        // setSaved(false)
+        if (filledStatus.includes('course landing page')) {
+            setFilledStatus(filledStatus.filter(stat => stat !== 'course landing page'))
+        }
+
+        // if (filledStatus.includes('course messsages')) {
+        //     setFilledStatus(filledStatus.filter(stat => stat !== 'course messsages'))
+        // }
+
+        // if (filledStatus.includes('curriculum')) {
+        //     setFilledStatus(filledStatus.filter(stat => stat !== 'curriculum'))
+        // }
+
+    }, [landingDetails])
+    useEffect(()=>{
+        // setSaved(false)
+        if(filledStatus.includes('curriculum')){
+            setFilledStatus(filledStatus.filter(stat=>stat !== 'curriculum' ))
+        }
+    },[sections])
+
+    useEffect(() => {
+        // setSaved(false)
+        if (filledStatus.includes('course messsages')) {
+            setFilledStatus(filledStatus.filter(stat => stat !== 'course messsages'))
+        }
+    }, [messages])
 
     return (
         <teacherContext.Provider value={{
@@ -83,6 +112,7 @@ function TeacherProvider({ children }) {
             requirements, setRequirements,
             intended, setIntended,
             sections, setSections,
+            conditionsSatisfied, setConditionsSatisfied,
             landingDetails, setLandingDetails,
             price, setPrice,
             messages, setMessages,

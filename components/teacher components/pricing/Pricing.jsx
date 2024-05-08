@@ -12,28 +12,57 @@ function Pricing({ activeSection }) {
             setFilledStatus([...filledStatus, 'pricing'])
             setSaved(true)
         }
+        else if(price == ''){
+            alert('please enter price')
+        }
+       
     }
-    useEffect(() => {
+    // useEffect(() => {
+    //     setSaved(false)
+    //     if (filledStatus.includes('pricing')) {
+    //         setFilledStatus(filledStatus.filter(stat => stat !== 'pricing'))
+    //     }
+    // }, [price])
+    const changeHandler = (e) => {
         setSaved(false)
         if (filledStatus.includes('pricing')) {
             setFilledStatus(filledStatus.filter(stat => stat !== 'pricing'))
         }
-    }, [price])
-    const changeHandler = (e) => {
-
         const value = e.target.value.replace(/\D/g, '')
         if (value < 50000) setPrice(value)
     }
 
+    // useEffect(() => {
+    //     document.addEventListener('click', () => {
+    //         if (document.getElementById('free').checked) {
+    //             setPrice('free')
+    //         }
+    //         else {
+    //             setPrice('')
+    //         }
+    //     })
+    // }, [])
+    const handlePrice = () => {
+        setSaved(false)
+        if (document.getElementById('free').checked) {
+            setPrice('free')
+
+        }
+        else {
+            setPrice('')
+
+        }
+        if (filledStatus.includes('pricing')) {
+            setFilledStatus(filledStatus.filter(stat => stat !== 'pricing'))
+        }
+        
+    }
+
     useEffect(() => {
-        document.addEventListener('click', () => {
-            if (document.getElementById('free').checked) {
-                setPrice('free')
-            }
-            else {
-                setPrice('')
-            }
-        })
+        if (filledStatus.includes('pricing')) {
+            setSaved(true)
+        }
+        else setSaved(false)
     }, [])
     return (
         <SectionLayout>
@@ -45,7 +74,7 @@ function Pricing({ activeSection }) {
                 </div>
                 <div className='flex items-center gap-1'>
 
-                    <input type="checkbox" name="" id="free" />
+                    <input type="checkbox" name="" checked={price == 'free' ? true : false} onChange={handlePrice} id="free" />
                     <label htmlFor="free">free</label>
                 </div>
                 {price !== 'free' && <div className='flex gap-6 items-start'>
@@ -54,7 +83,7 @@ function Pricing({ activeSection }) {
                         <input type="text" name="" id="price" value={price !== 'free' ? price : ''} onChange={(e) => changeHandler(e)} className='p-2 border border-black outline-none' placeholder='Enter Price' /> <br />
 
                     </div>
-                    
+
                 </div>}
                 {!saved && <button type='button' onClick={saveIntoFilled} className='self-start mt-4 w-[max-content] p-2 px-3 bg-slate-800 text-white font-semibold'>save</button>
                 }

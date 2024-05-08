@@ -8,17 +8,23 @@ function Messages({ activeSection }) {
     const [saved, setSaved] = useState(false)
     const saveIntoFilled = () => {
         // console.log('messages....', messages)
-        if (!filledStatus.includes('course messsages')) {
+        if (!filledStatus.includes('course messsages') && !Object.values(messages).includes('')) {
             setFilledStatus([...filledStatus, 'course messsages'])
             setSaved(true)
         }
-    }
-    useEffect(() => {
-        setSaved(false)
-        if (filledStatus.includes('course messsages')) {
-            setFilledStatus(filledStatus.filter(stat => stat !== 'course messsages'))
+        else if(Object.values(messages).includes('')){
+            alert('please fill all the fields')
         }
-    }, [messages])
+    }
+    
+
+    useEffect(() => {
+        
+        if (filledStatus.includes('course messsages')) {
+            setSaved(true)
+        }
+        else setSaved(false)
+    }, [])
     return (
         <SectionLayout>
             <SectionHeader activeSection={activeSection} />
@@ -30,7 +36,7 @@ function Messages({ activeSection }) {
                     return (
                         <div key={i}>
                             <label htmlFor={item} className='font-bold capitalize'>{item} message</label><br />
-                            <textarea name="" id={item} className='h-[100px] p-2  w-[90%] resize-none border border-black' placeholder={`enter a ${item} message to your students`} onChange={(e) => setMessages({ ...messages, [item]: e.target.value })}></textarea>
+                            <textarea name="" id={item} className='h-[100px] p-2  w-[90%] resize-none border border-black' placeholder={`enter a ${item} message to your students`} value={messages[item]} onChange={(e) => {setMessages({ ...messages, [item]: e.target.value }); setSaved(false)}}></textarea>
                         </div>
                     )
                 })}
@@ -42,7 +48,7 @@ function Messages({ activeSection }) {
                     <label htmlFor="congratulations" className='font-bold capitalize'>congratulations message</label><br />
                     <textarea name="" id="congratulations" className='h-[100px] p-2 w-full resize-none border border-black' placeholder='enter a congratulations message to your students'></textarea>
                 </div> */}
-                {!saved && <button type='button' onClick={saveIntoFilled} className='w-[max-content] p-2 px-3 bg-slate-800 text-white font-semibold'>save</button>
+                {!saved && <span onClick={saveIntoFilled} className='w-[max-content] p-2 px-3 bg-slate-800 text-white font-semibold'>save</span>
                 }
             </div>
         </SectionLayout>

@@ -47,7 +47,6 @@ function IntendedLearners({activeSection}) {
         if (!outcomes.includes('') && !requirements.includes('') && !intended.includes('')) {
             if (!filledStatus.includes('intended learners')) setFilledStatus([...filledStatus, 'intended learners'])
 
-
         }
         else {
             if (filledStatus.includes('intended learners')) {
@@ -71,12 +70,12 @@ function IntendedLearners({activeSection}) {
                     {outcomes.map((outcome, i) => {
                         return (
                             <span key={i}>
-                                <input type="text" className='border-[1px] border-black w-[90%] px-2 py-3' value={outcome} placeholder='enter the course outcome' name="" id="" onChange={(e) => changeHandler(e, i, 'outcome')} />
+                                <input type="text" className='border-[1px] border-black w-[90%] outline-none px-2 py-3' value={outcome} placeholder='enter the course outcome' name="" id="" onChange={(e) => changeHandler(e, i, 'outcome')} />
                             </span>
                         )
                     })}
                     {/* <span onClick={() => console.log(outcomes)}>print</span> */}
-                    <span onClick={() => addField('outcome')} className='flex gap-1 items-center font-bold text-violet-800'><IoMdAdd size={'1.5em'} />add more to your response </span>
+                    <span onClick={() => addField('outcome')} className='flex gap-1 items-center font-bold text-violet-800 cursor-pointer'><IoMdAdd size={'1.5em'} />add more to your response </span>
                 </form>
 
                 <div >
@@ -88,12 +87,12 @@ function IntendedLearners({activeSection}) {
                     {requirements.map((requirement, i) => {
                         return (
                             <span key={i}>
-                                <input type="text" className='border-[1px] border-black w-[90%] px-2 py-3' value={requirement} placeholder='enter the course requirement' name="" id="" onChange={(e) => changeHandler(e, i, 'requirement')} />
+                                <input type="text" className='border-[1px] border-black w-[90%] outline-none px-2 py-3' value={requirement} placeholder='enter the course requirement' name="" id="" onChange={(e) => changeHandler(e, i, 'requirement')} />
                             </span>
                         )
                     })}
                     
-                    <span onClick={() => addField('requirement')} className='flex gap-1 items-center font-bold text-violet-800'><IoMdAdd size={'1.5em'} />add more to your response </span>
+                    <span onClick={() => addField('requirement')} className='flex gap-1 items-center font-bold text-violet-800 cursor-pointer'><IoMdAdd size={'1.5em'} />add more to your response </span>
                 </form>
 
 
@@ -107,12 +106,12 @@ function IntendedLearners({activeSection}) {
                     {intended.map((intended, i) => {
                         return (
                             <span key={i}>
-                                <input type="text" className='border-[1px] border-black w-[90%] px-2 py-3' value={intended} placeholder='enter the course intended' name="" id="" onChange={(e) => changeHandler(e, i, 'intended')} />
+                                <input type="text" className='border-[1px] border-black w-[90%] outline-none px-2 py-3' value={intended} placeholder='enter the course intended' name="" id="" onChange={(e) => changeHandler(e, i, 'intended')} />
                             </span>
                         )
                     })}
                     {/* <span onClick={() => console.log(outcomes,requirements, intended)}>print</span> */}
-                    <span onClick={() => addField('intended')} className='flex gap-1 items-center font-bold text-violet-800'><IoMdAdd size={'1.5em'} />add more to your response </span>
+                    <span onClick={() => addField('intended')} className='flex gap-1 items-center font-bold text-violet-800 cursor-pointer'><IoMdAdd size={'1.5em'} />add more to your response </span>
                 </form>
 
             </div>

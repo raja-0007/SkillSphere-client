@@ -29,8 +29,9 @@ function Curriculum({ activeSection }) {
     const [isCurrForm, setIsCurrForm] = useState('')
     const [isAddContent, setIsAddContent] = useState('')
     const [isEditContent, setIsEditContent] = useState('')
-    const {filledStatus, setFilledStatus, sections, setSections} = useTeacherContext()
+    const { filledStatus, setFilledStatus, sections, setSections, conditionsSatisfied, setConditionsSatisfied } = useTeacherContext()
     const [saved, setSaved] = useState(false)
+    // const [conditionsSatisfied, setConditionsSatisfied] = useState(false)
 
     const contentIcons = {
         article: <BsFileEarmark />,
@@ -42,7 +43,6 @@ function Curriculum({ activeSection }) {
     //         id: 'section_1',
     //         title: 'Introduction',
     //         objective: 'learn something you fool!',
-
     //         curriculum: [
     //             {
     //                 title: 'Introduction',
@@ -74,6 +74,8 @@ function Curriculum({ activeSection }) {
                 title: '',
                 objective: ''
             })
+            setSaved(false)
+            setConditionsSatisfied(false)
             setIsSectForm(false)
         }
         else {
@@ -90,13 +92,15 @@ function Curriculum({ activeSection }) {
                 type: selectedType,
                 content: '',
                 content_type: '',
-                resources: '',
-                description: '',
+                resources: null,
+                description: null,
                 currId: 'sect' + id.split('_')[1] + 'cur' + (sections.filter(section => section.id == id)[0].curriculum.length + 1)
             }
             setSections(sections.map(section => section.id == id ? { ...section, curriculum: [...section.curriculum, curriculum] } : section))
             setIsCurrForm('')
             setSelectedType('')
+            setSaved(false)
+            setConditionsSatisfied(false)
         }
         else alert('enter title to add curriculum item')
     }
@@ -127,28 +131,62 @@ function Curriculum({ activeSection }) {
         setIsEditContent('')
 
 
-
         setSections(sections.map(sect => sect.id == sectId ? { ...sect, curriculum: sect.curriculum.map(curr => curr.currId == currId ? currlm : curr) } : sect))
+        setSaved(false)
+        setConditionsSatisfied(false)
 
     }
-    useEffect(()=>{
+    useEffect(() => {
         setArticleText('')
         setVideoUrl('')
-    },[isAddContent])
+    }, [isAddContent])
 
-    const saveIntoFilled=()=>{
-        if(!filledStatus.includes('curriculum')){
+    const saveIntoFilled = () => {
+
+        if (!filledStatus.includes('curriculum') && sections.length >= 2) {
+            sections.forEach(sect => {
+                if (!Object.values(sect).includes('') && sect.curriculum.length >= 1) {
+                    // console.log(sect)
+                    sect.curriculum.forEach(curr => {
+                        if (!Object.values(curr).includes('')) {
+                            setConditionsSatisfied(true)
+                        }
+                        else {
+                            // console.log(curr)
+                            setConditionsSatisfied(false)
+                            alert(`curriculum content should not be empty, please add content in ${curr.title}`)
+                            return
+                        }
+                    });
+                }
+                else {
+                    setConditionsSatisfied(false)
+                    alert(`section should contain alteast one curriculum item, please add curriculum content in ${sect.title}`)
+                    return
+                }
+            });
+
+        }
+        else if (sections.length < 2) {
+            setConditionsSatisfied(false)
+            alert('curriculum should atleast have 2 sections')
+        }
+    }
+
+    useEffect(() => {
+        if (conditionsSatisfied) {
             setFilledStatus([...filledStatus, 'curriculum'])
             setSaved(true)
         }
-    }
+    }, [conditionsSatisfied])
 
-    useEffect(()=>{
-        setSaved(false)
-        if(filledStatus.includes('curriculum')){
-            setFilledStatus(filledStatus.filter(stat=>stat !== 'curriculum' ))
+
+    useEffect(() => {
+        if (filledStatus.includes('curriculum')) {
+            setSaved(true)
         }
-    },[sections])
+        else setSaved(false)
+    }, [])
 
 
     return (
@@ -185,8 +223,8 @@ function Curriculum({ activeSection }) {
                                                     <div className='flex items-center gap-5'>
                                                         {(item.content == '' && isAddContent !== item.currId) && <span className='p-1 px-2 border flex items-center w-[max-content] border-black cursor-pointer' onClick={() => { setIsAddContent(item.currId); setSelectedType('') }}><IoMdAdd className='text-[1.2em]' />content</span>}
                                                         {isAddContent !== item.currId ? <FaAngleDown className='text-[1.2em] ' onClick={() => { setIsAddContent(item.currId); console.log('loggedddd', sections) }} />
-                                                        : <FaAngleUp className='text-[1.2em] ' onClick={() => { setIsAddContent(''); console.log('loggedddd', sections) }} />}
-                                                        </div>
+                                                            : <FaAngleUp className='text-[1.2em] ' onClick={() => { setIsAddContent(''); console.log('loggedddd', sections) }} />}
+                                                    </div>
 
                                                 </span>
                                                 {isAddContent == item.currId && <div className='w-full flex flex-col px-6 mt-3 relative border-t  gap-2 pt-3 pb-1 border-black'>
@@ -197,7 +235,7 @@ function Curriculum({ activeSection }) {
                                                             <IoMdCheckmark size={'1.3em'} />
                                                         </span>}</span>
                                                     }
-                                                    <span className='self-end mt-1 absolute top-2 right-10 cursor-pointer' onClick={() => { setIsAddContent(''); item.content == '' && addContentType('', section.id, item.currId)}}><IoClose size={'1.3em'} /></span>
+                                                    <span className='self-end mt-1 absolute top-2 right-10 cursor-pointer' onClick={() => { setIsAddContent(''); item.content == '' && addContentType('', section.id, item.currId) }}><IoClose size={'1.3em'} /></span>
                                                     {item.content_type == '' ? <>
                                                         <span className='mx-auto text-sm'>Select the main type of content. Files and links can be added as resources.</span>
                                                         <div className='flex gap-5 items-center justify-center w-full'>
@@ -219,14 +257,14 @@ function Curriculum({ activeSection }) {
                                                             : <><span className='p-2 py-1 border-r bg-white text-blue-700 border-black me-2'><AiOutlineLink size={'1.2em'} /></span><span className='w-96   flex items-center  bg-slate-100 border'>{item.content}</span></>
 
                                                         }
-                                                    </div> : <div>
-                                                        <label htmlFor="congratulations" className='font-bold capitalize'>Text</label><br />
+                                                    </div> : <div className='flex flex-col gap-1 w-full'>
+                                                        <label htmlFor="congratulations" className='font-bold capitalize'>Text</label>
                                                         {(item.content == '' || isEditContent == item.currId) ?
                                                             <div className='flex flex-col gap-2'> <textarea name="" className='h-[100px] p-2 w-full resize-none rounded-md outline-none border border-black' value={articleText} placeholder='write the article' onChange={(e) => setArticleText(e.target.value)}></textarea>
-                                                                {item.content == '' && <span className='py-1 w-[max-content] px-2 bg-slate-800 text-white text-center font-bold ' onClick={() => addContent(section.id, item.currId, articleText)}>done</span>
+                                                                {item.content == '' && <span className='py-1 w-[max-content] px-2 bg-slate-800 text-white text-center font-bold cursor-pointer' onClick={() => addContent(section.id, item.currId, articleText)}>done</span>
                                                                 }
                                                             </div>
-                                                            : <span className='w-96 p-2 mt-5 bg-slate-100 border'>{item.content}</span>}
+                                                            : <span className='w-full p-2 bg-slate-100 border'>{item.content}</span>}
                                                     </div>}
 
                                                     <span className='px-2 py-1 border border-black mt-3 flex items-center gap-1 w-[max-content] font-semibold '><IoMdAdd size={'1.3em'} />Description</span>
@@ -276,8 +314,8 @@ function Curriculum({ activeSection }) {
                         setSectionDetails({ title: '', objective: '' })
                     }}
                         className={`p-1 font-semibold px-2 w-[max-content] flex cursor-pointer  items-center ${!isSectForm && 'bg-slate-100 border border-black'}`}>
-                            <IoMdAdd size={'1.5em'} className={`${isSectForm && 'transform -rotate-45 -translate-x-3'} transition-all duration-300`} />
-                            {!isSectForm && 'section'}
+                        <IoMdAdd size={'1.5em'} className={`${isSectForm && 'transform -rotate-45 -translate-x-3'} transition-all duration-300`} />
+                        {!isSectForm && 'section'}
                     </span>
 
 
@@ -302,7 +340,7 @@ function Curriculum({ activeSection }) {
                             <span className='py-1 px-2 bg-slate-800 text-white cursor-pointer' onClick={addSection}>add</span>
                         </div>
                     </form>}
-                            {!saved && <span className='py-1 px-3 bg-slate-800 text-white font-bold w-[max-content]' onClick={saveIntoFilled}>save</span>}
+                    {!saved && <span className='py-1 px-3 bg-slate-800 text-white font-bold w-[max-content]' onClick={saveIntoFilled}>save</span>}
 
                 </div>
 

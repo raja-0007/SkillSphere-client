@@ -8,7 +8,7 @@ import { Navigation, EffectCoverflow, Pagination, EffectCards } from 'swiper/mod
 
 import 'swiper/css'
 import 'swiper/css/bundle';
-import { IoIosStar } from "react-icons/io";
+import { IoIosStar, IoIosStarOutline } from "react-icons/io";
 import { IoIosStarHalf } from "react-icons/io";
 export const printRating=(rating)=>{
   let result = []
@@ -20,6 +20,12 @@ export const printRating=(rating)=>{
   if(parseInt(rating)!== parseFloat(rating)){
     result.push(<IoIosStarHalf key={999} className='text-yellow-400'/>)
   }
+  if(result.length !== 5){
+    for(let i=result.length; i<5;i++){
+        result.push(<IoIosStarOutline key={999+i} className='text-yellow-400' />)
+
+    }
+}
   return  result
   
 }

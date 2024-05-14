@@ -9,6 +9,8 @@ import Home from "@/components/base components/Home";
 import { useHomeContext } from "@/context/HomeContext";
 import TeacherMode from "@/components/base components/TeacherMode";
 import Authentication from "@/components/base components/Authentication";
+import SearchResults from "@/components/search results/SearchResults";
+import CourseOverview from "@/components/course overview/CourseOverview";
 
 
 export default function Page() {
@@ -86,8 +88,8 @@ export default function Page() {
           </div>
 
         </div> */}
-        {active !== 'teacher' && <Navbar setAuthType={setAuthType}/>}
-      
+        {/* {active !== 'teacher' && <Navbar setAuthType={setAuthType}/>} */}
+        <Navbar setAuthType={setAuthType}/>
         {active == 'home' ?
         
         <Home /> 
@@ -96,7 +98,9 @@ export default function Page() {
        
         <Authentication type={authType} setAuthType={setAuthType}/>
         
-        : active == 'teacher' && <TeacherMode/>
+        : active == 'teacher' ? <TeacherMode/>
+        : active == 'search results' ? <SearchResults/>
+        : active == 'course overview' && <CourseOverview/>
         }
       
       <Footer />

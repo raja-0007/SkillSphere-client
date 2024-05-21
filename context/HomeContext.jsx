@@ -15,6 +15,7 @@ function HomeProvider({ children }) {
     console.log('cnaasdgoai 89', active, searchResults)
 
   }, [searchResults])
+  
   return (
     <homeContext.Provider value={{
       active, setActive,

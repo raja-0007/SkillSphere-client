@@ -1,5 +1,5 @@
 import { useHomeContext } from '@/context/HomeContext'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { printRating } from '../home components/courses'
 import { IoMdCheckmark } from "react-icons/io";
 import { FaRupeeSign } from "react-icons/fa";
@@ -7,15 +7,17 @@ import { FaRegHeart } from "react-icons/fa";
 import { BsFileEarmark } from 'react-icons/bs';
 import { FaCirclePlay } from "react-icons/fa6";
 import CourseSections from './CourseSections';
+import axios from 'axios';
 
 
 
 
 function CourseOverview() {
-    const { overviewCourse } = useHomeContext()
-    useEffect(() => {
-        console.log(overviewCourse)
-    }, [])
+    const { overviewCourse, userDetails, setUserDetails } = useHomeContext()
+    const [enrolled, setEnrolled] = useState(false)
+    // useEffect(() => {
+    //     console.log(overviewCourse)
+    // }, [])
     const totalArticleLectures = (sections) => {
         let total = 0
         sections.forEach(sect => {
@@ -34,6 +36,33 @@ function CourseOverview() {
 
         return total
     }
+    const enroll = async () => {
+        
+
+            if (Object.keys(userDetails).length !== 0) {
+                await axios.post('http://localhost:7777/api/enroll', { courseId: overviewCourse._id, email: userDetails.userDetails.email })
+                    .then((res) => {
+                        // console.log('enrolled', overviewCourse._id, res.data);
+                         res.data == 'success' && setEnrolled(true)}
+                    )
+
+            }
+            else alert('p;ease login to enroll')
+        
+    }
+
+    useEffect(() => {
+        if (enrolled) {
+            const item = JSON.parse(sessionStorage.getItem('userdetails'))
+            item.userDetails.enrolled = item.userDetails.enrolled || []
+            item.userDetails.enrolled.push(overviewCourse._id)
+            // console.log(item)
+            setUserDetails({ ...userDetails, userDetails: { ...userDetails.userDetails, enrolled: item.userDetails.enrolled } })
+
+            sessionStorage.setItem('userdetails', JSON.stringify(item))
+        }
+    }, [enrolled])
+
     return (
         <div className='flex flex-col overflow-hidden'>
             <div className='px-40 py-10  pt-20 text-white bg-slate-900'>
@@ -47,9 +76,16 @@ function CourseOverview() {
                 <div className='flex flex-col items-center gap-3 px-5 pb-10'>
 
                     <div className='flex items-center w-full gap-2 pt-5'>
+                        
+                        {!userDetails.userDetails?.enrolled?.includes(overviewCourse._id) ?
+                        <>
                         <span className='flex items-center  text-xl font-bold'><FaRupeeSign size={'1em'} />{overviewCourse.price}</span>
+                        <span className='px-3 py-2 bg-violet-500 text-center text-white w-full' onClick={enroll}>Add to Cart</span>
 
-                        <span className='px-3 py-2 bg-violet-500 text-center text-white w-full'>Add to Cart</span>
+                        </>
+                            :
+                            <span className='px-3 py-2 bg-slate-700 text-center text-white w-full'>Go to Course</span>
+                        }
                         <span className='px-2 py-2 border border-black'><FaRegHeart size={'1.2em'} /></span>
                     </div>
                     <span className='text-xs'> 30-day money-back guarantee</span>

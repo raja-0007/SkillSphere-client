@@ -20,7 +20,7 @@ export default function Page() {
   const [authType, setAuthType] = useState('')
   const sideref = useRef()
   let handleopen = () => {
-    console.log(window.scrollY)
+    // console.log(window.scrollY)
     setScrollpos(window.scrollY)
     document.body.style.overflow = 'hidden'
     setIsopen(true)
@@ -30,16 +30,16 @@ export default function Page() {
   }
 
   let handleclose = () => {
-    console.log('closed')
+    // console.log('closed')
     window.scrollY = scrollpos
 
     setIsopen(false)
     document.body.style.overflow = 'visible'
-    console.log(scrollpos)
+    // console.log(scrollpos)
 
   }
   let closehandler = () => {
-    console.log('closing')
+    // console.log('closing')
     handleclose()
     setIsopen(false)
   }

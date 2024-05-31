@@ -8,12 +8,12 @@ import { BsFileEarmark } from 'react-icons/bs';
 import { FaCirclePlay } from "react-icons/fa6";
 import CourseSections from './CourseSections';
 import axios from 'axios';
-
+import Link from 'next/link';
 
 
 
 function CourseOverview() {
-    const { overviewCourse, userDetails, setUserDetails } = useHomeContext()
+    const { overviewCourse, userDetails, setUserDetails, } = useHomeContext()
     const [enrolled, setEnrolled] = useState(false)
     // useEffect(() => {
     //     console.log(overviewCourse)
@@ -40,7 +40,7 @@ function CourseOverview() {
         
 
             if (Object.keys(userDetails).length !== 0) {
-                await axios.post('http://localhost:7777/api/enroll', { courseId: overviewCourse._id, email: userDetails.userDetails.email })
+                await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/enroll`, { courseId: overviewCourse._id, email: userDetails.userDetails.email })
                     .then((res) => {
                         // console.log('enrolled', overviewCourse._id, res.data);
                          res.data == 'success' && setEnrolled(true)}
@@ -50,6 +50,7 @@ function CourseOverview() {
             else alert('p;ease login to enroll')
         
     }
+
 
     useEffect(() => {
         if (enrolled) {
@@ -84,7 +85,7 @@ function CourseOverview() {
 
                         </>
                             :
-                            <span className='px-3 py-2 bg-slate-700 text-center text-white w-full'>Go to Course</span>
+                            <Link href={`/coursesDetails/${overviewCourse._id}`} className='px-3 py-2 bg-slate-700 text-center text-white w-full'>Go to Course</Link>
                         }
                         <span className='px-2 py-2 border border-black'><FaRegHeart size={'1.2em'} /></span>
                     </div>

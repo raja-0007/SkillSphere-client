@@ -43,7 +43,7 @@ function Navbar({ setAuthType }) {
   }, [])
   useEffect(() => {
     document.addEventListener('click', (e) => {
-      console.log(active)
+      // console.log(active)
       if (active !== 'teacher') {
         if (searchDropRef && searchDropRef.current && !searchDropRef.current.contains(e.target) && e.target !== document.getElementById('searchForm') && !Array.from(document.getElementById('searchForm').children).includes(e.target)) {
           setDropDown(false)
@@ -76,16 +76,16 @@ function Navbar({ setAuthType }) {
     setUserDetails({})
   }
 
-  useEffect(() => {
-    console.log('>>>>>>>>>>>>>>>>>>>.', userDetails)
-  }, [userDetails])
+  // useEffect(() => {
+  //   console.log('>>>>>>>>>>>>>>>>>>>.', userDetails)
+  // }, [userDetails])
 
 
   useEffect(() => {
     // console.log('rinnnn')
     const getSearchResults = async () => {
       // console.log(search)
-      await axios.get(`http://localhost:7777/api/searchResults/${search}`)
+      await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/searchResults/${search}`)
         .then(res => setSearchResults(res.data))
     }
     if (search !== '') getSearchResults()

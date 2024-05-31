@@ -11,10 +11,10 @@ function HomeProvider({ children }) {
   const [overviewCourse, setOverviewCourse] = useState({})
   const [searchResults, setSearchResults] = useState([])
   const [dropDown, setDropDown] = useState(false)
-  useEffect(() => {
-    console.log('cnaasdgoai 89', active, searchResults)
+  // useEffect(() => {
+  //   console.log('cnaasdgoai 89', active, searchResults)
 
-  }, [searchResults])
+  // }, [searchResults])
   
   return (
     <homeContext.Provider value={{

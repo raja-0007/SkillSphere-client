@@ -63,12 +63,12 @@ function TeacherProvider({ children }) {
         formdata.append('messages', JSON.stringify(messages))
         // formdata.append('title', title)
 
-        for (const entry of formdata.entries()) {
-            console.log(entry);
-        }
+        // for (const entry of formdata.entries()) {
+        //     console.log(entry);
+        // }
         const difference = requiredStatus.filter(stat => !filledStatus.includes(stat))
         // await axios.post('http://localhost:3000/api/test', formdata)
-        await axios.post('http://localhost:7777/api/createcourse', formdata)
+        await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/createcourse`, formdata)
             .then(res => console.log(res.data))
         // alert(`please complete ${difference.join(', ')} stages`,)
 

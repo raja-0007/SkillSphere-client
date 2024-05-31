@@ -222,8 +222,8 @@ function Curriculum({ activeSection }) {
                                                     </div>
                                                     <div className='flex items-center gap-5'>
                                                         {(item.content == '' && isAddContent !== item.currId) && <span className='p-1 px-2 border flex items-center w-[max-content] border-black cursor-pointer' onClick={() => { setIsAddContent(item.currId); setSelectedType('') }}><IoMdAdd className='text-[1.2em]' />content</span>}
-                                                        {isAddContent !== item.currId ? <FaAngleDown className='text-[1.2em] ' onClick={() => { setIsAddContent(item.currId); console.log('loggedddd', sections) }} />
-                                                            : <FaAngleUp className='text-[1.2em] ' onClick={() => { setIsAddContent(''); console.log('loggedddd', sections) }} />}
+                                                        {isAddContent !== item.currId ? <FaAngleDown className='text-[1.2em] ' onClick={() => { setIsAddContent(item.currId);  }} />
+                                                            : <FaAngleUp className='text-[1.2em] ' onClick={() => { setIsAddContent('');  }} />}
                                                     </div>
 
                                                 </span>

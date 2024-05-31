@@ -7,7 +7,7 @@ function Pricing({ activeSection }) {
     const { price, setPrice, filledStatus, setFilledStatus } = useTeacherContext()
     const [saved, setSaved] = useState(false)
     const saveIntoFilled = () => {
-        console.log('price....', price)
+        // console.log('price....', price)
         if (!filledStatus.includes('pricing') && price !== '') {
             setFilledStatus([...filledStatus, 'pricing'])
             setSaved(true)

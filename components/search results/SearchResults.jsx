@@ -29,9 +29,9 @@ function SearchResults() {
 
 
 
-    useEffect(() => {
-        console.log(filters)
-    }, [filters])
+    // useEffect(() => {
+    //     console.log(filters)
+    // }, [filters])
 
     const priceChangeHandler = (e) => {
         // e.preventDefault()

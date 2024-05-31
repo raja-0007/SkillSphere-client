@@ -100,7 +100,7 @@ function Authentication({ type,setAuthType }) {
       alert('please enter all fields')
       return
     }
-    await axios.post('http://localhost:7777/api/authorization', { email: email, password: password, action: 'login' })
+    await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/authorization`, { email: email, password: password, action: 'login' })
       .then(console.log('req sent'))
       .then(res => { console.log(res.data); setIsLoggedIn(res.data) })
 
@@ -123,7 +123,7 @@ function Authentication({ type,setAuthType }) {
 
   }
   const makeregister = async () =>{
-    await axios.post('http://localhost:7777/api/authorization', { username: username, email: rEmail, password: rPassword, action: 'register' })
+    await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/authorization`, { username: username, email: rEmail, password: rPassword, action: 'register' })
       .then(res => setIsLoggedIn(res.data))
       .catch(err => console.log('error in sending request', err))
   }

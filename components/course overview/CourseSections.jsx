@@ -54,9 +54,9 @@ function CourseSections() {
 
         }
     }
-    useEffect(() => {
-        console.log(openSections)
-    }, [openSections])
+    // useEffect(() => {
+    //     console.log(openSections)
+    // }, [openSections])
     return (
         <div className='w-full'>
             <span className='text-2xl font-bold'>Course Content</span>

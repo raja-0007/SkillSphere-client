@@ -47,6 +47,7 @@ function TeacherProvider({ children }) {
         welcome: '',
         congratulations: ''
     })
+    const [videoStatus, setVideoStatus] = useState([])
     const [filledStatus, setFilledStatus] = useState([])
     const submitHandler = async () => {
         // console.log(filledStatus)
@@ -116,6 +117,7 @@ function TeacherProvider({ children }) {
             landingDetails, setLandingDetails,
             price, setPrice,
             messages, setMessages,
+            videoStatus, setVideoStatus,
             filledStatus, setFilledStatus,
             submitHandler
         }}>

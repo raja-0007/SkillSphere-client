@@ -84,10 +84,11 @@ function page({ params }) {
 
                   <iframe
                     ref={iframeRef}
-                    src={selected.content}
+                    src={`${process.env.NEXT_PUBLIC_VIMEO_PLAYER}/${selected?.videoUrl}`}
                     width={'100%'} height={'100%'}
                     allowFullScreen
                   ></iframe>
+                  
                 </div>
                 : <div className='h-[500px]'></div>
             }

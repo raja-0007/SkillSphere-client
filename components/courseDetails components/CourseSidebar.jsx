@@ -12,6 +12,8 @@ function CourseSidebar({ courseContent, selected, setSelected, scrollPos, setIsS
     const [opened, setOpened] = useState([])
     
     const [completed, setCompleted] = useState([])
+    console.log(selected)
+
 {/* <iframe width="560" height="315" src="https://www.youtube.com/embed/kUMe1FH4CHE?si=JwnajJuXCzngmC8b" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> */}
     
     useEffect(()=>{
@@ -35,7 +37,7 @@ function CourseSidebar({ courseContent, selected, setSelected, scrollPos, setIsS
         }
     }
     return (
-        <div className={`w-[25%] h-[${scrollPos >= 40 ? '100vh' : '93vh'}] border-2  fixed bottom-0 z-10 right-0 flex flex-col overflow-auto`}>
+        <div className={`w-[25%] ${scrollPos >= 40 ? 'h-[100vh] bottom-0' : 'h-[93vh] top-[7vh] '} bg-green-200 border-2  fixed  z-10 right-0 flex flex-col overflow-auto`}>
             <div className='border-b border-black py-3 flex justify-between items-center px-4'>
 
                 <span className='font-bold'>Course Content</span> <span onClick={() => setIsSidebar(false)}><IoMdClose size={'1.5em'} /></span>

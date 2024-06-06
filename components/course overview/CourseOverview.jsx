@@ -47,22 +47,47 @@ function CourseOverview() {
                     )
 
             }
-            else alert('p;ease login to enroll')
+            else alert('please login to enroll')
         
     }
 
+    const getUserDetails=async()=>{
 
-    useEffect(() => {
-        if (enrolled) {
-            const item = JSON.parse(sessionStorage.getItem('userdetails'))
-            item.userDetails.enrolled = item.userDetails.enrolled || []
-            item.userDetails.enrolled.push(overviewCourse._id)
-            // console.log(item)
-            setUserDetails({ ...userDetails, userDetails: { ...userDetails.userDetails, enrolled: item.userDetails.enrolled } })
+        await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getUserDetails/${userDetails.userDetails._id}`)
+        .then(resp=>console.log(resp.data))
+        // setUserDetails({...userDetails, userDetails:{...userDetails.userDetails, cart:res.data.cart}})
+    }
 
-            sessionStorage.setItem('userdetails', JSON.stringify(item))
+    const addToCart = async()=>{
+        if (Object.keys(userDetails).length !== 0) {
+            await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/addToCart`, { courseId: overviewCourse._id, userId: userDetails.userDetails._id })
+                .then((res) => {
+                    console.log('added to cart', overviewCourse._id, res.data);
+                     if(res.data.status == 'success') {
+                        setUserDetails({...userDetails, userDetails:res.data.data})}
+                        sessionStorage.setItem('userdetails', JSON.stringify({...userDetails, userDetails:res.data.data}))
+
+                     }
+                )
+
         }
-    }, [enrolled])
+
+        
+        else alert('please login to enroll')
+    }
+
+
+    // useEffect(() => {
+    //     if (enrolled) {
+    //         const item = JSON.parse(sessionStorage.getItem('userdetails'))
+    //         item.userDetails.enrolled = item.userDetails.enrolled || []
+    //         item.userDetails.enrolled.push(overviewCourse._id)
+    //         // console.log(item)
+    //         setUserDetails({ ...userDetails, userDetails: { ...userDetails.userDetails, enrolled: item.userDetails.enrolled } })
+
+    //         sessionStorage.setItem('userdetails', JSON.stringify(item))
+    //     }
+    // }, [enrolled])
 
     return (
         <div className='flex flex-col overflow-hidden'>
@@ -78,10 +103,10 @@ function CourseOverview() {
 
                     <div className='flex items-center w-full gap-2 pt-5'>
                         
-                        {!userDetails.userDetails?.enrolled?.includes(overviewCourse._id) ?
+                        {!userDetails.userDetails?.cart?.includes(overviewCourse._id) ?
                         <>
                         <span className='flex items-center  text-xl font-bold'><FaRupeeSign size={'1em'} />{overviewCourse.price}</span>
-                        <span className='px-3 py-2 bg-violet-500 text-center text-white w-full' onClick={enroll}>Add to Cart</span>
+                        <span className='px-3 py-2 bg-violet-500 text-center text-white w-full' onClick={addToCart}>Add to Cart</span>
 
                         </>
                             :

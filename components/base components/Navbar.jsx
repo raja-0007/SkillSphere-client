@@ -110,6 +110,12 @@ function Navbar({ setAuthType }) {
     })
   }
 
+  const gotoCart=()=>{
+    if(Object.keys(userDetails || {}).length === 0){
+      alert('please login')
+    }
+  }
+
 
 
   return (
@@ -119,7 +125,7 @@ function Navbar({ setAuthType }) {
     <div className='w-full h-[10vh] flex flex-row justify-between items-center relative lg:px-10 px-5 z-10 shadow-md shadow-gray-300' >
 
       <span className="lg:hidden "><IoMenuSharp className="text-2xl text-black cursor-pointer" /></span>
-      <span className="text-2xl font-bold self-center" onClick={() => setActive('home')}>SkillSphere</span>
+      <Link href={'/'} className="text-2xl font-bold self-center" onClick={() => setActive('home')}>SkillSphere</Link>
       <div ref={catref} className="font-light hidden lg:block relative ">
         <span
           id="categories"
@@ -166,7 +172,9 @@ function Navbar({ setAuthType }) {
       <Link href={''} onClick={() => setActive('teacher')} className="font-light hidden lg:block">teacher mode</Link>
       <span className="flex gap-4">
         <IoSearch className="lg:hidden text-2xl text-black" />
-        <MdOutlineShoppingCart className="text-2xl text-black" />
+        <Link href={Object.keys(userDetails || {}).length !== 0 ? '/cart':''} onClick={gotoCart}>
+        <MdOutlineShoppingCart className="text-2xl text-black"/>
+        </Link>
       </span>
       {Object.keys(userDetails || {}).length === 0 ?
         <div className="hidden lg:flex gap-3">

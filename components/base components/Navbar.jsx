@@ -1,5 +1,5 @@
 "use client"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import Link from "next/link"
 import { IoSearch } from "react-icons/io5";
 import { MdOutlineShoppingCart } from "react-icons/md";
@@ -14,7 +14,7 @@ import { IoMdArrowDropright } from "react-icons/io";
 import { useHomeContext } from "@/context/HomeContext";
 function Navbar({ setAuthType }) {
   const [isCategories, setIsCategories] = useState(false)
-  const { setActive, active, userDetails, setUserDetails, search, setSearch, dropDown, setDropDown, searchResults, setSearchResults, setSearchData } = useHomeContext()
+  const { setActive, active, userDetails, setUserDetails, search, cart, setSearch, dropDown, setDropDown, searchResults, setSearchResults, setSearchData } = useHomeContext()
   const [isTopics, setIsTopics] = useState(false)
   const [topics, setTopics] = useState([])
   const [clickedCategory, setClickedCategory] = useState('')
@@ -22,7 +22,7 @@ function Navbar({ setAuthType }) {
   const router = useRouter()
   const [categorieslist, setCategorieslist] = useState([])
   const searchDropRef = useRef(null)
-
+  const pathname = usePathname()
 
 
   useEffect(() => {
@@ -44,7 +44,7 @@ function Navbar({ setAuthType }) {
   useEffect(() => {
     document.addEventListener('click', (e) => {
       // console.log(active)
-      if (active !== 'teacher') {
+      if (active !== 'teacher' && !pathname.split('/').includes('coursesDetails')) {
         if (searchDropRef && searchDropRef.current && !searchDropRef.current.contains(e.target) && e.target !== document.getElementById('searchForm') && !Array.from(document.getElementById('searchForm').children).includes(e.target)) {
           setDropDown(false)
           // console.log(e.target, document.getElementById('searchForm').children)
@@ -110,11 +110,16 @@ function Navbar({ setAuthType }) {
     })
   }
 
-  const gotoCart=()=>{
-    if(Object.keys(userDetails || {}).length === 0){
+  const gotoCart = () => {
+    if (Object.keys(userDetails || {}).length === 0) {
       alert('please login')
     }
+    else{
+      setActive('cart')
+    }
   }
+
+
 
 
 
@@ -172,9 +177,15 @@ function Navbar({ setAuthType }) {
       <Link href={''} onClick={() => setActive('teacher')} className="font-light hidden lg:block">teacher mode</Link>
       <span className="flex gap-4">
         <IoSearch className="lg:hidden text-2xl text-black" />
-        <Link href={Object.keys(userDetails || {}).length !== 0 ? '/cart':''} onClick={gotoCart}>
-        <MdOutlineShoppingCart className="text-2xl text-black"/>
-        </Link>
+        <div  onClick={gotoCart}>
+        {/* href={Object.keys(userDetails || {}).length !== 0 ? '/cart' : ''} */}
+          <div className="relative">
+            <MdOutlineShoppingCart className="text-2xl text-black" />
+            {cart.length > 0 && <div className="absolute top-[-5px] right-[-5px] bg-violet-500 text-center text-white text-xs rounded-full w-4 h-4">
+              {cart.length}
+            </div>}
+          </div>
+        </div>
       </span>
       {Object.keys(userDetails || {}).length === 0 ?
         <div className="hidden lg:flex gap-3">

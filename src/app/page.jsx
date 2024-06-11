@@ -11,12 +11,14 @@ import TeacherMode from "@/components/base components/TeacherMode";
 import Authentication from "@/components/base components/Authentication";
 import SearchResults from "@/components/search results/SearchResults";
 import CourseOverview from "@/components/course overview/CourseOverview";
+import axios from "axios";
+import Cart from "@/components/cart components/Cart";
 
 
 export default function Page() {
   const [scrollpos, setScrollpos] = useState(0)
   const [isopen, setIsopen] = useState(false)
-  const {active} = useHomeContext()
+  const {active, setCart, userDetails} = useHomeContext()
   const [authType, setAuthType] = useState('')
   const sideref = useRef()
   let handleopen = () => {
@@ -54,6 +56,8 @@ export default function Page() {
   //   })
   // }, [])
 
+  
+
 
   // const [coursesList,setCoursesList] = useState([])
 
@@ -70,6 +74,8 @@ export default function Page() {
   // useEffect(()=>{
   //   console.log(coursesList)
   // },[coursesList])
+
+
 
 
   return (
@@ -100,7 +106,8 @@ export default function Page() {
         
         : active == 'teacher' ? <TeacherMode/>
         : active == 'search results' ? <SearchResults/>
-        : active == 'course overview' && <CourseOverview/>
+        : active == 'course overview' ? <CourseOverview/>
+        : active == 'cart' && <Cart/>
         }
       
       <Footer />

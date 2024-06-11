@@ -13,11 +13,16 @@ import Link from 'next/link';
 
 
 function CourseOverview() {
-    const { overviewCourse, userDetails, setUserDetails, } = useHomeContext()
-    const [enrolled, setEnrolled] = useState(false)
-    // useEffect(() => {
-    //     console.log(overviewCourse)
-    // }, [])
+    const { overviewCourse, userDetails, setUserDetails, cart, setCart, enrolled, setActive } = useHomeContext()
+    // const [enrolled, setEnrolled] = useState(false)
+    useEffect(() => {
+        const getCart=async()=>{
+            await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userDetails?.userDetails?._id}`)
+            .then(res=>{console.log(res.data); setCart(res.data.cart)})
+        }
+        
+        getCart()
+    }, [])
     const totalArticleLectures = (sections) => {
         let total = 0
         sections.forEach(sect => {
@@ -36,36 +41,38 @@ function CourseOverview() {
 
         return total
     }
-    const enroll = async () => {
+    // currently not using
+    // const enroll = async () => {
         
 
-            if (Object.keys(userDetails).length !== 0) {
-                await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/enroll`, { courseId: overviewCourse._id, email: userDetails.userDetails.email })
-                    .then((res) => {
-                        // console.log('enrolled', overviewCourse._id, res.data);
-                         res.data == 'success' && setEnrolled(true)}
-                    )
+    //         if (Object.keys(userDetails).length !== 0) {
+    //             await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/enroll`, { courseId: overviewCourse._id, email: userDetails.userDetails.email })
+    //                 .then((res) => {
+    //                     // console.log('enrolled', overviewCourse._id, res.data);
+    //                      res.data == 'success' && setEnrolled(true)}
+    //                 )
 
-            }
-            else alert('please login to enroll')
+    //         }
+    //         else alert('please login to enroll')
         
-    }
+    // }
 
-    const getUserDetails=async()=>{
+    // const getUserDetails=async()=>{
 
-        await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getUserDetails/${userDetails.userDetails._id}`)
-        .then(resp=>console.log(resp.data))
-        // setUserDetails({...userDetails, userDetails:{...userDetails.userDetails, cart:res.data.cart}})
-    }
+    //     await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getUserDetails/${userDetails.userDetails._id}`)
+    //     .then(resp=>console.log(resp.data))
+    //     // setUserDetails({...userDetails, userDetails:{...userDetails.userDetails, cart:res.data.cart}})
+    // }
 
     const addToCart = async()=>{
         if (Object.keys(userDetails).length !== 0) {
-            await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/addToCart`, { courseId: overviewCourse._id, userId: userDetails.userDetails._id })
+            await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/addToCart`, { course: JSON.stringify(overviewCourse), userId: userDetails.userDetails._id })
                 .then((res) => {
                     console.log('added to cart', overviewCourse._id, res.data);
                      if(res.data.status == 'success') {
-                        setUserDetails({...userDetails, userDetails:res.data.data})}
-                        sessionStorage.setItem('userdetails', JSON.stringify({...userDetails, userDetails:res.data.data}))
+                        setCart(res.data.cart)
+                        
+                    }
 
                      }
                 )
@@ -77,17 +84,7 @@ function CourseOverview() {
     }
 
 
-    // useEffect(() => {
-    //     if (enrolled) {
-    //         const item = JSON.parse(sessionStorage.getItem('userdetails'))
-    //         item.userDetails.enrolled = item.userDetails.enrolled || []
-    //         item.userDetails.enrolled.push(overviewCourse._id)
-    //         // console.log(item)
-    //         setUserDetails({ ...userDetails, userDetails: { ...userDetails.userDetails, enrolled: item.userDetails.enrolled } })
-
-    //         sessionStorage.setItem('userdetails', JSON.stringify(item))
-    //     }
-    // }, [enrolled])
+   
 
     return (
         <div className='flex flex-col overflow-hidden'>
@@ -98,19 +95,21 @@ function CourseOverview() {
                 <p className='w-[70%] mt-3'>created by {overviewCourse.author.username}</p>
             </div>
             <div className='w-[25%] self-end fixed flex flex-col top-32 z-0  right-16 bg-white shadow-md'>
-                <img src={`http://localhost:7777/images/${overviewCourse.image}`} className='w-full' alt="" />
+                <img src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${overviewCourse.image}`} className='w-full' alt="" />
                 <div className='flex flex-col items-center gap-3 px-5 pb-10'>
 
                     <div className='flex items-center w-full gap-2 pt-5'>
                         
-                        {!userDetails.userDetails?.cart?.includes(overviewCourse._id) ?
+                        {(cart?.filter(item=>item._id == overviewCourse._id).length == 0 && enrolled?.filter(item=>item._id == overviewCourse._id).length == 0 && overviewCourse.price !== 'free') ?
                         <>
                         <span className='flex items-center  text-xl font-bold'><FaRupeeSign size={'1em'} />{overviewCourse.price}</span>
-                        <span className='px-3 py-2 bg-violet-500 text-center text-white w-full' onClick={addToCart}>Add to Cart</span>
+                        <span className='px-3 py-2 bg-violet-500 text-center text-white w-full' onClick={addToCart}>Add to cart</span>
 
                         </>
-                            :
-                            <Link href={`/coursesDetails/${overviewCourse._id}`} className='px-3 py-2 bg-slate-700 text-center text-white w-full'>Go to Course</Link>
+                            : cart?.filter(item=>item._id == overviewCourse._id).length !== 0 ?
+                            <span  className='px-3 py-2 bg-slate-700 text-center text-white w-full' onClick={()=>setActive('cart')}>Go to cart</span>
+                            : (enrolled?.filter(item=>item._id == overviewCourse._id).length !== 0 || overviewCourse.price == 'free') && 
+                            <Link href={`/coursesDetails/${overviewCourse._id}`}  className='px-3 py-2 bg-slate-700 text-center text-white w-full' >Go to course</Link>
                         }
                         <span className='px-2 py-2 border border-black'><FaRegHeart size={'1.2em'} /></span>
                     </div>

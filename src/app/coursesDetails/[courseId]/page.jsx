@@ -143,7 +143,7 @@ function page({ params }) {
         {isSidebar ?
           <CourseSidebar courseContent={courseContent} scrollPos={scrollPos} selected={selected} setSelected={setSelected} setIsSidebar={setIsSidebar} />
           :
-          <div onClick={() => setIsSidebar(true)} className='w-8 h-10 text-white z-10 px-2 py-2 gap-2 justify-start bg-slate-700  overflow-hidden  hover:w-[max-content]  absolute right-0 top-20 flex items-center'>
+          <div onClick={() => setIsSidebar(true)} className='w-8 h-10 cursor-pointer text-white z-10 px-2 py-2 gap-2 justify-start bg-slate-700  overflow-hidden  hover:w-[max-content]  absolute right-0 top-20 flex items-center'>
             <span ><FaArrowLeftLong /></span><span className='font-bold inline-block'>course content</span>
           </div>
 

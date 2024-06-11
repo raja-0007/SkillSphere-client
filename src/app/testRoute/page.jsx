@@ -32,7 +32,6 @@ function page() {
 <span className='p-4 bg-black text-white' onClick={getVideo}>get video</span>
       <video src="https://player.vimeo.com/video/952857056" className='w-[400px]' controls></video>
       <iframe src="https://player.vimeo.com/video/953102917" width="400" height="225"  allow="autoplay; fullscreen; picture-in-picture" ></iframe>
-
       <Link href='https://vimeo.com/953102917'>go</Link>
     </div>
   )

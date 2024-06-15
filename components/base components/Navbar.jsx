@@ -14,12 +14,12 @@ import { IoMdArrowDropright } from "react-icons/io";
 import { useHomeContext } from "@/context/HomeContext";
 function Navbar({ setAuthType }) {
   const [isCategories, setIsCategories] = useState(false)
-  const { setActive, active, userDetails, setUserDetails, search, cart, setSearch, dropDown, setDropDown, searchResults, setSearchResults, setSearchData } = useHomeContext()
+  const { setActive, active, userDetails, setUserDetails,logout, search, cart, setCart, setSearch, dropDown, setDropDown, searchResults, setSearchResults, setSearchData } = useHomeContext()
   const [isTopics, setIsTopics] = useState(false)
   const [topics, setTopics] = useState([])
   const [clickedCategory, setClickedCategory] = useState('')
   const catref = useRef()
-  const router = useRouter()
+  
   const [categorieslist, setCategorieslist] = useState([])
   const searchDropRef = useRef(null)
   const pathname = usePathname()
@@ -37,6 +37,7 @@ function Navbar({ setAuthType }) {
     })
     getCategories()
     setUserDetails(JSON.parse(sessionStorage.getItem('userdetails')) || '')
+
 
 
 
@@ -69,16 +70,9 @@ function Navbar({ setAuthType }) {
     setTopics(list)
   }
 
-  const logout = () => {
-    sessionStorage.removeItem('userdetails')
-    router.push('/')
-    setActive('home')
-    setUserDetails({})
-  }
+  
 
-  // useEffect(() => {
-  //   console.log('>>>>>>>>>>>>>>>>>>>.', userDetails)
-  // }, [userDetails])
+
 
 
   useEffect(() => {
@@ -103,19 +97,46 @@ function Navbar({ setAuthType }) {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    setActive('search results')
     setSearchData({
       search: search,
       searchResults: searchResults
     })
+    setActive('search results')
   }
+  console.log(cart)
 
-  const gotoCart = () => {
+  const gotoCart = async () => {
     if (Object.keys(userDetails || {}).length === 0) {
       alert('please login')
     }
-    else{
-      setActive('cart')
+    else {
+
+      try {
+        const token = userDetails?.token;
+        console.log(token) // Replace with your actual token
+        await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userDetails?.userDetails?._id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then(response=>{
+
+          console.log('Data:', response.data);
+          if (response.data.status == 'success') {
+            setActive('cart')
+          }
+          
+        })
+
+      } catch (error) {
+        if (error.response.status === 403) {
+          alert('session expired please login again to continue')
+          logout()
+        }
+        
+        console.error('Error fetching data:', error);
+      }
+      // setActive('cart')
     }
   }
 
@@ -153,7 +174,7 @@ function Navbar({ setAuthType }) {
             : 'hidden'
           }>
             <span className="font-bold text-gray-500 mb-1 px-5">Popular Topics</span>
-            {topics.map((topic, topic_i) => <Link href={`/coursesDetails/${topic}`} className="text-sm px-5 cursor-pointer py-2 hover:bg-slate-200 hover:font-medium transition-all duration-100 hover:text-slate-700" key={topic_i}>{topic}</Link>)}
+            {topics.map((topic, topic_i) => <Link href={`/`} className="text-sm px-5 cursor-pointer py-2 hover:bg-slate-200 hover:font-medium transition-all duration-100 hover:text-slate-700" key={topic_i}>{topic}</Link>)}
           </div>
 
         </div>
@@ -169,7 +190,7 @@ function Navbar({ setAuthType }) {
       {dropDown && <div ref={searchDropRef} className="w-[40%] ms-[22%] bg-white rounded-md overflow-hidden absolute top-[10vh] h-[max-content] flex flex-col">
         {searchResults.map((res, i) => {
           return (
-            <span key={i} className="w-full p-2 py-2 hover:shadow-md hover:bg-slate-100">{res.landingPageDetails.title}</span>
+            <Link href={`/coursesDetails/${res._id}`} target='_blank' key={i} className="w-full p-2 py-2 hover:shadow-md hover:bg-slate-100">{res.landingPageDetails.title}</Link>
           )
         })}
       </div>}
@@ -177,8 +198,8 @@ function Navbar({ setAuthType }) {
       <Link href={''} onClick={() => setActive('teacher')} className="font-light hidden lg:block">teacher mode</Link>
       <span className="flex gap-4">
         <IoSearch className="lg:hidden text-2xl text-black" />
-        <div  onClick={gotoCart}>
-        {/* href={Object.keys(userDetails || {}).length !== 0 ? '/cart' : ''} */}
+        <div onClick={gotoCart}>
+          {/* href={Object.keys(userDetails || {}).length !== 0 ? '/cart' : ''} */}
           <div className="relative">
             <MdOutlineShoppingCart className="text-2xl text-black" />
             {cart.length > 0 && <div className="absolute top-[-5px] right-[-5px] bg-violet-500 text-center text-white text-xs rounded-full w-4 h-4">

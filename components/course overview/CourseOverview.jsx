@@ -15,14 +15,14 @@ import Link from 'next/link';
 function CourseOverview() {
     const { overviewCourse, userDetails, setUserDetails, cart, setCart, enrolled, setActive } = useHomeContext()
     // const [enrolled, setEnrolled] = useState(false)
-    useEffect(() => {
-        const getCart=async()=>{
-            await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userDetails?.userDetails?._id}`)
-            .then(res=>{console.log(res.data); setCart(res.data.cart)})
-        }
+    // useEffect(() => {
+    //     const getCart=async()=>{
+    //         await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userDetails?.userDetails?._id}`)
+    //         .then(res=>{console.log(res.data); setCart(res.data.cart)})
+    //     }
         
-        getCart()
-    }, [])
+    //     getCart()
+    // }, [])
     const totalArticleLectures = (sections) => {
         let total = 0
         sections.forEach(sect => {
@@ -94,7 +94,7 @@ function CourseOverview() {
                 <p className='w-[70%] mt-3 flex items-center text-yellow-500'><span className='me-1 text-xl'>{overviewCourse.rating}</span> {printRating(overviewCourse.rating)}</p>
                 <p className='w-[70%] mt-3'>created by {overviewCourse.author.username}</p>
             </div>
-            <div className='w-[25%] self-end fixed flex flex-col top-32 z-0  right-16 bg-white shadow-md'>
+            <div className='w-[25%] self-end fixed flex flex-col top-32 z-20  right-16 bg-white shadow-md'>
                 <img src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${overviewCourse.image}`} className='w-full' alt="" />
                 <div className='flex flex-col items-center gap-3 px-5 pb-10'>
 
@@ -109,7 +109,7 @@ function CourseOverview() {
                             : cart?.filter(item=>item._id == overviewCourse._id).length !== 0 ?
                             <span  className='px-3 py-2 bg-slate-700 text-center text-white w-full' onClick={()=>setActive('cart')}>Go to cart</span>
                             : (enrolled?.filter(item=>item._id == overviewCourse._id).length !== 0 || overviewCourse.price == 'free') && 
-                            <Link href={`/coursesDetails/${overviewCourse._id}`}  className='px-3 py-2 bg-slate-700 text-center text-white w-full' >Go to course</Link>
+                            <Link href={`/coursesDetails/${overviewCourse._id}`} target='_blank'  className='px-3 py-2 bg-slate-700 text-center text-white w-full' >Go to course</Link>
                         }
                         <span className='px-2 py-2 border border-black'><FaRegHeart size={'1.2em'} /></span>
                     </div>

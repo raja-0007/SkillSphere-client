@@ -31,7 +31,6 @@ function HomeProvider({ children }) {
   }, [cart])
 
   useEffect(() => {
-    const token = userDetails?.token;
     
     const getCart = async () => {
       try {
@@ -60,6 +59,7 @@ function HomeProvider({ children }) {
       getEnrolled()
       getCart()
     }
+    
   }, [userDetails])
 
 

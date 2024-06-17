@@ -49,6 +49,7 @@ function TeacherProvider({ children }) {
     })
     const [videoStatus, setVideoStatus] = useState([])
     const [filledStatus, setFilledStatus] = useState([])
+    
     const submitHandler = async () => {
         // console.log(filledStatus)
         // console.log(landingDetails)
@@ -69,9 +70,26 @@ function TeacherProvider({ children }) {
         // }
         const difference = requiredStatus.filter(stat => !filledStatus.includes(stat))
         // await axios.post('http://localhost:3000/api/test', formdata)
-        await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/createcourse`, formdata)
-            .then(res => console.log(res.data))
-        // alert(`please complete ${difference.join(', ')} stages`,)
+        if(difference.length == 0){
+            var result = ''
+
+            await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/createcourse`, formdata)
+                .then(res => {console.log(res.data)
+                    if(res.data.status == 'saved'){
+                        result = 'success'
+                        window.open(`/coursesDetails/${res.data.courseId}`,'_blank')
+                        
+                    }
+                })
+                .catch(err=>{console.log('error in creation'); result = 'failed'})
+            // console.log('added')
+            return result
+
+        }
+        else{
+
+            alert(`please complete ${difference.join(', ')} stages`)
+        }
 
 
     }

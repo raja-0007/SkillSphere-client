@@ -106,7 +106,7 @@ function Cart() {
 
                                     <span className='flex items-center justify-between w-[200px] h-[max-content] font-bold text-violet-500'>
                                         <div className='text-violet-500 w-[max-content]' >
-                                            <span onClick={() => { removeFromCart(item._id); console.log('l;oooohs') }}>remove sjsj</span>
+                                            <span onClick={() => { removeFromCart(item._id); }}>remove</span>
                                         </div>
                                         <span className='flex items-center '><FaRupeeSign />{item.price}<FaTag className='ms-1' /></span>
                                     </span>

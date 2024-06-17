@@ -4,25 +4,31 @@ import Link from "next/link"
 import { IoSearch } from "react-icons/io5";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { IoMenuSharp } from "react-icons/io5";
+import { FaRegHeart } from "react-icons/fa";
 
 import { useEffect, useRef, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 
 import axios from "axios";
 import { IoMdArrowDropright } from "react-icons/io";
+import { MdNotificationsNone } from "react-icons/md";
+
 
 import { useHomeContext } from "@/context/HomeContext";
 function Navbar({ setAuthType }) {
   const [isCategories, setIsCategories] = useState(false)
-  const { setActive, active, userDetails, setUserDetails,logout, search, cart, setCart, setSearch, dropDown, setDropDown, searchResults, setSearchResults, setSearchData } = useHomeContext()
+  const { setActive, active, userDetails, setUserDetails, logout, search, cart, setCart, setSearch, dropDown, setDropDown, searchResults, setSearchResults, setSearchData } = useHomeContext()
   const [isTopics, setIsTopics] = useState(false)
   const [topics, setTopics] = useState([])
   const [clickedCategory, setClickedCategory] = useState('')
   const catref = useRef()
-  
+
   const [categorieslist, setCategorieslist] = useState([])
   const searchDropRef = useRef(null)
+  const [isProfile, setIsProfile] = useState(false)
   const pathname = usePathname()
+  
+  const profileItems = [ 'My learning', 'My cart', 'Wishlist', 'Log out']
 
 
   useEffect(() => {
@@ -38,9 +44,7 @@ function Navbar({ setAuthType }) {
     getCategories()
     setUserDetails(JSON.parse(sessionStorage.getItem('userdetails')) || '')
 
-
-
-
+   
   }, [])
   useEffect(() => {
     document.addEventListener('click', (e) => {
@@ -70,7 +74,7 @@ function Navbar({ setAuthType }) {
     setTopics(list)
   }
 
-  
+
 
 
 
@@ -119,25 +123,32 @@ function Navbar({ setAuthType }) {
             'Authorization': `Bearer ${token}`
           }
         })
-        .then(response=>{
+          .then(response => {
 
-          console.log('Data:', response.data);
-          if (response.data.status == 'success') {
-            setActive('cart')
-          }
-          
-        })
+            console.log('Data:', response.data);
+            if (response.data.status == 'success') {
+              setActive('cart')
+            }
+
+          })
 
       } catch (error) {
         if (error.response.status === 403) {
           alert('session expired please login again to continue')
           logout()
         }
-        
+
         console.error('Error fetching data:', error);
       }
       // setActive('cart')
     }
+  }
+
+  const profileItemHandler=(item)=>{
+    if(item == 'Log out'){
+      logout()
+    }
+    else setActive(item)
   }
 
 
@@ -158,7 +169,7 @@ function Navbar({ setAuthType }) {
           onClick={() => { setIsCategories(!isCategories); setIsTopics(false); setClickedCategory('') }}
           className="cursor-pointer"
         >
-          categories
+          Categories
         </span>
         <div
           className={isCategories ? "w-72 h-[max-content] flex px-5 py-5 flex-col justify-start gap-4 absolute z-10 bottom-[-250px] rounded-sm left-[-10px] bg-white shadow-md shadow-gray-500"
@@ -182,7 +193,7 @@ function Navbar({ setAuthType }) {
       </div>
       <form
         id="searchForm"
-        className="w-[40%] hidden lg:flex gap-2 bg-white border-[1px]  border-black px-3 rounded-3xl h-11 overflow-x-hidden" onSubmit={(e) => submitHandler(e)}>
+        className="w-[45%] hidden lg:flex gap-2 bg-white border-[1px]  border-black px-3 rounded-3xl h-11 overflow-x-hidden" onSubmit={(e) => submitHandler(e)}>
         <button type="submit"><IoSearch className="text-gray-400 text-xl" /></button>
         <input type="text" placeholder="search for anything..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full outline-none " name="" id="" />
 
@@ -195,27 +206,85 @@ function Navbar({ setAuthType }) {
         })}
       </div>}
 
-      <Link href={''} onClick={() => setActive('teacher')} className="font-light hidden lg:block">teacher mode</Link>
+      <Link href={''} onClick={() => setActive('teacher')} className="font-light hidden lg:block">Teacher mode</Link>
+      <div className="font-light">
+        My learning
+      </div>
+      <div className="relative" >
+        <FaRegHeart className="text-xl text-black" />
+        {/* {cart.length > 0 && <div className="absolute top-[-5px] right-[-5px] bg-violet-500 text-center text-white text-xs rounded-full w-4 h-4">
+            {cart.length}
+          </div>} */}
+      </div>
       <span className="flex gap-4">
-        <IoSearch className="lg:hidden text-2xl text-black" />
-        <div onClick={gotoCart}>
-          {/* href={Object.keys(userDetails || {}).length !== 0 ? '/cart' : ''} */}
-          <div className="relative">
-            <MdOutlineShoppingCart className="text-2xl text-black" />
-            {cart.length > 0 && <div className="absolute top-[-5px] right-[-5px] bg-violet-500 text-center text-white text-xs rounded-full w-4 h-4">
-              {cart.length}
-            </div>}
-          </div>
+        {/* <IoSearch className="lg:hidden text-2xl text-black" /> */}
+
+        {/* href={Object.keys(userDetails || {}).length !== 0 ? '/cart' : ''} */}
+        <div className="relative" onClick={gotoCart}>
+          <MdOutlineShoppingCart className="text-2xl text-black" />
+          {cart.length > 0 && <div className="absolute top-[-5px] right-[-5px] bg-violet-500 text-center text-white text-xs rounded-full w-4 h-4">
+            {cart.length}
+          </div>}
         </div>
       </span>
+      <div className="relative" >
+        <MdNotificationsNone className="text-2xl text-black" />
+        {/* {cart.length > 0 && <div className="absolute top-[-5px] right-[-5px] bg-violet-500 text-center text-white text-xs rounded-full w-4 h-4">
+            {cart.length}
+          </div>} */}
+      </div>
+
+
       {Object.keys(userDetails || {}).length === 0 ?
         <div className="hidden lg:flex gap-3">
           <span className="px-3 py-1 border-2 border-slate-800 hover:bg-slate-200 cursor-pointer" onClick={() => { setAuthType('login'); setActive('authentication') }}>login</span>
           <span className="px-3 py-1 bg-slate-800 text-white border-2 border-slate-950 cursor-pointer hover:bg-slate-700" onClick={() => { setAuthType('register'); setActive('authentication') }}>signup</span>
         </div>
         :
-        <div>
-          <span className="flex gap-1 items-center text-md" onClick={logout}><FaUserCircle size={'1.5em'} />{userDetails?.userDetails?.username}</span>
+        <div className="flex flex-col  relative" onClick={()=>setIsProfile(!isProfile)} >
+          <div className="flex font-semibold bg-slate-800 rounded-full text-white  text-md uppercase items-center justify-center h-8 w-8 ">
+
+            <span  >
+              {/* <FaUserCircle size={'1.5em'} /> */}
+              {userDetails?.userDetails?.username?.split(' ')[0]?.slice(0, 1)}
+            </span>
+            <span  >
+              {/* <FaUserCircle size={'1.5em'} /> */}
+              {userDetails?.userDetails?.username?.split(' ')[1]?.slice(0, 1)}
+            </span>
+          </div>
+
+
+          {isProfile && <div className=" absolute top-[7vh] right-[-10px] flex flex-col gap-3 bg-white border">
+            <div className="flex gap-2 p-4 items-center border-b" onClick={()=>setActive('profile')}>
+              <div className="flex font-semibold bg-slate-800 rounded-full text-white  text-lg uppercase items-center justify-center h-10 w-10 ">
+
+                <span  >
+                  {/* <FaUserCircle size={'1.5em'} /> */}
+                  {userDetails?.userDetails?.username?.split(' ')[0]?.slice(0, 1)}
+                </span>
+                <span  >
+                  {/* <FaUserCircle size={'1.5em'} /> */}
+                  {userDetails?.userDetails?.username?.split(' ')[1]?.slice(0, 1)}
+                </span>
+              </div>
+              <div>
+                <p className="font-bold">{userDetails?.userDetails?.username}</p>
+                <p className="text-sm text-gray-500">{userDetails?.userDetails?.email}</p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-3  pb-3">
+              {profileItems.map((item,i)=>{
+                return (
+                  <span key={i} className="px-3 cursor-pointer" onClick={()=>profileItemHandler(item)}>{item}</span>
+                )
+              })}
+              
+
+            </div>
+           
+          </div>}
+
         </div>
       }
 

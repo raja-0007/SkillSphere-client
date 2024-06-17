@@ -3,7 +3,7 @@ import React from 'react'
 import { IoMdCheckmark } from "react-icons/io";
 
 
-function Sidebar({setActiveSection, activeSection}) {
+function Sidebar({setActiveSection, activeSection, setIsCreationDone, goToHome}) {
     const {submitHandler, filledStatus} = useTeacherContext()
     const sections = [
         {
@@ -19,6 +19,24 @@ function Sidebar({setActiveSection, activeSection}) {
             subsections:['course landing page', 'pricing','course messsages']
         }
     ]
+
+    const creationFunction=async()=>{
+       const result = await submitHandler()
+       console.log(result)
+       if(result == 'success'){
+        setIsCreationDone(true)
+        document.body.style.overflow = 'hidden'
+        setTimeout(() => {
+            goToHome()
+            document.body.style.overflow = ''
+            setIsCreationDone(true)
+        }, 5000);
+
+       }
+       else if(result == 'failed'){
+        alert('something went wrong in course creation try again')
+       }
+    }
   return (
     <div className='w-[25%] flex flex-col gap-12'>
       {sections.map((section,i)=>{
@@ -38,7 +56,7 @@ function Sidebar({setActiveSection, activeSection}) {
             </div>
         )
       })}
-      <button type='button' className='py-4 px-6 w-[max-content] bg-violet-500 text-white font-semibold' onClick={submitHandler}>Submit for review</button>
+      <button type='button' className='py-4 px-6 w-[max-content] bg-violet-500 text-white font-semibold' onClick={creationFunction}>Submit for review</button>
     </div>
   )
 }

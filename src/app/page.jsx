@@ -13,6 +13,7 @@ import SearchResults from "@/components/search results/SearchResults";
 import CourseOverview from "@/components/course overview/CourseOverview";
 import axios from "axios";
 import Cart from "@/components/cart components/Cart";
+import Profile from "@/components/profile components/Profile";
 
 
 export default function Page() {
@@ -107,7 +108,8 @@ export default function Page() {
         : active == 'teacher' ? <TeacherMode/>
         : active == 'search results' ? <SearchResults/>
         : active == 'course overview' ? <CourseOverview/>
-        : active == 'cart' && <Cart/>
+        : active == 'cart' ? <Cart/>
+        : active == 'profile' && <Profile/>
         }
       
       <Footer />

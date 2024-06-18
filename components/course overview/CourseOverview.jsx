@@ -82,6 +82,8 @@ function CourseOverview() {
         
         else alert('please login to enroll')
     }
+    // console.log(overviewCourse?.enrolled)
+    // console.log(cart?.filter(item=>item._id == overviewCourse._id).length == 0,'yesornoe', !overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id),'cart',cart,'price',overviewCourse.price !== 'free')
 
 
    
@@ -100,7 +102,7 @@ function CourseOverview() {
 
                     <div className='flex items-center w-full gap-2 pt-5'>
                         
-                        {(cart?.filter(item=>item._id == overviewCourse._id).length == 0 && enrolled?.filter(item=>item._id == overviewCourse._id).length == 0 && overviewCourse.price !== 'free') ?
+                        {(cart?.filter(item=>item._id == overviewCourse._id).length == 0 && !overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) && overviewCourse.price !== 'free') ?
                         <>
                         <span className='flex items-center  text-xl font-bold'><FaRupeeSign size={'1em'} />{overviewCourse.price}</span>
                         <span className='px-3 py-2 bg-violet-500 text-center text-white w-full' onClick={addToCart}>Add to cart</span>
@@ -108,7 +110,7 @@ function CourseOverview() {
                         </>
                             : cart?.filter(item=>item._id == overviewCourse._id).length !== 0 ?
                             <span  className='px-3 py-2 bg-slate-700 text-center text-white w-full' onClick={()=>setActive('cart')}>Go to cart</span>
-                            : (enrolled?.filter(item=>item._id == overviewCourse._id).length !== 0 || overviewCourse.price == 'free') && 
+                            : (overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) || overviewCourse.price == 'free') && 
                             <Link href={`/coursesDetails/${overviewCourse._id}`} target='_blank'  className='px-3 py-2 bg-slate-700 text-center text-white w-full' >Go to course</Link>
                         }
                         <span className='px-2 py-2 border border-black'><FaRegHeart size={'1.2em'} /></span>

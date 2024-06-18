@@ -2,22 +2,24 @@
 
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,  } from 'react'
 
 function page({ params }) {
   // const {saveTransaction} = useHomeContext()
+  // const {userDetails} = useHomeContext()
   const router = useRouter()
+  const [userDetails, setUserDetails] = useState({})
   const [processing, setProcessing] = useState(true)
   const [status, setStatus] = useState(false)
-  const userId = params.userId
-  console.log(userId)
+  const Ids = params.Ids
+  console.log(Ids)
   // const userDetails = JSON.parse(sessionStorage.getItem('userdetails'))
   // console.log(sessionStorage.getItem('userdetails'))
   // console.log(userDetails)
 
-  const enroll = async (course) => {
+  const enroll = async (Ids) => {
 
-    await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/enroll`, { userId: userId, course: course })
+    await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/enroll`, { userId: userDetails?.userDetails?._id, courseIds: JSON.stringify(Ids) })
       .then(res => {
         console.log('enrolled', res.data);
         if (res.data.status == 'success') {
@@ -33,8 +35,12 @@ function page({ params }) {
     var status = false
     // console.log(userDetails)
     const getCart = async () => {
-
-      await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userId}`)
+      const token = userDetails.token
+      await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
         .then(res => {
           console.log(res.data);
           res.data.cart.forEach(course => {
@@ -50,22 +56,39 @@ function page({ params }) {
 
         })
     }
+    const startEnrolling=async()=>{
+      
 
-    getCart()
-  }, [userId])
+      status = enroll(Ids)
+      
+      setProcessing(false)
+      setStatus(status)
+      setTimeout(() => {
+        router.push('/')
+      }, 1000);
+    }
+    if (Object.keys(userDetails).length !== 0) {
+      console.log('>>>>>>>>>>>>>>>>>>')
+      // getCart()
+      startEnrolling()
+    }
+    console.log('asdgaerwgq')
+  }, [userDetails])
 
 
 
   useEffect(() => {
-    const userDetails = sessionStorage.getItem('userdetail')
-    console.log(sessionStorage.getItem('userdetail'))
+    const userData = sessionStorage.getItem('userdetails')
+    console.log(sessionStorage.getItem('userdetails'))
     const getCart = async () => {
-      await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userDetails?.userDetails?._id}`)
+      await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userData?.userData?._id}`)
         .then(res => console.log(res.data))
     }
 
     // getCart()
     // router.push('/')
+    console.log(JSON.parse(userData))
+    setUserDetails(JSON.parse(userData))
   }, [])
 
 
@@ -83,7 +106,7 @@ function page({ params }) {
             </div>
             <p className='animate-pulse'>payment processing</p>
           </> : <>
-            <p>payment {status ? <span className='font-bold text-green-400'>success</span>:<span className='font-bold text-red-400'>success</span>} </p>
+            <p>payment {status ? <span className='font-bold text-green-400'>success</span> : <span className='font-bold text-red-400'>success</span>} </p>
 
             <p>redirecting to home page</p>
           </>

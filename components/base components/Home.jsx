@@ -4,7 +4,7 @@ import TrustedCompanies from '../home components/TrustedCompanies'
 import Courses from '../home components/courses'
 import LearnersReview from '../home components/LearnersReview'
 import BecomeInstructor from '../home components/BecomeInstructor'
-import { useHomeContext } from '@/context/HomeContext'
+import { useHomeContext } from '@contexts/HomeContext' 
 
 function Home() {
     const {active} = useHomeContext()

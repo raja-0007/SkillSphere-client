@@ -1,4 +1,4 @@
-import { useHomeContext } from '@/context/HomeContext'
+import { useHomeContext } from '@contexts/HomeContext'
 import React from 'react'
 import { FaTag } from "react-icons/fa6";
 import { FaRupeeSign } from "react-icons/fa";

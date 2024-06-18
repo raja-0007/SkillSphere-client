@@ -2,7 +2,7 @@
 
 import { Inter } from 'next/font/google'
 import './globals.css'
-import HomeProvider from '@/context/HomeContext'
+import HomeProvider from '@contexts/HomeContext'
 
 
 

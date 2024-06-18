@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import SectionLayout from '../SectionLayout'
 import SectionHeader from '../SectionHeader'
 import { IoIosInformationCircle } from "react-icons/io";
-import { useTeacherContext } from '@/context/TeacherContext';
+import { useTeacherContext } from '@contexts/TeacherContext';
 
 
 function LandingPage({ activeSection }) {

@@ -1,5 +1,5 @@
 'use client'
-import { useHomeContext } from '@/context/HomeContext'
+import { useHomeContext } from '@contexts/HomeContext'
 import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
 

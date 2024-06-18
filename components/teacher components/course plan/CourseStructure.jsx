@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import QandA from './QandA'
 import SectionHeader from '../SectionHeader'
 import SectionLayout from '../SectionLayout'
-import { useTeacherContext } from '@/context/TeacherContext'
+import { useTeacherContext } from '@contexts/TeacherContext'
 
 function CourseStructure({ activeSection }) {
     const { filledStatus, setFilledStatus } = useTeacherContext()

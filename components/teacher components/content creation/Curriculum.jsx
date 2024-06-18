@@ -12,7 +12,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { IoMdCheckmark } from "react-icons/io";
 import { AiOutlineLink } from "react-icons/ai";
 import { FaAngleUp } from "react-icons/fa6";
-import { useTeacherContext } from '@/context/TeacherContext';
+import { useTeacherContext } from '@contexts/TeacherContext';
 import axios from 'axios';
 
 

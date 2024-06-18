@@ -2,13 +2,13 @@ import React, { useState } from 'react'
 import { FaArrowLeftLong } from "react-icons/fa6";
 import Sidebar from '../teacher components/Sidebar';
 import IntendedLearners from '../teacher components/course plan/IntendedLearners';
-import { useHomeContext } from '@/context/HomeContext';
+import { useHomeContext } from '@contexts/HomeContext';
 import CourseStructure from '../teacher components/course plan/CourseStructure';
 import Curriculum from '../teacher components/content creation/Curriculum';
 import LandingPage from '../teacher components/landing page/LandingPage';
 import Pricing from '../teacher components/pricing/Pricing';
 import Messages from '../teacher components/messages/Messages';
-import TeacherProvider from '@/context/TeacherContext';
+import TeacherProvider from '@contexts/TeacherContext';
 import { MdDone } from "react-icons/md";
 
 

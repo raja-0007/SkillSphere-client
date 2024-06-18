@@ -1,4 +1,4 @@
-import { useTeacherContext } from '@/context/TeacherContext';
+import { useTeacherContext } from '@contexts/TeacherContext';
 import React from 'react'
 import { IoMdCheckmark } from "react-icons/io";
 

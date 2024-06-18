@@ -1,4 +1,4 @@
-import { useHomeContext } from '@/context/HomeContext'
+import { useHomeContext } from '@contexts/HomeContext'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { HiCurrencyRupee } from "react-icons/hi2";

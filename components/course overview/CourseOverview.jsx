@@ -1,4 +1,4 @@
-import { useHomeContext } from '@/context/HomeContext'
+import { useHomeContext } from '@contexts/HomeContext'
 import React, { useEffect, useState } from 'react'
 import { printRating } from '../home components/courses'
 import { IoMdCheckmark } from "react-icons/io";
@@ -13,7 +13,7 @@ import Link from 'next/link';
 
 
 function CourseOverview() {
-    const { overviewCourse, userDetails, setUserDetails, cart, setCart, enrolled, setActive } = useHomeContext()
+    const { overviewCourse, userDetails, setUserDetails, cart, setCart, enrolled, setActive, searchResults } = useHomeContext()
     // const [enrolled, setEnrolled] = useState(false)
     // useEffect(() => {
     //     const getCart=async()=>{
@@ -86,10 +86,13 @@ function CourseOverview() {
     // console.log(cart?.filter(item=>item._id == overviewCourse._id).length == 0,'yesornoe', !overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id),'cart',cart,'price',overviewCourse.price !== 'free')
 
 
+    
+    
    
 
     return (
         <div className='flex flex-col overflow-hidden'>
+            {searchResults.length !==0 && <div className="w-full font-bold py-3 text-blue-500" onClick={()=>setActive('search results')}>back to search results</div>}
             <div className='px-40 py-10  pt-20 text-white bg-slate-900'>
                 <span className='text-3xl font-bold w-[70%]'>{overviewCourse.landingPageDetails.title}</span>
                 <p className='w-[70%] mt-3'>{overviewCourse.landingPageDetails.subtitle}</p>
@@ -102,7 +105,7 @@ function CourseOverview() {
 
                     <div className='flex items-center w-full gap-2 pt-5'>
                         
-                        {(cart?.filter(item=>item._id == overviewCourse._id).length == 0 && !overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) && overviewCourse.price !== 'free') ?
+                        {(cart?.filter(item=>item._id == overviewCourse._id).length == 0 && !overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) && overviewCourse.price !== 'free' && overviewCourse.author.authorId !== userDetails?.userDetails?._id) ?
                         <>
                         <span className='flex items-center  text-xl font-bold'><FaRupeeSign size={'1em'} />{overviewCourse.price}</span>
                         <span className='px-3 py-2 bg-violet-500 text-center text-white w-full' onClick={addToCart}>Add to cart</span>
@@ -110,7 +113,7 @@ function CourseOverview() {
                         </>
                             : cart?.filter(item=>item._id == overviewCourse._id).length !== 0 ?
                             <span  className='px-3 py-2 bg-slate-700 text-center text-white w-full' onClick={()=>setActive('cart')}>Go to cart</span>
-                            : (overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) || overviewCourse.price == 'free') && 
+                            : (overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) || overviewCourse.price == 'free' || overviewCourse.author.authorId == userDetails?.userDetails?._id) && 
                             <Link href={`/coursesDetails/${overviewCourse._id}`} target='_blank'  className='px-3 py-2 bg-slate-700 text-center text-white w-full' >Go to course</Link>
                         }
                         <span className='px-2 py-2 border border-black'><FaRegHeart size={'1.2em'} /></span>

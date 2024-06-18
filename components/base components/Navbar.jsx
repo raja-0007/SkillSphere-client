@@ -84,7 +84,7 @@ function Navbar({ setAuthType }) {
     const getSearchResults = async () => {
       // console.log(search)
       await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/searchResults/${search}`)
-        .then(res => setSearchResults(res.data))
+        .then(res => {setSearchResults(res.data); console.log(res.data)})
     }
     if (search !== '') getSearchResults()
     else setSearchResults([])
@@ -198,7 +198,7 @@ function Navbar({ setAuthType }) {
         <input type="text" placeholder="search for anything..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full outline-none " name="" id="" />
 
       </form>
-      {dropDown && <div ref={searchDropRef} className="w-[40%] ms-[22%] bg-white rounded-md overflow-hidden absolute top-[10vh] h-[max-content] flex flex-col">
+      {dropDown && <div ref={searchDropRef} className="w-[45%] ms-[18%] bg-white rounded-md overflow-hidden absolute top-[10vh] h-[max-content] flex flex-col">
         {searchResults.map((res, i) => {
           return (
             <Link href={`/coursesDetails/${res._id}`} target='_blank' key={i} className="w-full p-2 py-2 hover:shadow-md hover:bg-slate-100">{res.landingPageDetails.title}</Link>

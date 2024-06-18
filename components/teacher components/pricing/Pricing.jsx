@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import SectionLayout from '../SectionLayout'
 import SectionHeader from '../SectionHeader'
-import { useTeacherContext } from '@/context/TeacherContext'
+import { useTeacherContext } from '@contexts/TeacherContext'
 
 function Pricing({ activeSection }) {
     const { price, setPrice, filledStatus, setFilledStatus } = useTeacherContext()

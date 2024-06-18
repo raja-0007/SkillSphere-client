@@ -14,10 +14,10 @@ import { IoMdArrowDropright } from "react-icons/io";
 import { MdNotificationsNone } from "react-icons/md";
 
 
-import { useHomeContext } from "@/context/HomeContext";
+import { useHomeContext } from "@contexts/HomeContext";
 function Navbar({ setAuthType }) {
   const [isCategories, setIsCategories] = useState(false)
-  const { setActive, active, userDetails, setUserDetails, logout, search, cart, setCart, setSearch, dropDown, setDropDown, searchResults, setSearchResults, setSearchData } = useHomeContext()
+  const { setActive, active, userDetails, setUserDetails, logout, search, cart, setCart, setSearch, dropDown, setDropDown, searchResults, setSearchResults, setSearchData, setOverviewCourse } = useHomeContext()
   const [isTopics, setIsTopics] = useState(false)
   const [topics, setTopics] = useState([])
   const [clickedCategory, setClickedCategory] = useState('')
@@ -107,7 +107,7 @@ function Navbar({ setAuthType }) {
     })
     setActive('search results')
   }
-  console.log(cart)
+  // console.log(cart)
 
   const gotoCart = async () => {
     if (Object.keys(userDetails || {}).length === 0) {
@@ -201,7 +201,7 @@ function Navbar({ setAuthType }) {
       {dropDown && <div ref={searchDropRef} className="w-[45%] ms-[18%] bg-white rounded-md overflow-hidden absolute top-[10vh] h-[max-content] flex flex-col">
         {searchResults.map((res, i) => {
           return (
-            <Link href={`/coursesDetails/${res._id}`} target='_blank' key={i} className="w-full p-2 py-2 hover:shadow-md hover:bg-slate-100">{res.landingPageDetails.title}</Link>
+            <span onClick={()=>{setOverviewCourse(res); setActive('course overview'); setSearchResults([])}} key={i} className="w-full p-2 py-2 hover:shadow-md hover:bg-slate-100">{res.landingPageDetails.title}</span>
           )
         })}
       </div>}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { IoMdAdd } from "react-icons/io";
 import SectionHeader from '../SectionHeader';
 import SectionLayout from '../SectionLayout';
-import { useTeacherContext } from '@/context/TeacherContext';
+import { useTeacherContext } from '@contexts/TeacherContext';
 
 function IntendedLearners({activeSection}) {
     const {outcomes, setOutcomes, requirements, setRequirements, intended, setIntended, filledStatus, setFilledStatus} = useTeacherContext()

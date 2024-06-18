@@ -5,12 +5,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import { FaUserCircle } from "react-icons/fa";
 
 import emailjs from '@emailjs/browser';
-import OtpVerify from '@/components/OtpVerify';
+import OtpVerify from '@components/OtpVerify';
 import { TiWeatherPartlySunny } from "react-icons/ti";
 import { GiFertilizerBag } from "react-icons/gi";
 import { GiWheat } from "react-icons/gi";
 import { GrPieChart } from "react-icons/gr";
-import { useHomeContext } from '@/context/HomeContext';
+import { useHomeContext } from '@contexts/HomeContext'; 
 
 
 

@@ -1,19 +1,19 @@
 "use client"
 
-import Navbar from "@/components/base components/Navbar";
-import Footer from "@/components/base components/Footer";
+import Navbar from "@components/base components/Navbar";
+import Footer from "@components/base components/Footer";
 import { useEffect, useRef, useState } from 'react'
 
 import { AiOutlineClose } from "react-icons/ai";
-import Home from "@/components/base components/Home";
-import { useHomeContext } from "@/context/HomeContext";
-import TeacherMode from "@/components/base components/TeacherMode";
-import Authentication from "@/components/base components/Authentication";
-import SearchResults from "@/components/search results/SearchResults";
-import CourseOverview from "@/components/course overview/CourseOverview";
+import Home from "@components/base components/Home";
+import { useHomeContext } from "@contexts/HomeContext";
+import TeacherMode from "@components/base components/TeacherMode";
+import Authentication from "@components/base components/Authentication";
+import SearchResults from "@components/search results/SearchResults";
+import CourseOverview from "@components/course overview/CourseOverview";
 import axios from "axios";
-import Cart from "@/components/cart components/Cart";
-import Profile from "@/components/profile components/Profile";
+import Cart from "@components/cart components/Cart";
+import Profile from "@components/profile components/Profile";
 
 
 export default function Page() {

@@ -1,11 +1,11 @@
 "use client"
 
-import Footer from '@/components/base components/Footer'
-import CourseNavbar from '@/components/courseDetails components/CourseNavbar'
+import Footer from '@components/base components/Footer'
+import CourseNavbar from '@components/courseDetails components/CourseNavbar'
 import axios from 'axios'
 import { useEffect, useRef, useState } from 'react'
 import { FaArrowLeftLong, FaCirclePlay } from "react-icons/fa6";
-import CourseSidebar from '@/components/courseDetails components/CourseSidebar'
+import CourseSidebar from '@components/courseDetails components/CourseSidebar'
 import { FaStar } from "react-icons/fa";
 import { BsFileEarmark } from 'react-icons/bs'
 import { IoMdCheckmark } from 'react-icons/io'

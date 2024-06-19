@@ -6,10 +6,11 @@ import { printRating } from '../home components/courses';
 import { GoDotFill } from "react-icons/go";
 import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
+import { IoChevronBackOutline } from 'react-icons/io5';
 
 
-function Cart() {
-    const { cart, setCart, userDetails, logout } = useHomeContext()
+function Cart({ from, setFrom }) {
+    const { cart, setCart, userDetails, logout, setActive } = useHomeContext()
 
     const getTotal = () => {
         var total = 0
@@ -20,7 +21,7 @@ function Cart() {
     }
 
     const checkOutHandler = async () => {
-        if(getTotal() > 0){
+        if (getTotal() > 0) {
 
             const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
             // if (!Object.values(details).includes('')) {
@@ -28,19 +29,19 @@ function Cart() {
             //     .then((res) => console.log(res.data))
             console.log('payment', cart)
             const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/create-checkout-session`, { cart: JSON.stringify(cart), userId: userDetails?.userDetails?._id })
-    
+
             const session = await response.data
-    
+
             const result = stripe.redirectToCheckout({
                 sessionId: session.id
             })
-    
+
             if ((await result).error) {
                 console.log(result.error)
             }
             // }
         }
-        
+
     }
 
     const removeFromCart = async (Id) => {
@@ -71,10 +72,15 @@ function Cart() {
     }
 
     return (
-        <div className='min-h-[70vh]'>
-            <div className='px-40 mt-10'>
+        <div className='min-h-[80vh]'>
+            <div className='px-40 mt-10 relative'>
 
                 <p className='font-bold text-3xl'>Shopping Cart</p>
+                {(from !== '') &&
+                    <div className=" absolute top-[-40px] left-0 flex w-[max-content] cursor-pointer items-center font-bold py-3 text-gray-500" onClick={() => {setActive(from); setFrom('')}}>
+                        <IoChevronBackOutline className='font-bold' />back to {from}
+                    </div>
+                }
             </div>
             <div className='px-40 mt-10 flex'>
                 <div className='basis-3/4 pe-10'>
@@ -112,13 +118,13 @@ function Cart() {
                                     </span>
                                 </div>
                             )
-                        }) : <div className='w-full text-center py-36 font-bold text-2xl text-gray-200'>Add courses to buy</div>
+                        }) : <div className='w-full text-center py-36 font-bold text-2xl text-gray-300'>Add courses to buy</div>
                     }
                 </div>
                 <div className='basis-1/4 flex flex-col gap-3'>
                     <span className='text-gray-600 font-bold'>Total:</span>
                     <span className='text-3xl font-bold flex items-center'><FaRupeeSign />{getTotal()}</span>
-                    <button type='button' className={`px-20 text-lg w-[max-content] py-2 ${getTotal() > 0 ? 'bg-violet-500':'bg-violet-200'}  text-white font-bold`} onClick={checkOutHandler}>checkout</button>
+                    <button type='button' className={`px-20 text-lg w-[max-content] py-2 ${getTotal() > 0 ? 'bg-violet-500' : 'bg-violet-200'}  text-white font-bold`} onClick={checkOutHandler}>checkout</button>
                 </div>
 
             </div>

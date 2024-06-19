@@ -21,6 +21,7 @@ export default function Page() {
   const [isopen, setIsopen] = useState(false)
   const {active, setCart, userDetails} = useHomeContext()
   const [authType, setAuthType] = useState('')
+  const [from, setFrom] = useState('')
   const sideref = useRef()
   let handleopen = () => {
     // console.log(window.scrollY)
@@ -96,7 +97,7 @@ export default function Page() {
 
         </div> */}
         {/* {active !== 'teacher' && <Navbar setAuthType={setAuthType}/>} */}
-        <Navbar setAuthType={setAuthType}/>
+        <Navbar setAuthType={setAuthType} setFrom={setFrom} />
         {active == 'home' ?
         
         <Home /> 
@@ -106,10 +107,10 @@ export default function Page() {
         <Authentication type={authType} setAuthType={setAuthType}/>
         
         : active == 'teacher' ? <TeacherMode/>
-        : active == 'search results' ? <SearchResults/>
-        : active == 'course overview' ? <CourseOverview/>
-        : active == 'cart' ? <Cart/>
-        : active == 'profile' && <Profile/>
+        : active == 'search results' ? <SearchResults setFrom={setFrom}/>
+        : active == 'course overview' ? <CourseOverview from={from} setFrom={setFrom}/>
+        : active == 'cart' ? <Cart from={from} setFrom={setFrom}/>
+        : active == 'profile' && <Profile setFrom={setFrom}/>
         }
       
       <Footer />

@@ -2,8 +2,8 @@ import { useHomeContext } from '@contexts/HomeContext'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 
-function Profile() {
-    const { userDetails } = useHomeContext()
+function Profile({setFrom}) {
+    const { userDetails, setOverviewCourse, setActive } = useHomeContext()
     const [activeProfile, setActiveProfile] = useState('learner')
     const [teacherCourses, setTeacherCourses] = useState([])
     useEffect(() => {
@@ -17,8 +17,8 @@ function Profile() {
         <div className='px-32 py-10'>
             <p className='text-3xl font-bold'>Profile & Settings</p>
             <div className='flex gap-10 items-center border-b mt-10'>
-                <span className={`${activeProfile == 'learner' && 'font-bold border-b-2 border-black'}`} onClick={() => setActiveProfile('learner')}>SkillSphere profile</span>
-                <span className={`${activeProfile == 'teacher' && 'font-bold border-b-2 border-black'}`} onClick={() => setActiveProfile('teacher')}>Instructor Dashboard</span>
+                <span className={`${activeProfile == 'learner' && 'font-bold border-b-2 border-black'} cursor-pointer`} onClick={() => setActiveProfile('learner')}>SkillSphere profile</span>
+                <span className={`${activeProfile == 'teacher' && 'font-bold border-b-2 border-black'} cursor-pointer`} onClick={() => setActiveProfile('teacher')}>Instructor Dashboard</span>
             </div>
             {activeProfile == 'learner' ?
                 <>
@@ -55,7 +55,9 @@ function Profile() {
                     <div className='w-full text-2xl font-bold'>Courses Published</div>
                     {teacherCourses.map((item, i) => {
                         return (
-                            <div key={i} className='flex flex-col gap-1 border items-center text-justify pb-2 w-[350px]'>
+                            <div key={i} 
+                            onClick={()=>{setOverviewCourse(item); setActive('course overview'); setFrom('profile')}}
+                            className='flex flex-col gap-1 border items-center  pb-2 w-[350px] hover:scale-105 transition-all duration-200 cursor-pointer'>
                                 <img src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${item.image}`} className='w-[350px]' alt="" />
                                 
                                 <p className='font-bold px-2'>{item.landingPageDetails.title}</p>

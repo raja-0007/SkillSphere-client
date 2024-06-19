@@ -9,20 +9,14 @@ import { FaCirclePlay } from "react-icons/fa6";
 import CourseSections from './CourseSections';
 import axios from 'axios';
 import Link from 'next/link';
+import { IoChevronBackOutline } from "react-icons/io5";
 
 
 
-function CourseOverview() {
+
+function CourseOverview({from, setFrom}) {
     const { overviewCourse, userDetails, setUserDetails, cart, setCart, enrolled, setActive, searchResults } = useHomeContext()
-    // const [enrolled, setEnrolled] = useState(false)
-    // useEffect(() => {
-    //     const getCart=async()=>{
-    //         await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userDetails?.userDetails?._id}`)
-    //         .then(res=>{console.log(res.data); setCart(res.data.cart)})
-    //     }
-        
-    //     getCart()
-    // }, [])
+    
     const totalArticleLectures = (sections) => {
         let total = 0
         sections.forEach(sect => {
@@ -41,28 +35,9 @@ function CourseOverview() {
 
         return total
     }
-    // currently not using
-    // const enroll = async () => {
-        
+    
 
-    //         if (Object.keys(userDetails).length !== 0) {
-    //             await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/enroll`, { courseId: overviewCourse._id, email: userDetails.userDetails.email })
-    //                 .then((res) => {
-    //                     // console.log('enrolled', overviewCourse._id, res.data);
-    //                      res.data == 'success' && setEnrolled(true)}
-    //                 )
-
-    //         }
-    //         else alert('please login to enroll')
-        
-    // }
-
-    // const getUserDetails=async()=>{
-
-    //     await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getUserDetails/${userDetails.userDetails._id}`)
-    //     .then(resp=>console.log(resp.data))
-    //     // setUserDetails({...userDetails, userDetails:{...userDetails.userDetails, cart:res.data.cart}})
-    // }
+    
 
     const addToCart = async()=>{
         if (Object.keys(userDetails).length !== 0) {
@@ -92,14 +67,19 @@ function CourseOverview() {
 
     return (
         <div className='flex flex-col overflow-hidden'>
-            {searchResults.length !==0 && <div className="w-full font-bold py-3 text-blue-500" onClick={()=>setActive('search results')}>back to search results</div>}
-            <div className='px-40 py-10  pt-20 text-white bg-slate-900'>
+            
+            <div className='px-40 py-10  pt-20 text-white bg-slate-900 relative'>
+            {(from !== '' ) && 
+            <div className=" absolute top-0 left-0 flex w-[max-content] cursor-pointer items-center font-bold py-3 text-gray-300" onClick={()=>{setActive(from); setFrom('')}}>
+                <IoChevronBackOutline className='font-bold'/>back to {from}
+            </div>
+             }
                 <span className='text-3xl font-bold w-[70%]'>{overviewCourse.landingPageDetails.title}</span>
                 <p className='w-[70%] mt-3'>{overviewCourse.landingPageDetails.subtitle}</p>
                 <p className='w-[70%] mt-3 flex items-center text-yellow-500'><span className='me-1 text-xl'>{overviewCourse.rating}</span> {printRating(overviewCourse.rating)}</p>
                 <p className='w-[70%] mt-3'>created by {overviewCourse.author.username}</p>
             </div>
-            <div className='w-[25%] self-end fixed flex flex-col top-32 z-20  right-16 bg-white shadow-md'>
+            <div className='w-[25%] self-end fixed flex flex-col top-32   right-16 bg-white shadow-md'>
                 <img src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${overviewCourse.image}`} className='w-full' alt="" />
                 <div className='flex flex-col items-center gap-3 px-5 pb-10'>
 
@@ -123,16 +103,16 @@ function CourseOverview() {
                 </div>
             </div>
             <div className='ps-40 pe-10 py-10 flex flex-col gap-10 w-[70%]'>
-                <div className='border border-gray-300 p-3 '>
+                <div className='border border-gray-300 p-3 w-full'>
 
                     <span className='text-2xl font-bold'>what you'll learn</span>
                     <div className='w-full mt-2 flex flex-wrap'>
                         {overviewCourse.outcomes.map((outcome, i) => {
-                            return <span key={i} className='flex items-center gap-2 w-[50%] mb-3'><IoMdCheckmark size={'1.2em'} />{outcome}</span>
+                            return <span key={i} className='flex items-center h-[max-content] gap-2 w-[50%] mb-3'><IoMdCheckmark size={'1.2em'} />{outcome}</span>
                         })}
-                        {overviewCourse.outcomes.map((outcome, i) => {
+                        {/* {overviewCourse.outcomes.map((outcome, i) => {
                             return <span key={i} className='flex items-center gap-2 w-[50%] mb-3'><IoMdCheckmark size={'1.2em'} />{outcome}</span>
-                        })}
+                        })} */}
                     </div>
                 </div>
                 <div className='flex flex-col gap-3 w-[50%]'>

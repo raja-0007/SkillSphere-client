@@ -11,7 +11,7 @@ import Levels from './Levels';
 
 
 
-function SearchResults() {
+function SearchResults({setFrom}) {
     const { setSearch, searchData, setDropDown,setOverviewCourse, setActive } = useHomeContext()
     const [isfilter, setIsfilter] = useState(false)
 
@@ -110,7 +110,7 @@ function SearchResults() {
                             return total
                         }
                         return (
-                            <div key={i} className='flex justify-between gap-2 items-start pb-5 mb-5 border-b ' onClick={()=>{setActive('course overview'); setOverviewCourse(item)}}>
+                            <div key={i} className='flex justify-between gap-2 items-start pb-5 mb-5 border-b ' onClick={()=>{setActive('course overview'); setOverviewCourse(item); setFrom('search results')}}>
 
                                 <div className='flex gap-3'>
                                     <img src={`http://localhost:7777/images/${item.image}`} className='w-[250px] h-[150px]' alt="" />

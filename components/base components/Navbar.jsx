@@ -15,7 +15,7 @@ import { MdNotificationsNone } from "react-icons/md";
 
 
 import { useHomeContext } from "@contexts/HomeContext";
-function Navbar({ setAuthType }) {
+function Navbar({ setAuthType, setFrom }) {
   const [isCategories, setIsCategories] = useState(false)
   const { setActive, active, userDetails, setUserDetails, logout, search, cart, setCart, setSearch, dropDown, setDropDown, searchResults, setSearchResults, setSearchData, setOverviewCourse } = useHomeContext()
   const [isTopics, setIsTopics] = useState(false)
@@ -27,8 +27,11 @@ function Navbar({ setAuthType }) {
   const searchDropRef = useRef(null)
   const [isProfile, setIsProfile] = useState(false)
   const pathname = usePathname()
-  
-  const profileItems = [ 'My learning', 'My cart', 'Wishlist', 'Log out']
+
+  const profileItems = [
+    { tag: 'My learning', action: 'learning' },
+    { tag: 'My cart', action: 'cart' },
+    {tag:'Wishlist',action:'wishlist'}, {tag:'Log out',action:'logout'}]
 
 
   useEffect(() => {
@@ -44,7 +47,7 @@ function Navbar({ setAuthType }) {
     getCategories()
     setUserDetails(JSON.parse(sessionStorage.getItem('userdetails')) || '')
 
-   
+
   }, [])
   useEffect(() => {
     document.addEventListener('click', (e) => {
@@ -84,7 +87,7 @@ function Navbar({ setAuthType }) {
     const getSearchResults = async () => {
       // console.log(search)
       await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/searchResults/${search}`)
-        .then(res => {setSearchResults(res.data); console.log(res.data)})
+        .then(res => { setSearchResults(res.data); console.log(res.data) })
     }
     if (search !== '') getSearchResults()
     else setSearchResults([])
@@ -127,7 +130,12 @@ function Navbar({ setAuthType }) {
 
             console.log('Data:', response.data);
             if (response.data.status == 'success') {
-              setActive('cart')
+              if(active !== 'cart'){
+
+                setActive('cart')
+                setFrom(active)
+              }
+              else setActive('cart')
             }
 
           })
@@ -144,11 +152,18 @@ function Navbar({ setAuthType }) {
     }
   }
 
-  const profileItemHandler=(item)=>{
-    if(item == 'Log out'){
+  const profileItemHandler = (item) => {
+    if (item == 'Log out') {
       logout()
     }
-    else setActive(item)
+    else {
+      if(item.action !== active){
+        setActive(item.action)
+  
+        setFrom(active)
+
+      }
+    }
   }
 
 
@@ -201,7 +216,11 @@ function Navbar({ setAuthType }) {
       {dropDown && <div ref={searchDropRef} className="w-[45%] ms-[18%] bg-white rounded-md overflow-hidden absolute top-[10vh] h-[max-content] flex flex-col">
         {searchResults.map((res, i) => {
           return (
-            <span onClick={()=>{setOverviewCourse(res); setActive('course overview'); setSearchResults([])}} key={i} className="w-full p-2 py-2 hover:shadow-md hover:bg-slate-100">{res.landingPageDetails.title}</span>
+            <span onClick={() => {
+              setOverviewCourse(res);
+              setActive('course overview'); setSearchResults([]); setSearch('')
+               setFrom(active)
+            }} key={i} className="w-full p-2 py-2 hover:shadow-md hover:bg-slate-100">{res.landingPageDetails.title}</span>
           )
         })}
       </div>}
@@ -241,7 +260,7 @@ function Navbar({ setAuthType }) {
           <span className="px-3 py-1 bg-slate-800 text-white border-2 border-slate-950 cursor-pointer hover:bg-slate-700" onClick={() => { setAuthType('register'); setActive('authentication') }}>signup</span>
         </div>
         :
-        <div className="flex flex-col  relative" onClick={()=>setIsProfile(!isProfile)} >
+        <div className="flex flex-col  relative" onClick={() => setIsProfile(!isProfile)} >
           <div className="flex font-semibold bg-slate-800 rounded-full text-white  text-md uppercase items-center justify-center h-8 w-8 ">
 
             <span  >
@@ -255,8 +274,8 @@ function Navbar({ setAuthType }) {
           </div>
 
 
-          {isProfile && <div className=" absolute top-[7vh] right-[-10px] flex flex-col gap-3 bg-white border">
-            <div className="flex gap-2 p-4 items-center border-b" onClick={()=>setActive('profile')}>
+          {isProfile && <div className=" absolute top-[7vh] right-[-10px] flex flex-col z-50 gap-3 bg-white border">
+            <div className="flex gap-2 p-4 items-center border-b" onClick={() => setActive('profile')}>
               <div className="flex font-semibold bg-slate-800 rounded-full text-white  text-lg uppercase items-center justify-center h-10 w-10 ">
 
                 <span  >
@@ -274,15 +293,15 @@ function Navbar({ setAuthType }) {
               </div>
             </div>
             <div className="flex flex-col gap-3  pb-3">
-              {profileItems.map((item,i)=>{
+              {profileItems.map((item, i) => {
                 return (
-                  <span key={i} className="px-3 cursor-pointer" onClick={()=>profileItemHandler(item)}>{item}</span>
+                  <span key={i} className="px-3 cursor-pointer" onClick={() => profileItemHandler(item)}>{item.tag}</span>
                 )
               })}
-              
+
 
             </div>
-           
+
           </div>}
 
         </div>

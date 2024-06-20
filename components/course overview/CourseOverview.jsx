@@ -10,13 +10,17 @@ import CourseSections from './CourseSections';
 import axios from 'axios';
 import Link from 'next/link';
 import { IoChevronBackOutline } from "react-icons/io5";
+import { FaHeart } from "react-icons/fa6";
 
 
 
 
-function CourseOverview({from, setFrom}) {
+
+function CourseOverview({ from, setFrom }) {
+    const [wishList, setWishList] = useState([])
+    const [loading, setLoading] = useState(false)
     const { overviewCourse, userDetails, setUserDetails, cart, setCart, enrolled, setActive, searchResults } = useHomeContext()
-    
+
     const totalArticleLectures = (sections) => {
         let total = 0
         sections.forEach(sect => {
@@ -35,45 +39,85 @@ function CourseOverview({from, setFrom}) {
 
         return total
     }
-    
 
-    
 
-    const addToCart = async()=>{
+
+
+    const addToCart = async () => {
         if (Object.keys(userDetails).length !== 0) {
             await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/addToCart`, { course: JSON.stringify(overviewCourse), userId: userDetails.userDetails._id })
                 .then((res) => {
                     console.log('added to cart', overviewCourse._id, res.data);
-                     if(res.data.status == 'success') {
+                    if (res.data.status == 'success') {
                         setCart(res.data.cart)
-                        
+
                     }
 
-                     }
+                }
                 )
 
         }
 
-        
+
         else alert('please login to enroll')
+    }
+    const addToWishlist = async () => {
+
+        if (Object.keys(userDetails).length !== 0) {
+            await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/addToWishlist`, { courseId: overviewCourse._id, userId: userDetails.userDetails._id }, {
+                headers: {
+                    'Authorization': `Bearer ${userDetails?.token}`
+                }
+            })
+                .then((res) => {
+                    if (res.status == 403) {
+                        alert('session expired please login again to continue')
+                        logout()
+                    }
+                    else if(res.data.status == 'success'){
+                        setWishList([...wishList,overviewCourse._id])
+                    }
+
+                    // console.log('added to Wishlist', res.data);
+
+
+                }
+                )
+
+        }
+
+
+        else alert('please login to access wishlist')
     }
     // console.log(overviewCourse?.enrolled)
     // console.log(cart?.filter(item=>item._id == overviewCourse._id).length == 0,'yesornoe', !overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id),'cart',cart,'price',overviewCourse.price !== 'free')
+    useEffect(() => {
+        setLoading(true)
+        const getWishList = async () => {
+            await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getWishlist/${userDetails?.userDetails?._id}`)
+                .then(res => { 
+                    // console.log('wishlist>>>', res.data);
+                     setWishList(res.data.RawList); setLoading(false)
+                })
+
+        }
+
+        if (userDetails?.userDetails?._id) getWishList()
+    }, [])
 
 
-    
-    
-   
+
+
 
     return (
         <div className='flex flex-col overflow-hidden'>
-            
+
             <div className='px-40 py-10  pt-20 text-white bg-slate-900 relative'>
-            {(from !== '' ) && 
-            <div className=" absolute top-3 left-2 flex w-[max-content] cursor-pointer items-center text-sm font-medium  text-gray-300" onClick={()=>{setActive(from); setFrom('')}}>
-                <IoChevronBackOutline className='font-bold'/>back to {from}
-            </div>
-             }
+                {(from !== '') &&
+                    <div className=" absolute top-3 left-2 flex w-[max-content] cursor-pointer items-center text-sm font-medium  text-gray-300" onClick={() => { setActive(from); setFrom('') }}>
+                        <IoChevronBackOutline className='font-bold' />back to {from}
+                    </div>
+                }
                 <span className='text-3xl font-bold w-[70%]'>{overviewCourse.landingPageDetails.title}</span>
                 <p className='w-[70%] mt-3'>{overviewCourse.landingPageDetails.subtitle}</p>
                 <p className='w-[70%] mt-3 flex items-center text-yellow-500'><span className='me-1 text-xl'>{overviewCourse.rating}</span> {printRating(overviewCourse.rating)}</p>
@@ -84,19 +128,23 @@ function CourseOverview({from, setFrom}) {
                 <div className='flex flex-col items-center gap-3 px-5 pb-10'>
 
                     <div className='flex items-center w-full gap-2 pt-5'>
-                        
-                        {(cart?.filter(item=>item._id == overviewCourse._id).length == 0 && !overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) && overviewCourse.price !== 'free' && overviewCourse.author.authorId !== userDetails?.userDetails?._id) ?
-                        <>
-                        <span className='flex items-center  text-xl font-bold'><FaRupeeSign size={'1em'} />{overviewCourse.price}</span>
-                        <span className='px-3 py-2 bg-violet-500 text-center text-white w-full' onClick={addToCart}>Add to cart</span>
 
-                        </>
-                            : cart?.filter(item=>item._id == overviewCourse._id).length !== 0 ?
-                            <span  className='px-3 py-2 bg-slate-700 text-center text-white w-full' onClick={()=>setActive('cart')}>Go to cart</span>
-                            : (overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) || overviewCourse.price == 'free' || overviewCourse.author.authorId == userDetails?.userDetails?._id) && 
-                            <Link href={`/coursesDetails/${overviewCourse._id}`} target='_blank'  className='px-3 py-2 bg-slate-700 text-center text-white w-full' >Go to course</Link>
+                        {(cart?.filter(item => item._id == overviewCourse._id).length == 0 && !overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) && overviewCourse.price !== 'free' && overviewCourse.author.authorId !== userDetails?.userDetails?._id) ?
+                            <>
+                                <span className='flex items-center  text-xl font-bold'><FaRupeeSign size={'1em'} />{overviewCourse.price}</span>
+                                <span className='px-3 py-2 bg-violet-500 text-center text-white w-full' onClick={addToCart}>Add to cart</span>
+
+                            </>
+                            : cart?.filter(item => item._id == overviewCourse._id).length !== 0 ?
+                                <span className='px-3 py-2 bg-slate-700 text-center text-white w-full' onClick={() => setActive('cart')}>Go to cart</span>
+                                : (overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) || overviewCourse.price == 'free' || overviewCourse.author.authorId == userDetails?.userDetails?._id) &&
+                                <Link href={`/coursesDetails/${overviewCourse._id}`} target='_blank' className='px-3 py-2 bg-slate-700 text-center text-white w-full' >Go to course</Link>
                         }
-                        <span className='px-2 py-2 border border-black'><FaRegHeart size={'1.2em'} /></span>
+                        <span className={`px-2 py-2 border border-black ${loading && ' animate-pulse'}`} onClick={addToWishlist}>
+                            {wishList.includes(overviewCourse?._id) ? <FaHeart className='text-red-400' size={'1.2em'}/>
+                            :<FaRegHeart size={'1.2em'} />
+                            }
+                        </span>
                     </div>
                     <span className='text-xs'> 30-day money-back guarantee</span>
                     <span className='text-xs'>Full life time access</span>

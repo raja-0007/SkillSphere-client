@@ -15,6 +15,7 @@ import axios from "axios";
 import Cart from "@components/cart components/Cart";
 import Profile from "@components/profile components/Profile";
 import Learning from "@components/base components/Learning";
+import WishList from "@components/base components/WishList";
 
 
 export default function Page() {
@@ -112,7 +113,8 @@ export default function Page() {
         : active == 'course overview' ? <CourseOverview from={from} setFrom={setFrom}/>
         : active == 'cart' ? <Cart from={from} setFrom={setFrom}/>
         : active == 'profile' ? <Profile setFrom={setFrom}/>
-        : active == 'learning' && <Learning setFrom={setFrom} from={from}/>
+        : active == 'learning' ? <Learning setFrom={setFrom} from={from}/>
+        : active == 'wishlist' && <WishList setFrom={setFrom} from={from}/>
         }
       
       <Footer />

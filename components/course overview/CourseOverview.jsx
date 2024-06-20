@@ -70,7 +70,7 @@ function CourseOverview({from, setFrom}) {
             
             <div className='px-40 py-10  pt-20 text-white bg-slate-900 relative'>
             {(from !== '' ) && 
-            <div className=" absolute top-0 left-0 flex w-[max-content] cursor-pointer items-center font-bold py-3 text-gray-300" onClick={()=>{setActive(from); setFrom('')}}>
+            <div className=" absolute top-3 left-2 flex w-[max-content] cursor-pointer items-center text-sm font-medium  text-gray-300" onClick={()=>{setActive(from); setFrom('')}}>
                 <IoChevronBackOutline className='font-bold'/>back to {from}
             </div>
              }

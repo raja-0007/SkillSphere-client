@@ -14,7 +14,7 @@ function Profile({setFrom}) {
         getTeacherCourses()
     }, [])
     return (
-        <div className='px-32 py-10'>
+        <div className='px-32 py-10 min-h-[70vh]'>
             <p className='text-3xl font-bold'>Profile & Settings</p>
             <div className='flex gap-10 items-center border-b mt-10'>
                 <span className={`${activeProfile == 'learner' && 'font-bold border-b-2 border-black'} cursor-pointer`} onClick={() => setActiveProfile('learner')}>SkillSphere profile</span>

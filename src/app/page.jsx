@@ -14,6 +14,7 @@ import CourseOverview from "@components/course overview/CourseOverview";
 import axios from "axios";
 import Cart from "@components/cart components/Cart";
 import Profile from "@components/profile components/Profile";
+import Learning from "@components/base components/Learning";
 
 
 export default function Page() {
@@ -110,7 +111,8 @@ export default function Page() {
         : active == 'search results' ? <SearchResults setFrom={setFrom}/>
         : active == 'course overview' ? <CourseOverview from={from} setFrom={setFrom}/>
         : active == 'cart' ? <Cart from={from} setFrom={setFrom}/>
-        : active == 'profile' && <Profile setFrom={setFrom}/>
+        : active == 'profile' ? <Profile setFrom={setFrom}/>
+        : active == 'learning' && <Learning setFrom={setFrom} from={from}/>
         }
       
       <Footer />

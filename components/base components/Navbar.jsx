@@ -153,7 +153,7 @@ function Navbar({ setAuthType, setFrom }) {
   }
 
   const profileItemHandler = (item) => {
-    if (item == 'Log out') {
+    if (item.tag == 'Log out') {
       logout()
     }
     else {
@@ -226,10 +226,13 @@ function Navbar({ setAuthType, setFrom }) {
       </div>}
 
       <Link href={''} onClick={() => setActive('teacher')} className="font-light hidden lg:block">Teacher mode</Link>
-      <div className="font-light">
+      <div className="font-light cursor-pointer" onClick={()=>{
+        setActive('learning'); 
+        active !== 'learning' && setFrom(active)
+        }}>
         My learning
       </div>
-      <div className="relative" >
+      <div className="relative cursor-pointer" >
         <FaRegHeart className="text-xl text-black" />
         {/* {cart.length > 0 && <div className="absolute top-[-5px] right-[-5px] bg-violet-500 text-center text-white text-xs rounded-full w-4 h-4">
             {cart.length}
@@ -239,14 +242,14 @@ function Navbar({ setAuthType, setFrom }) {
         {/* <IoSearch className="lg:hidden text-2xl text-black" /> */}
 
         {/* href={Object.keys(userDetails || {}).length !== 0 ? '/cart' : ''} */}
-        <div className="relative" onClick={gotoCart}>
+        <div className="relative cursor-pointer" onClick={gotoCart}>
           <MdOutlineShoppingCart className="text-2xl text-black" />
           {cart.length > 0 && <div className="absolute top-[-5px] right-[-5px] bg-violet-500 text-center text-white text-xs rounded-full w-4 h-4">
             {cart.length}
           </div>}
         </div>
       </span>
-      <div className="relative" >
+      <div className="relative cursor-pointer" >
         <MdNotificationsNone className="text-2xl text-black" />
         {/* {cart.length > 0 && <div className="absolute top-[-5px] right-[-5px] bg-violet-500 text-center text-white text-xs rounded-full w-4 h-4">
             {cart.length}
@@ -261,7 +264,7 @@ function Navbar({ setAuthType, setFrom }) {
         </div>
         :
         <div className="flex flex-col  relative" onClick={() => setIsProfile(!isProfile)} >
-          <div className="flex font-semibold bg-slate-800 rounded-full text-white  text-md uppercase items-center justify-center h-8 w-8 ">
+          <div className="flex font-semibold cursor-pointer bg-slate-800 rounded-full text-white  text-md uppercase items-center justify-center h-8 w-8 ">
 
             <span  >
               {/* <FaUserCircle size={'1.5em'} /> */}

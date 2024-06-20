@@ -50,13 +50,8 @@ function HomeProvider({ children }) {
       // await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userDetails?.userDetails?._id}`)
       //   .then(res => { console.log(res.data); setCart(res.data.cart) })
     }
-    const getEnrolled = async () => {
-      await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getEnrolled/${userDetails?.userDetails?._id}`)
-        .then(res => { console.log('enroled>>>',res.data); setCart(res.data.enrolled) })
-
-    }
+    
     if (userDetails?.userDetails?._id) {
-      getEnrolled()
       getCart()
     }
     

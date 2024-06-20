@@ -1,34 +1,35 @@
-import { useHomeContext } from '@contexts/HomeContext'
-import axios from 'axios'
-import Link from 'next/link'
+import { useHomeContext } from '@contexts/HomeContext';
+import axios from 'axios';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
-import { IoChevronBackOutline } from 'react-icons/io5'
+import { IoChevronBackOutline } from 'react-icons/io5';
 
-function Learning({ from, setFrom }) {
-    const [learningCourses, setLearningCourses] = useState([])
+function WishList({from, setFrom}) {
+    const [wishList, setWishList] = useState([])
     const { userDetails, setActive } = useHomeContext()
     const [loading, setLoading] = useState(false)
     useEffect(() => {
         setLoading(true)
-        const getEnrolled = async () => {
-            await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getEnrolled/${userDetails?.userDetails?._id}`)
-                .then(res => { console.log('enroled>>>', res.data); setLearningCourses(res.data.enrolled); setLoading(false)})
+        const getWishList = async () => {
+            await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getWishlist/${userDetails?.userDetails?._id}`)
+                .then(res => { 
+                    // console.log('wishlist>>>', res.data);
+                     setWishList(res.data.wishList); setLoading(false)})
 
         }
 
-        if (userDetails?.userDetails?._id) getEnrolled()
+        if (userDetails?.userDetails?._id) getWishList()
     }, [])
-
-    return (
-        <div className='px-32 py-10 relative min-h-[70vh]'>
+  return (
+    <div className='px-32 py-10 relative min-h-[70vh]'>
             {(from !== '') &&
                 <div className=" absolute top-3 left-2 flex  w-[max-content]  cursor-pointer items-center text-sm font-medium  text-gray-400" onClick={() => { setActive(from); setFrom('') }}>
                     <IoChevronBackOutline className='font-bold' />back to {from}
                 </div>
             }
-            <p className='text-3xl font-bold'>My Learning</p>
+            <p className='text-3xl font-bold'>My WishList</p>
             <section className=' flex flex-wrap gap-10 px-10  py-10'>
-                {!loading ? learningCourses?.map((item, i) => {
+                {!loading ? wishList?.map((item, i) => {
                     return (
                         <Link key={i} href={`/coursesDetails/${item._id}`} target='_blank'
                             className='flex flex-col gap-1  border   pb-2 w-[300px] hover:scale-[1.03] hover:shadow-md hover:shadow-violet-400 transition-all duration-200 cursor-pointer'>
@@ -69,8 +70,7 @@ function Learning({ from, setFrom }) {
                 }
             </section>
         </div>
-    )
+  )
 }
 
-export default Learning
-
+export default WishList

@@ -87,7 +87,7 @@ function Navbar({ setAuthType, setFrom }) {
     const getSearchResults = async () => {
       // console.log(search)
       await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/searchResults/${search}`)
-        .then(res => { setSearchResults(res.data); console.log(res.data) })
+        .then(res => { setSearchResults(res.data); })
     }
     if (search !== '') getSearchResults()
     else setSearchResults([])
@@ -232,7 +232,10 @@ function Navbar({ setAuthType, setFrom }) {
         }}>
         My learning
       </div>
-      <div className="relative cursor-pointer" >
+      <div className="relative cursor-pointer" onClick={()=>{
+        setActive('wishlist'); 
+        active !== 'wishlist' && setFrom(active)
+        }}>
         <FaRegHeart className="text-xl text-black" />
         {/* {cart.length > 0 && <div className="absolute top-[-5px] right-[-5px] bg-violet-500 text-center text-white text-xs rounded-full w-4 h-4">
             {cart.length}

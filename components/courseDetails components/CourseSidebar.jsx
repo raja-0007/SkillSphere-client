@@ -15,14 +15,14 @@ function CourseSidebar({ courseContent, selected, setSelected, completed, scroll
 
 {/* <iframe width="560" height="315" src="https://www.youtube.com/embed/kUMe1FH4CHE?si=JwnajJuXCzngmC8b" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> */}
     
-    useEffect(()=>{
-        if (Array.isArray(courseContent?.sections)) {
-            // console.log('>>>>>>>>>>>>>>>>>>>>>>', courseContent?.sections[0])
-            setSelected(courseContent?.sections[0]?.curriculum[0])
-          }
-        // console.log(selected)
+    // useEffect(()=>{
+    //     if (Array.isArray(courseContent?.sections)) {
+    //         // console.log('>>>>>>>>>>>>>>>>>>>>>>', courseContent?.sections[0])
+    //         setSelected(courseContent?.sections[0]?.curriculum[0])
+    //       }
+    //     // console.log(selected)
 
-    },[courseContent])
+    // },[courseContent])
 
     const handleOpen = (action, id) => {
         if (action == 'open') {

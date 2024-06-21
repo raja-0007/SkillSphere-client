@@ -18,27 +18,81 @@ function page({ params }) {
   const [courseContent, SetCourseContent] = useState({})
   const containerRef = useRef(null)
   const [selected, setSelected] = useState({})
-  
+
+
   const [completed, setCompleted] = useState([])
   useEffect(() => {
     const getCourseContent = async () => {
       await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCourseDetails/${params.Ids[0]}`)
         .then(res => {
-          // console.log(res.data);
+          console.log(res.data);
           SetCourseContent(res.data)
         })
     }
+
+
+    const getCompletionDetails = async () => {
+      await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCompletionDetails/${params.Ids[0]}/${params.Ids[1]}`)
+        .then(res => {
+          if (res.data.status == 'success') {
+            setCompleted(res.data.completedLectures)
+          }
+          else {
+            alert('an unexpected error had occured. please try again')
+          }
+        })
+    }
+
+
     getCourseContent()
-
-
-
+    getCompletionDetails()
     window.addEventListener("scroll", handleScroll, { passive: true, capture: true });
     return () => {
       window.removeEventListener("scroll", handleScroll);
     }
 
 
+
   }, [])
+
+
+  useEffect(() => {
+    var found = false
+    if (Object.keys(courseContent).length !== 0) {
+
+      for (let sect = 0; sect < courseContent.sections.length; sect++) {
+        if (found) break
+        for (let curr = 0; curr < courseContent.sections[sect].curriculum.length; curr++) {
+          if (!completed.includes(courseContent.sections[sect].curriculum[curr].currId)) {
+            setSelected(courseContent.sections[sect].curriculum[curr])
+            found = true
+            break
+          }
+          else {
+            continue
+          }
+        }
+      }
+      // courseContent.sections.forEach(sect => {
+      //   if(found) return;
+      //   sect.curriculum.forEach(curr => {
+      //     console.log('ids', curr.currId)
+      //     if(!completed.includes(curr.currId)){
+      //       console.log('active', curr.currId)
+      //       setSelected(curr)
+      //       found = true
+      //       return
+      //     }
+      //   });
+      //   console.log(found)
+
+      // });
+    }
+
+  }, [courseContent, completed])
+
+
+
   const handleScroll = () => {
     // console.log('triggered')
     if (containerRef && containerRef.current) {
@@ -109,10 +163,10 @@ function page({ params }) {
           </div>
           <span className='w-full flex justify-between items-start text-xl px-10'>
             <span className='w-[70%]'>{courseContent?.landingPageDetails?.subtitle}</span>
-            {!completed?.includes(selected.currId) ? 
-            <div className='bg-green-500 text-white font-semibold text-sm p-2' onClick={() => updateCompletion(selected.currId)}>mark as completed</div>
-            :<div className='bg-green-200 text-white font-semibold text-sm p-2' onClick={() => updateCompletion(selected.currId)}>completed</div>
-            }          
+            {!completed?.includes(selected.currId) ?
+              <div className='bg-green-500 text-white font-semibold text-sm p-2' onClick={() => updateCompletion(selected.currId)}>mark as completed</div>
+              : <div className='bg-green-200 text-white font-semibold text-sm p-2' onClick={() => updateCompletion(selected.currId)}>completed</div>
+            }
           </span>
           <span className='px-10 flex items-center gap-10'>
             <span >

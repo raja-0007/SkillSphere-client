@@ -3,21 +3,54 @@ import axios from 'axios'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { IoChevronBackOutline } from 'react-icons/io5'
+import { IoPlaySharp } from "react-icons/io5";
+
+
 
 function Learning({ from, setFrom }) {
     const [learningCourses, setLearningCourses] = useState([])
     const { userDetails, setActive } = useHomeContext()
     const [loading, setLoading] = useState(false)
+    const [completed, setCompleted] = useState([])
+    const [hover, setHover] = useState(null)
     useEffect(() => {
         setLoading(true)
         const getEnrolled = async () => {
             await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getEnrolled/${userDetails?.userDetails?._id}`)
-                .then(res => { console.log('enroled>>>', res.data); setLearningCourses(res.data.enrolled); setLoading(false)})
+                .then(res => { console.log('enroled>>>', res.data); setLearningCourses(res.data.enrolled); setLoading(false) })
 
         }
 
+
         if (userDetails?.userDetails?._id) getEnrolled()
     }, [])
+
+    useEffect(() => {
+
+        const getCompletionDetails = async (courseId) => {
+            console.log(courseId)
+            await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCompletionDetails/${courseId}/${userDetails?.userDetails?._id}`)
+                .then(res => {
+                    if (res.data.status == 'success') {
+                        setCompleted([...completed, res.data.completedLectures.length])
+                    }
+                    else {
+                        alert('an unexpected error had occured. please try again')
+                    }
+                })
+        }
+
+        if (learningCourses.length > 0) {
+            learningCourses.forEach(course => {
+
+                getCompletionDetails(course._id)
+            });
+
+        }
+
+    }, [learningCourses])
+
+
 
     return (
         <div className='px-32 py-10 relative min-h-[70vh]'>
@@ -29,14 +62,30 @@ function Learning({ from, setFrom }) {
             <p className='text-3xl font-bold'>My Learning</p>
             <section className=' flex flex-wrap gap-10 px-10  py-10'>
                 {!loading ? learningCourses?.map((item, i) => {
+                    var totalLectures = 0
+                    item.sections.forEach(sect => {
+                        totalLectures += sect.curriculum.length
+
+                    });
+                    const percentage = Math.floor((completed[i] / totalLectures) * 100)
                     return (
                         <Link key={i} href={`/coursesDetails/${item._id}/${userDetails?.userDetails?._id}`} target='_blank'
-                            className='flex flex-col gap-1  border   pb-2 w-[300px] hover:scale-[1.03] hover:shadow-md hover:shadow-violet-400 transition-all duration-200 cursor-pointer'>
-                            <img src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${item.image}`} className='w-[300px]' alt="" />
+                            className='flex flex-col gap-1  w-[300px] cursor-pointer' onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}>
+                            <div className='w-[300px] h-[max-content] relative'>
+
+                                <img src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${item.image}`} className='w-[300px]' alt="" />
+                                {hover == i && (<div className='w-full flex items-center justify-center h-full bg-black bg-opacity-40 absolute top-0 left-0'>
+                                    <div className='w-14 h-14 flex justify-center items-center rounded-full bg-white'><IoPlaySharp className='text-[1.8em] ms-1'/></div>
+                                </div>)}
+                            </div>
 
                             <p className='font-bold px-2'>{item.landingPageDetails.title}</p>
                             <p className='text-xs px-2 text-gray-500 font-medium'>{item.author.username} sikandhar</p>
+                            <div className='w-full h-1 mt-1 bg-violet-200 '>
+                                <div style={{ width: `${percentage}%` }} className={` h-full bg-violet-500 rounded-e-full `}></div>
 
+                            </div>
+                            <p className='text-xs'>{Math.floor((completed[i] / totalLectures) * 100)}% completed</p>
                         </Link>
                     )
                 }) :

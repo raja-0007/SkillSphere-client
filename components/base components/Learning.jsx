@@ -30,7 +30,7 @@ function Learning({ from, setFrom }) {
             <section className=' flex flex-wrap gap-10 px-10  py-10'>
                 {!loading ? learningCourses?.map((item, i) => {
                     return (
-                        <Link key={i} href={`/coursesDetails/${item._id}`} target='_blank'
+                        <Link key={i} href={`/coursesDetails/${item._id}/${userDetails?.userDetails?._id}`} target='_blank'
                             className='flex flex-col gap-1  border   pb-2 w-[300px] hover:scale-[1.03] hover:shadow-md hover:shadow-violet-400 transition-all duration-200 cursor-pointer'>
                             <img src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${item.image}`} className='w-[300px]' alt="" />
 

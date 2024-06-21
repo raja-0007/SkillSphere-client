@@ -3,11 +3,14 @@ import axios from 'axios';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
 import { IoChevronBackOutline } from 'react-icons/io5';
+import { MdDeleteOutline } from "react-icons/md";
+
 
 function WishList({from, setFrom}) {
     const [wishList, setWishList] = useState([])
-    const { userDetails, setActive } = useHomeContext()
+    const { userDetails,active, setActive, setOverviewCourse, logout } = useHomeContext()
     const [loading, setLoading] = useState(false)
+    const [itemLoading, setItemLoading] = useState('')
     useEffect(() => {
         setLoading(true)
         const getWishList = async () => {
@@ -20,6 +23,25 @@ function WishList({from, setFrom}) {
 
         if (userDetails?.userDetails?._id) getWishList()
     }, [])
+
+    const removeFromWishlist=async(id)=>{
+        setItemLoading(id)
+        await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/removeFromWishlist/${id}/${userDetails?.userDetails?._id}`,{
+            headers:{
+                'Authorization':`Bearer ${userDetails?.token}`
+            }
+        })
+        .then((res)=>{
+            setItemLoading('')
+            if(res.status == 403){
+                alert('session expired, please log in to continue')
+                logout()
+            }
+            else if(res.data.status == 'success'){
+                setWishList(res.data.wishList)
+            }
+        })
+    }
   return (
     <div className='px-32 py-10 relative min-h-[70vh]'>
             {(from !== '') &&
@@ -31,14 +53,16 @@ function WishList({from, setFrom}) {
             <section className=' flex flex-wrap gap-10 px-10  py-10'>
                 {!loading ? wishList?.map((item, i) => {
                     return (
-                        <Link key={i} href={`/coursesDetails/${item._id}`} target='_blank'
-                            className='flex flex-col gap-1  border   pb-2 w-[300px] hover:scale-[1.03] hover:shadow-md hover:shadow-violet-400 transition-all duration-200 cursor-pointer'>
+                        <div key={i} 
+                        onClick={()=>{setOverviewCourse(item); setActive('course overview'); setFrom(active)}}
+                        // href={`/coursesDetails/${item._id}`} target='_blank'
+                            className={`flex flex-col gap-1  border   pb-2 w-[300px] relative hover:scale-[1.03] hover:shadow-md ${itemLoading == item._id && 'animate-pulse'} hover:shadow-violet-400 transition-all duration-200 cursor-pointer`}>
                             <img src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${item.image}`} className='w-[300px]' alt="" />
 
                             <p className='font-bold px-2'>{item.landingPageDetails.title}</p>
                             <p className='text-xs px-2 text-gray-500 font-medium'>{item.author.username} sikandhar</p>
-
-                        </Link>
+                            <span className='absolute top-1 right-1 border border-black p-1 bg-white ' onClick={(e)=>{e.stopPropagation(); removeFromWishlist(item._id)}}><MdDeleteOutline size={'1.2em'}/></span>
+                        </div>
                     )
                 }) :
                     <>

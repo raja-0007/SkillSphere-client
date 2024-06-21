@@ -105,6 +105,25 @@ function CourseOverview({ from, setFrom }) {
         if (userDetails?.userDetails?._id) getWishList()
     }, [])
 
+    const removeFromWishlist=async(id)=>{
+        setLoading(true)
+        await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/removeFromWishlist/${id}/${userDetails?.userDetails?._id}`,{
+            headers:{
+                'Authorization':`Bearer ${userDetails?.token}`
+            }
+        })
+        .then((res)=>{
+            setLoading(false)
+            if(res.status == 403){
+                alert('session expired, please log in to continue')
+                logout()
+            }
+            else if(res.data.status == 'success'){
+                setWishList(res.data.wishList)
+            }
+        })
+    }
+
 
 
 
@@ -138,9 +157,9 @@ function CourseOverview({ from, setFrom }) {
                             : cart?.filter(item => item._id == overviewCourse._id).length !== 0 ?
                                 <span className='px-3 py-2 bg-slate-700 text-center text-white w-full' onClick={() => setActive('cart')}>Go to cart</span>
                                 : (overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) || overviewCourse.price == 'free' || overviewCourse.author.authorId == userDetails?.userDetails?._id) &&
-                                <Link href={`/coursesDetails/${overviewCourse._id}`} target='_blank' className='px-3 py-2 bg-slate-700 text-center text-white w-full' >Go to course</Link>
+                                <Link href={`/coursesDetails/${overviewCourse._id}/${userDetails?.userDetails?._id}`} target='_blank' className='px-3 py-2 bg-slate-700 text-center text-white w-full' >Go to course</Link>
                         }
-                        <span className={`px-2 py-2 border border-black ${loading && ' animate-pulse'}`} onClick={addToWishlist}>
+                        <span className={`px-2 py-2 border border-black ${loading && ' animate-pulse'}`} onClick={()=>wishList.includes(overviewCourse?._id) ? removeFromWishlist(overviewCourse?._id) : addToWishlist()}>
                             {wishList.includes(overviewCourse?._id) ? <FaHeart className='text-red-400' size={'1.2em'}/>
                             :<FaRegHeart size={'1.2em'} />
                             }
@@ -154,9 +173,9 @@ function CourseOverview({ from, setFrom }) {
                 <div className='border border-gray-300 p-3 w-full'>
 
                     <span className='text-2xl font-bold'>what you'll learn</span>
-                    <div className='w-full mt-2 flex flex-wrap'>
+                    <div className='w-full mt-2 flex flex-wrap pt-2'>
                         {overviewCourse.outcomes.map((outcome, i) => {
-                            return <span key={i} className='flex items-center h-[max-content] gap-2 w-[50%] mb-3'><IoMdCheckmark size={'1.2em'} />{outcome}</span>
+                            return <span key={i} className='flex items-start h-[max-content] gap-2 w-[50%] mb-2'><div className='pt-1'><IoMdCheckmark size={'1.1em'} /></div>{outcome}</span>
                         })}
                         {/* {overviewCourse.outcomes.map((outcome, i) => {
                             return <span key={i} className='flex items-center gap-2 w-[50%] mb-3'><IoMdCheckmark size={'1.2em'} />{outcome}</span>

@@ -8,22 +8,21 @@ import { FaRegFile } from "react-icons/fa6";
 
 
 
-function CourseSidebar({ courseContent, selected, setSelected, scrollPos, setIsSidebar }) {
+function CourseSidebar({ courseContent, selected, setSelected, completed, scrollPos, setIsSidebar }) {
     const [opened, setOpened] = useState([])
     
-    const [completed, setCompleted] = useState([])
     // console.log(selected)
 
 {/* <iframe width="560" height="315" src="https://www.youtube.com/embed/kUMe1FH4CHE?si=JwnajJuXCzngmC8b" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> */}
     
-    useEffect(()=>{
-        if (Array.isArray(courseContent?.sections)) {
-            // console.log('>>>>>>>>>>>>>>>>>>>>>>', courseContent?.sections[0])
-            setSelected(courseContent?.sections[0]?.curriculum[0])
-          }
-        // console.log(selected)
+    // useEffect(()=>{
+    //     if (Array.isArray(courseContent?.sections)) {
+    //         // console.log('>>>>>>>>>>>>>>>>>>>>>>', courseContent?.sections[0])
+    //         setSelected(courseContent?.sections[0]?.curriculum[0])
+    //       }
+    //     // console.log(selected)
 
-    },[courseContent])
+    // },[courseContent])
 
     const handleOpen = (action, id) => {
         if (action == 'open') {
@@ -59,7 +58,7 @@ function CourseSidebar({ courseContent, selected, setSelected, scrollPos, setIsS
                                 return (
                                     <div className={`py-3 px-3 flex items-center cursor-pointer ${selected.currId == curr.currId ? 'bg-gray-100 border-2 border-slate-700': 'border-2 border-white'} justify-between`} onClick={()=>setSelected(curr)} key={curr_i}>
                                         <div className='flex items-center'>
-                                            <div className={`p-1 inline-block rounded-full ${completed.includes('subsec') ? 'bg-slate-700' : 'bg-gray-300'} me-2  text-white`}>
+                                            <div className={`p-1 inline-block rounded-full ${completed.includes(curr.currId) ? 'bg-slate-700' : 'bg-gray-300'} me-2  text-white`}>
                                                 <IoMdCheckmark />
                                             </div>
                                             {curr_i+1}. {curr.title}

@@ -18,25 +18,81 @@ function page({ params }) {
   const [courseContent, SetCourseContent] = useState({})
   const containerRef = useRef(null)
   const [selected, setSelected] = useState({})
+
+
+  const [completed, setCompleted] = useState([])
   useEffect(() => {
     const getCourseContent = async () => {
-      await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCourseDetails/${params.courseId}`)
+      await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCourseDetails/${params.Ids[0]}`)
         .then(res => {
-          // console.log(res.data);
+          console.log(res.data);
           SetCourseContent(res.data)
         })
     }
+
+
+    const getCompletionDetails = async () => {
+      await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCompletionDetails/${params.Ids[0]}/${params.Ids[1]}`)
+        .then(res => {
+          if (res.data.status == 'success') {
+            setCompleted(res.data.completedLectures)
+          }
+          else {
+            alert('an unexpected error had occured. please try again')
+          }
+        })
+    }
+
+
     getCourseContent()
-
-
-
+    getCompletionDetails()
     window.addEventListener("scroll", handleScroll, { passive: true, capture: true });
     return () => {
       window.removeEventListener("scroll", handleScroll);
     }
 
 
+
   }, [])
+
+
+  useEffect(() => {
+    var found = false
+    if (Object.keys(courseContent).length !== 0) {
+
+      for (let sect = 0; sect < courseContent.sections.length; sect++) {
+        if (found) break
+        for (let curr = 0; curr < courseContent.sections[sect].curriculum.length; curr++) {
+          if (!completed.includes(courseContent.sections[sect].curriculum[curr].currId)) {
+            setSelected(courseContent.sections[sect].curriculum[curr])
+            found = true
+            break
+          }
+          else {
+            continue
+          }
+        }
+      }
+      // courseContent.sections.forEach(sect => {
+      //   if(found) return;
+      //   sect.curriculum.forEach(curr => {
+      //     console.log('ids', curr.currId)
+      //     if(!completed.includes(curr.currId)){
+      //       console.log('active', curr.currId)
+      //       setSelected(curr)
+      //       found = true
+      //       return
+      //     }
+      //   });
+      //   console.log(found)
+
+      // });
+    }
+
+  }, [courseContent, completed])
+
+
+
   const handleScroll = () => {
     // console.log('triggered')
     if (containerRef && containerRef.current) {
@@ -67,6 +123,18 @@ function page({ params }) {
     return total
   }
 
+  const updateCompletion = async (lectId) => {
+    await axios.put(`${process.env.NEXT_PUBLIC_BASE_URL}/updateCompletion/${params.Ids[0]}/${params.Ids[1]}/${lectId}`)
+      .then(res => {
+        if (res.status == 200) {
+          setCompleted(res.data.completedLectures)
+        }
+        else {
+          alert('an unexpected error had occured. please try again')
+        }
+      })
+  }
+
 
   return (
     <div className='flex flex-col ' ref={containerRef} >
@@ -88,13 +156,17 @@ function page({ params }) {
                     width={'100%'} height={'100%'}
                     allowFullScreen
                   ></iframe>
-                  
+
                 </div>
                 : <div className='h-[500px]'></div>
             }
           </div>
-          <span className='w-[70%] text-xl px-10'>
-            {courseContent?.landingPageDetails?.subtitle}
+          <span className='w-full flex justify-between items-start text-xl px-10'>
+            <span className='w-[70%]'>{courseContent?.landingPageDetails?.subtitle}</span>
+            {!completed?.includes(selected.currId) ?
+              <div className='bg-green-500 text-white font-semibold text-sm p-2' onClick={() => updateCompletion(selected.currId)}>mark as completed</div>
+              : <div className='bg-green-200 text-white font-semibold text-sm p-2' onClick={() => updateCompletion(selected.currId)}>completed</div>
+            }
           </span>
           <span className='px-10 flex items-center gap-10'>
             <span >
@@ -141,7 +213,7 @@ function page({ params }) {
         </div>
 
         {isSidebar ?
-          <CourseSidebar courseContent={courseContent} scrollPos={scrollPos} selected={selected} setSelected={setSelected} setIsSidebar={setIsSidebar} />
+          <CourseSidebar courseContent={courseContent} scrollPos={scrollPos} selected={selected} completed={completed} setSelected={setSelected} setIsSidebar={setIsSidebar} />
           :
           <div onClick={() => setIsSidebar(true)} className='w-8 h-10 cursor-pointer text-white z-10 px-2 py-2 gap-2 justify-start bg-slate-700  overflow-hidden  hover:w-[max-content]  absolute right-0 top-20 flex items-center'>
             <span ><FaArrowLeftLong /></span><span className='font-bold inline-block'>course content</span>

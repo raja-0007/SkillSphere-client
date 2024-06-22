@@ -12,6 +12,8 @@ import { IoMdCheckmark } from 'react-icons/io'
 
 
 function page({ params }) {
+  const [opened, setOpened] = useState([])
+
   const iframeRef = useRef(null)
   const [scrollPos, setScrollPos] = useState(0)
   const [isSidebar, setIsSidebar] = useState(true)
@@ -65,6 +67,7 @@ function page({ params }) {
         for (let curr = 0; curr < courseContent.sections[sect].curriculum.length; curr++) {
           if (!completed.includes(courseContent.sections[sect].curriculum[curr].currId)) {
             setSelected(courseContent.sections[sect].curriculum[curr])
+            handleOpen('open', courseContent.sections[sect].id)
             found = true
             break
           }
@@ -73,20 +76,7 @@ function page({ params }) {
           }
         }
       }
-      // courseContent.sections.forEach(sect => {
-      //   if(found) return;
-      //   sect.curriculum.forEach(curr => {
-      //     console.log('ids', curr.currId)
-      //     if(!completed.includes(curr.currId)){
-      //       console.log('active', curr.currId)
-      //       setSelected(curr)
-      //       found = true
-      //       return
-      //     }
-      //   });
-      //   console.log(found)
-
-      // });
+      
     }
 
   }, [courseContent, completed])
@@ -135,6 +125,18 @@ function page({ params }) {
       })
   }
 
+  const handleOpen = (action, id) => {
+    if (action == 'open') {
+        setOpened([...opened, id])
+    }
+    else if (action == 'close') {
+        const list = [...opened]
+        // console.log('lcosee', list,id, list.filter(sect !== id))
+
+        setOpened(list.filter(sect => sect !== id))
+    }
+}
+
 
   return (
     <div className='flex flex-col ' ref={containerRef} >
@@ -164,7 +166,7 @@ function page({ params }) {
           <span className='w-full flex justify-between items-start text-xl px-10'>
             <span className='w-[70%]'>{courseContent?.landingPageDetails?.subtitle}</span>
             {!completed?.includes(selected.currId) ?
-              <div className='bg-green-500 text-white font-semibold text-sm p-2' onClick={() => updateCompletion(selected.currId)}>mark as completed</div>
+              <div className='bg-green-500 cursor-pointer text-white font-semibold text-sm p-2' onClick={() => updateCompletion(selected.currId)}>mark as completed</div>
               : <div className='bg-green-200 text-white font-semibold text-sm p-2' onClick={() => updateCompletion(selected.currId)}>completed</div>
             }
           </span>
@@ -213,7 +215,7 @@ function page({ params }) {
         </div>
 
         {isSidebar ?
-          <CourseSidebar courseContent={courseContent} scrollPos={scrollPos} selected={selected} completed={completed} setSelected={setSelected} setIsSidebar={setIsSidebar} />
+          <CourseSidebar courseContent={courseContent} opened={opened} handleOpen={handleOpen} scrollPos={scrollPos} selected={selected} completed={completed} setSelected={setSelected} setIsSidebar={setIsSidebar} />
           :
           <div onClick={() => setIsSidebar(true)} className='w-8 h-10 cursor-pointer text-white z-10 px-2 py-2 gap-2 justify-start bg-slate-700  overflow-hidden  hover:w-[max-content]  absolute right-0 top-20 flex items-center'>
             <span ><FaArrowLeftLong /></span><span className='font-bold inline-block'>course content</span>

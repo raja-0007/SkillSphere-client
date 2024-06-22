@@ -8,8 +8,7 @@ import { FaRegFile } from "react-icons/fa6";
 
 
 
-function CourseSidebar({ courseContent, selected, setSelected, completed, scrollPos, setIsSidebar }) {
-    const [opened, setOpened] = useState([])
+function CourseSidebar({ courseContent, opened, selected, setSelected, completed, scrollPos, setIsSidebar, handleOpen }) {
     
     // console.log(selected)
 
@@ -24,17 +23,7 @@ function CourseSidebar({ courseContent, selected, setSelected, completed, scroll
 
     // },[courseContent])
 
-    const handleOpen = (action, id) => {
-        if (action == 'open') {
-            setOpened([...opened, id])
-        }
-        else if (action == 'close') {
-            const list = [...opened]
-            // console.log('lcosee', list,id, list.filter(sect !== id))
-
-            setOpened(list.filter(sect => sect !== id))
-        }
-    }
+    
     return (
         <div className={`w-[25%] ${scrollPos >= 40 ? 'h-[100vh] bottom-0' : 'h-[93vh] top-[7vh] '}  border-2  fixed  z-10 right-0 flex flex-col overflow-auto`}>
             <div className='border-b border-black py-3 flex justify-between items-center px-4'>

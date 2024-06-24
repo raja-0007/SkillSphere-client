@@ -31,11 +31,11 @@ function Curriculum({ activeSection }) {
     const [isCurrForm, setIsCurrForm] = useState('')
     const [isAddContent, setIsAddContent] = useState('')
     const [isEditContent, setIsEditContent] = useState('')
-    const { filledStatus, setFilledStatus, sections, setSections,videoStatus, setVideoStatus, conditionsSatisfied, setConditionsSatisfied } = useTeacherContext()
+    const { filledStatus, setFilledStatus, sections, setSections, videoStatus, setVideoStatus, conditionsSatisfied, setConditionsSatisfied } = useTeacherContext()
     const [saved, setSaved] = useState(false)
     // const [conditionsSatisfied, setConditionsSatisfied] = useState(false)
 
-    
+
     const contentIcons = {
         article: <BsFileEarmark />,
         video: <FaCirclePlay />
@@ -111,15 +111,15 @@ function Curriculum({ activeSection }) {
 
     }
 
-    const uploadVideo = async(content, currId, sectId) => {
+    const uploadVideo = async (content, currId, sectId) => {
         console.log(content)
-        if(videoStatus.filter(stat=>Object.keys(stat).includes(currId)).length == 0){
+        if (videoStatus.filter(stat => Object.keys(stat).includes(currId)).length == 0) {
             // console.log('first entry')
             setVideoStatus([...videoStatus, { [currId]: 'processing' }])
         }
-        else{
+        else {
 
-            setVideoStatus(videoStatus.map(stat=>Object.keys(stat).includes(currId) ? {...stat, [currId]:'processing'} : stat))
+            setVideoStatus(videoStatus.map(stat => Object.keys(stat).includes(currId) ? { ...stat, [currId]: 'processing' } : stat))
         }
         // setVideoStatus([...videoStatus, { [currId]: 'processing' }])
         // setVideoStatus(prevStatus => prevStatus.map(
@@ -131,28 +131,28 @@ function Curriculum({ activeSection }) {
         //         status => status[currId] ? { [currId]: 'uploaded' } : status
         //     ));
         // }, 10000);
-        const addVideoUrl=(sectId, currId, videoUrl)=>{
+        const addVideoUrl = (sectId, currId, videoUrl) => {
             // console.log(videoUrl.split('/')[videoUrl.split('/').length-1])
             const section = sections.filter(sect => sect.id == sectId)[0]
             const currlm = section.curriculum.filter(currlm => currlm.currId == currId)[0]
-            currlm.videoUrl = videoUrl.split('/')[videoUrl.split('/').length-1]
-            console.log('added url',currlm)
+            currlm.videoUrl = videoUrl.split('/')[videoUrl.split('/').length - 1]
+            console.log('added url', currlm)
             setSections(sections.map(sect => sect.id == sectId ? { ...sect, curriculum: sect.curriculum.map(curr => curr.currId == currId ? currlm : curr) } : sect))
 
         }
         const formdata = new FormData()
-        formdata.append('video',content)
+        formdata.append('video', content)
         // formdata.append('name',data.name)
         // console.log(data.video.filepath, data.video.name)
-        await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/createcourse/videoUpload`,formdata)
-        .then(res=>{
-            console.log(res.data)
-            setVideoStatus(prevStatus => prevStatus.map(
-                status => status[currId] ? { [currId]: 'uploaded' } : status
-            ));
-            if(res.data.status == 'success') addVideoUrl(sectId, currId, res.data.videoUrl)
-        })
-        
+        await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/createcourse/videoUpload`, formdata)
+            .then(res => {
+                console.log(res.data)
+                setVideoStatus(prevStatus => prevStatus.map(
+                    status => status[currId] ? { [currId]: 'uploaded' } : status
+                ));
+                if (res.data.status == 'success') addVideoUrl(sectId, currId, res.data.videoUrl)
+            })
+
     }
 
     // useEffect(()=>{
@@ -182,23 +182,23 @@ function Curriculum({ activeSection }) {
 
             const section = sections.filter(sect => sect.id == sectId)[0]
             const currlm = section.curriculum.filter(currlm => currlm.currId == currId)[0]
-            if(videoFIle === currlm?.content){
+            if (videoFIle === currlm?.content) {
                 console.log('same files')
                 setIsEditContent('')
                 setVideoFile(null)
-            } 
-            else{
+            }
+            else {
                 console.log('not same', videoFIle, currlm.content)
                 currlm.content = videoFIle
                 setArticleText('')
                 setVideoUrl('')
                 setVideoFile(null)
-                
+
                 // console.log(currlm)
                 uploadVideo(currlm.content, currlm.currId, sectId)
                 setIsEditContent('')
-    
-    
+
+
                 setSections(sections.map(sect => sect.id == sectId ? { ...sect, curriculum: sect.curriculum.map(curr => curr.currId == currId ? currlm : curr) } : sect))
                 setSaved(false)
                 setConditionsSatisfied(false)
@@ -253,7 +253,7 @@ function Curriculum({ activeSection }) {
         }
     }, [conditionsSatisfied])
 
-    
+
 
     useEffect(() => {
         if (filledStatus.includes('curriculum')) {
@@ -298,7 +298,7 @@ function Curriculum({ activeSection }) {
                                                     </div>
                                                     <div className='flex items-center gap-5'>
                                                         {(item.content == '' && isAddContent !== item.currId) && <span className='p-1 px-2 border flex items-center w-[max-content] border-black cursor-pointer' onClick={() => { setIsAddContent(item.currId); setSelectedType('') }}><IoMdAdd className='text-[1.2em]' />content</span>}
-                                                        {isAddContent !== item.currId ? <FaAngleDown className='text-[1.2em] ' onClick={() => { setIsAddContent(item.currId); }} />
+                                                        {isAddContent !== item.currId ? <FaAngleDown className='text-[1.2em] ' onClick={() => { setIsEditContent('');setIsAddContent(item.currId); }} />
                                                             : <FaAngleUp className='text-[1.2em] ' onClick={() => { setIsAddContent(''); }} />}
                                                     </div>
 
@@ -339,30 +339,30 @@ function Curriculum({ activeSection }) {
                                                                 </div>
                                                                 {item.content == '' && <span className='py-2 w-[max-content] h-[max-content]  px-2 bg-slate-800 text-white text-center font-bold ' onClick={() => { addVideoContent(section.id, item.currId, videoFIle); }}>done</span>}                                                    </>
                                                             : <>
-                                                            {/* <span className='p-2 py-1 border-r bg-white text-blue-700 border-black me-2'>
+                                                                {/* <span className='p-2 py-1 border-r bg-white text-blue-700 border-black me-2'>
                                                                 <AiOutlineLink size={'1.2em'} />
                                                             </span>
                                                                 <span className='w-96   flex items-center  bg-slate-100 border'>{item.content?.name}</span> */}
                                                                 <table className='w-[80%] '>
                                                                     <tbody>
 
-                                                                    <tr className='border-b'>
-                                                                        <th className=' text-start px-2 py-2'>File</th>
-                                                                        <th className=' text-start px-2 py-2'>type</th>
-                                                                        <th className=' text-start px-2 py-2'>status</th>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td className='flex items-center gap-2 p-2'>{contentIcons.video} {item.content?.name}</td>
-                                                                        <td className='p-2'>video</td>
-                                                                        <td className='p-2'>{videoStatus.filter(vidstat=>vidstat[item.currId])[0][item.currId] == 'processing' ?
-                                                                            <div >
-                                                                                <p>{videoStatus.filter(vidstat=>vidstat[item.currId])[0][item.currId]}</p>
-                                                                                <div className='w-20 h-2 rounded-full  bg-gray-500 animate-pulse'></div>
-                                                                            </div>
-                                                                            :
-                                                                            <div>uploaded</div>
-                                                                        }</td>
-                                                                    </tr>
+                                                                        <tr className='border-b'>
+                                                                            <th className=' text-start px-2 py-2'>File</th>
+                                                                            <th className=' text-start px-2 py-2'>type</th>
+                                                                            <th className=' text-start px-2 py-2'>status</th>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td className='flex items-center gap-2 p-2'>{contentIcons.video} {item.content?.name}</td>
+                                                                            <td className='p-2'>video</td>
+                                                                            <td className='p-2'>{videoStatus.filter(vidstat => vidstat[item.currId])[0][item.currId] == 'processing' ?
+                                                                                <div >
+                                                                                    <p>{videoStatus.filter(vidstat => vidstat[item.currId])[0][item.currId]}</p>
+                                                                                    <div className='w-20 h-2 rounded-full  bg-gray-500 animate-pulse'></div>
+                                                                                </div>
+                                                                                :
+                                                                                <div>uploaded</div>
+                                                                            }</td>
+                                                                        </tr>
                                                                     </tbody>
                                                                 </table>
                                                             </>
@@ -371,7 +371,8 @@ function Curriculum({ activeSection }) {
                                                     </div> : <div className='flex flex-col gap-1 w-full'>
                                                         <label htmlFor="congratulations" className='font-bold capitalize'>Text</label>
                                                         {(item.content == '' || isEditContent == item.currId) ?
-                                                            <div className='flex flex-col gap-2'> <textarea name="" className='h-[100px] p-2 w-full resize-none rounded-md outline-none border border-black' value={articleText} placeholder='write the article' onChange={(e) => setArticleText(e.target.value)}></textarea>
+                                                            <div className='flex flex-col gap-2'>
+                                                                <textarea name="" className='h-[100px] p-2 w-full resize-none rounded-md outline-none border border-black' value={articleText} placeholder='write the article' onChange={(e) => setArticleText(e.target.value)}></textarea>
                                                                 {item.content == '' && <span className='py-1 w-[max-content] px-2 bg-slate-800 text-white text-center font-bold cursor-pointer' onClick={() => addContent(section.id, item.currId, articleText)}>done</span>
                                                                 }
                                                             </div>

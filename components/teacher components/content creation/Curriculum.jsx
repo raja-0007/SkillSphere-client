@@ -14,6 +14,8 @@ import { AiOutlineLink } from "react-icons/ai";
 import { FaAngleUp } from "react-icons/fa6";
 import { useTeacherContext } from '@contexts/TeacherContext';
 import axios from 'axios';
+import Editor from './Editor';
+
 
 
 
@@ -104,7 +106,7 @@ function Curriculum({ activeSection }) {
     }
 
     const addContentType = (value, sectId, currId) => {
-        setSections(sections.map(sect => sect.id == sectId ? { ...sect, curriculum: sect.curriculum.map(curr => curr.currId == currId ? { ...curr, content_type: value } : curr) } : sect))
+        setSections(sections.map(sect => sect.id == sectId ? { ...sect, curriculum: sect.curriculum.map(curr => curr.currId == currId ? { ...curr, content_type: value, content: value === 'video' ? '' : [] } : curr) } : sect))
         setVideoUrl('')
         setVideoFile(null)
         setArticleText('')
@@ -155,9 +157,6 @@ function Curriculum({ activeSection }) {
 
     }
 
-    // useEffect(()=>{
-    //     console.log(videoStatus)
-    // },[videoStatus])
 
     const addContent = (sectId, currId, content) => {
         const section = sections.filter(sect => sect.id == sectId)[0]
@@ -262,6 +261,10 @@ function Curriculum({ activeSection }) {
         else setSaved(false)
     }, [])
 
+    const onSave = (currId, sectId, data) => {
+        console.log(data.blocks)
+        addContent(sectId, currId, data)
+    }
 
 
 
@@ -298,16 +301,16 @@ function Curriculum({ activeSection }) {
                                                     </div>
                                                     <div className='flex items-center gap-5'>
                                                         {(item.content == '' && isAddContent !== item.currId) && <span className='p-1 px-2 border flex items-center w-[max-content] border-black cursor-pointer' onClick={() => { setIsAddContent(item.currId); setSelectedType('') }}><IoMdAdd className='text-[1.2em]' />content</span>}
-                                                        {isAddContent !== item.currId ? <FaAngleDown className='text-[1.2em] ' onClick={() => { setIsEditContent('');setIsAddContent(item.currId); }} />
+                                                        {isAddContent !== item.currId ? <FaAngleDown className='text-[1.2em] ' onClick={() => { setIsEditContent(''); setIsAddContent(item.currId); }} />
                                                             : <FaAngleUp className='text-[1.2em] ' onClick={() => { setIsAddContent(''); }} />}
                                                     </div>
 
                                                 </span>
                                                 {isAddContent == item.currId && <div className='w-full flex flex-col px-6 mt-3 relative border-t  gap-2 pt-3 pb-1 border-black'>
-                                                    {item.content !== '' && <span className='self-end mt-1 absolute top-2 right-20 cursor-pointer' > {isEditContent !== item.currId ?
+                                                    {(item.content !== '' && item.content.length !== 0) && <span className='self-end mt-1 absolute top-2 right-20 cursor-pointer' > {isEditContent !== item.currId ?
                                                         <span className='cursor-pointer' onClick={() => { setIsEditContent(item.currId); item.content_type == 'video' ? (setVideoUrl(item.content), setVideoFile(item.content)) : setArticleText(item.content) }}>
                                                             <FaRegEdit size={'1.3em'} />
-                                                        </span> : <span className='p-1 w-5 h-5 flex items-center justify-center bg-green-300 text-white rounded-full cursor-pointer' onClick={() => { item.content_type == 'video' ? addVideoContent(section.id, item.currId, videoFIle) : addContent(section.id, item.currId, articleText) }}>
+                                                        </span> : item.content_type == 'video' && <span className='p-1 w-5 h-5 flex items-center justify-center bg-green-300 text-white rounded-full cursor-pointer' onClick={() => { item.content_type == 'video' ? addVideoContent(section.id, item.currId, videoFIle) : addContent(section.id, item.currId, articleText) }}>
                                                             <IoMdCheckmark size={'1.3em'} />
                                                         </span>}</span>
                                                     }
@@ -370,13 +373,58 @@ function Curriculum({ activeSection }) {
                                                         }
                                                     </div> : <div className='flex flex-col gap-1 w-full'>
                                                         <label htmlFor="congratulations" className='font-bold capitalize'>Text</label>
-                                                        {(item.content == '' || isEditContent == item.currId) ?
-                                                            <div className='flex flex-col gap-2'>
-                                                                <textarea name="" className='h-[100px] p-2 w-full resize-none rounded-md outline-none border border-black' value={articleText} placeholder='write the article' onChange={(e) => setArticleText(e.target.value)}></textarea>
-                                                                {item.content == '' && <span className='py-1 w-[max-content] px-2 bg-slate-800 text-white text-center font-bold cursor-pointer' onClick={() => addContent(section.id, item.currId, articleText)}>done</span>
-                                                                }
+                                                        {(item.content.length == 0 || isEditContent == item.currId) ?
+                                                            <div className='flex flex-col gap-2 w-full'>
+                                                                <Editor id={item.currId} sectId={section.id} onSave={onSave} data={item.content} />
+                                                                {/* <textarea name="" className='h-[100px] p-2 w-full resize-none rounded-md outline-none border border-black' value={articleText} placeholder='write the article' onChange={(e) => setArticleText(e.target.value)}></textarea> */}
+                                                                {/* {item.content == '' && <span className=' ' onClick={() => addContent(section.id, item.currId, articleText)}>done</span> 
+                                                                }*/}
                                                             </div>
-                                                            : <span className='w-full p-2 bg-slate-100 border'>{item.content}</span>}
+                                                            : <span className='w-full p-4 flex flex-col gradient-opacity border h-[250px] overflow-hidden relative'>{item.content.blocks.map((block, block_i) => {
+                                                                const getHeaderText = () => {
+                                                                    const headers = {
+                                                                        h1: <h1 className='font-bold text-lg mb-2' dangerouslySetInnerHTML={{__html: block.data.text}}></h1>,
+                                                                        h2: <h2 className='font-bold text-xl mb-2' dangerouslySetInnerHTML={{__html: block.data.text}}></h2>,
+                                                                        h3: <h3 className='font-bold text-2xl mb-2' dangerouslySetInnerHTML={{__html: block.data.text}}></h3>,
+                                                                        h4: <h4 className='font-bold text-3xl mb-2' dangerouslySetInnerHTML={{__html: block.data.text}}></h4>,
+                                                                        h5: <h5 className='font-bold text-4xl mb-2' dangerouslySetInnerHTML={{__html: block.data.text}}></h5>,
+                                                                        h6: <h6 className='font-bold text-5xl mb-2' dangerouslySetInnerHTML={{__html: block.data.text}}></h6>,
+
+                                                                    }
+                                                                    return headers[`h${block.data.level}`]
+                                                                }
+                                                                const getNestedList = (style, items, key) => {
+
+                                                                    if (style === 'unordered') {
+                                                                        return <ul className='list-disc ps-5'>
+                                                                            {items.map((listItem, list_i) => {
+                                                                                return <>
+                                                                                    <li key={list_i + key} dangerouslySetInnerHTML={{__html: listItem.content}}></li>
+                                                                                    {listItem.items.length > 0 && getNestedList('unordered', listItem.items, list_i + key)}
+                                                                                </>
+                                                                            })}
+                                                                        </ul>
+                                                                    }
+                                                                    else {
+                                                                        return <ol className='list-decimal ps-5'>
+                                                                            {items.map((listItem, list_i) => {
+                                                                                return <>
+                                                                                    <li key={list_i + key} dangerouslySetInnerHTML={{__html: listItem.content}}></li>
+                                                                                    {listItem.items.length > 0 && getNestedList('ordered', listItem.items, list_i + key)}
+                                                                                </>
+                                                                            })}
+                                                                        </ol>
+                                                                    }
+                                                                }
+                                                                return (
+                                                                    <>
+                                                                        {block.type == 'paragraph' ? <p dangerouslySetInnerHTML={{__html: block.data.text}} className='mb-2'></p>
+                                                                            : block.type == 'header' ? getHeaderText()
+                                                                                : block.type == 'nestedList' && getNestedList(block.data.style, block.data.items, 0)}
+                                                                        <span className='absolute w-full text-end   py-1 rounded-b-md  right-0 bottom-0 text-gray-200 px-5 font-bold text-2xl'>...</span>                                                                   </>
+
+                                                                )
+                                                            })}</span>}
                                                     </div>}
 
                                                     <span className='px-2 py-1 border border-black mt-3 flex items-center gap-1 w-[max-content] font-semibold '><IoMdAdd size={'1.3em'} />Description</span>

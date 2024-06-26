@@ -74,8 +74,8 @@ function CourseOverview({ from, setFrom }) {
                         alert('session expired please login again to continue')
                         logout()
                     }
-                    else if(res.data.status == 'success'){
-                        setWishList([...wishList,overviewCourse._id])
+                    else if (res.data.status == 'success') {
+                        setWishList([...wishList, overviewCourse._id])
                     }
 
                     // console.log('added to Wishlist', res.data);
@@ -95,9 +95,9 @@ function CourseOverview({ from, setFrom }) {
         setLoading(true)
         const getWishList = async () => {
             await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getWishlist/${userDetails?.userDetails?._id}`)
-                .then(res => { 
+                .then(res => {
                     // console.log('wishlist>>>', res.data);
-                     setWishList(res.data.RawList); setLoading(false)
+                    setWishList(res.data.RawList); setLoading(false)
                 })
 
         }
@@ -105,26 +105,37 @@ function CourseOverview({ from, setFrom }) {
         if (userDetails?.userDetails?._id) getWishList()
     }, [])
 
-    const removeFromWishlist=async(id)=>{
+    const removeFromWishlist = async (id) => {
         setLoading(true)
-        await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/removeFromWishlist/${id}/${userDetails?.userDetails?._id}`,{
-            headers:{
-                'Authorization':`Bearer ${userDetails?.token}`
+        await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/removeFromWishlist/${id}/${userDetails?.userDetails?._id}`, {
+            headers: {
+                'Authorization': `Bearer ${userDetails?.token}`
             }
         })
-        .then((res)=>{
-            setLoading(false)
-            if(res.status == 403){
-                alert('session expired, please log in to continue')
-                logout()
-            }
-            else if(res.data.status == 'success'){
-                setWishList(res.data.wishList)
-            }
-        })
+            .then((res) => {
+                setLoading(false)
+                if (res.status == 403) {
+                    alert('session expired, please log in to continue')
+                    logout()
+                }
+                else if (res.data.status == 'success') {
+                    setWishList(res.data.wishList)
+                }
+            })
     }
 
 
+    const enrollFree = async (courseId, userId) => {
+
+        await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/enroll`, { userId: userId, courseIds: JSON.stringify([courseId]) })
+            .then(res => {
+                console.log('enrolled', res.data);
+                if (res.data.status == 'success') {
+                    window.open(`/coursesDetails/${overviewCourse._id}/${userDetails?.userDetails?._id}`, '_blank');
+                }
+                else return false
+            })
+    }
 
 
 
@@ -148,24 +159,27 @@ function CourseOverview({ from, setFrom }) {
 
                     <div className='flex items-center w-full gap-2 pt-5'>
 
+                        <span className='flex items-center  text-xl font-bold uppercase text-violet-400'>{overviewCourse.price !== 'free' ? <FaRupeeSign size={'.85em'} />:'*'}{overviewCourse.price}</span>
+
+
                         {(cart?.filter(item => item._id == overviewCourse._id).length == 0 && !overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) && overviewCourse.price !== 'free' && overviewCourse.author.authorId !== userDetails?.userDetails?._id) ?
                             <>
-                                <span className='flex items-center  text-xl font-bold'><FaRupeeSign size={'1em'} />{overviewCourse.price}</span>
                                 <span className='px-3 py-2 bg-violet-500 text-center text-white w-full' onClick={addToCart}>Add to cart</span>
 
                             </>
                             : cart?.filter(item => item._id == overviewCourse._id).length !== 0 ?
                                 <span className='px-3 py-2 bg-slate-700 text-center text-white w-full' onClick={() => setActive('cart')}>Go to cart</span>
-                                : (overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) || overviewCourse.price == 'free' || overviewCourse.author.authorId == userDetails?.userDetails?._id) &&
-                                <Link href={`/coursesDetails/${overviewCourse._id}/${userDetails?.userDetails?._id}`} target='_blank' className='px-3 py-2 bg-slate-700 text-center text-white w-full' >Go to course</Link>
+                                : (!overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) && overviewCourse.price == 'free') ? <span className='px-3 py-2 bg-slate-700 text-center text-white w-full' onClick={() => enrollFree(overviewCourse._id, userDetails?.userDetails?._id)}>Enroll for free</span>
+                                    : (overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) || overviewCourse.price == 'free' || overviewCourse.author.authorId == userDetails?.userDetails?._id) &&
+                                    <Link href={`/coursesDetails/${overviewCourse._id}/${userDetails?.userDetails?._id}`} target='_blank' className='px-3 py-2 bg-slate-700 text-center text-white w-full' >Go to course</Link>
                         }
-                        <span className={`px-2 py-2 border border-black ${loading && ' animate-pulse'}`} onClick={()=>wishList.includes(overviewCourse?._id) ? removeFromWishlist(overviewCourse?._id) : addToWishlist()}>
-                            {wishList.includes(overviewCourse?._id) ? <FaHeart className='text-red-400' size={'1.2em'}/>
-                            :<FaRegHeart size={'1.2em'} />
+                        <span className={`px-2 py-2 border border-black ${loading && ' animate-pulse'}`} onClick={() => wishList.includes(overviewCourse?._id) ? removeFromWishlist(overviewCourse?._id) : addToWishlist()}>
+                            {wishList.includes(overviewCourse?._id) ? <FaHeart className='text-red-400' size={'1.2em'} />
+                                : <FaRegHeart size={'1.2em'} />
                             }
                         </span>
                     </div>
-                    <span className='text-xs'> 30-day money-back guarantee</span>
+                    <span className='text-xs'>{overviewCourse.price !== 'free' ? '30-day money-back guarantee' : 'this course is available for free'}</span>
                     <span className='text-xs'>Full life time access</span>
                 </div>
             </div>
@@ -187,9 +201,9 @@ function CourseOverview({ from, setFrom }) {
                     <div className='flex flex-wrap '>
 
                         <span className='flex items-center gap-2 w-[50%] mb-2'><BsFileEarmark size={'1.2em'} />{totalArticleLectures(overviewCourse.sections)} articles</span>
-                        <span className='flex items-center gap-2 w-[50%] mb-2'><FaCirclePlay size={'1.2em'} />{totalVideoLectures(overviewCourse.sections)} articles</span>
-                        <span className='flex items-center gap-2 w-[50%] mb-2'><BsFileEarmark size={'1.2em'} />{totalArticleLectures(overviewCourse.sections)} articles</span>
-                        <span className='flex items-center gap-2 w-[50%] mb-2'><FaCirclePlay size={'1.2em'} />{totalVideoLectures(overviewCourse.sections)} articles</span>
+                        <span className='flex items-center gap-2 w-[50%] mb-2'><FaCirclePlay size={'1.2em'} />{totalVideoLectures(overviewCourse.sections)} video lectures</span>
+                        {/* <span className='flex items-center gap-2 w-[50%] mb-2'><BsFileEarmark size={'1.2em'} />{totalArticleLectures(overviewCourse.sections)} articles</span>
+                        <span className='flex items-center gap-2 w-[50%] mb-2'><FaCirclePlay size={'1.2em'} />{totalVideoLectures(overviewCourse.sections)} articles</span> */}
                     </div>
                 </div>
                 <CourseSections />

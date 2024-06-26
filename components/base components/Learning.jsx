@@ -12,6 +12,7 @@ function Learning({ from, setFrom }) {
     const { userDetails, setActive } = useHomeContext()
     const [loading, setLoading] = useState(false)
     const [completed, setCompleted] = useState([])
+    const [percentages, setPercentages] = useState([])
     const [hover, setHover] = useState(null)
     useEffect(() => {
         setLoading(true)
@@ -28,27 +29,81 @@ function Learning({ from, setFrom }) {
     useEffect(() => {
 
         const getCompletionDetails = async (courseId) => {
-            console.log(courseId)
-            await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCompletionDetails/${courseId}/${userDetails?.userDetails?._id}`)
-                .then(res => {
-                    if (res.data.status == 'success') {
-                        setCompleted([...completed, res.data.completedLectures.length])
-                    }
-                    else {
-                        alert('an unexpected error had occured. please try again')
-                    }
-                })
+            try {
+                console.log(courseId);
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCompletionDetails/${courseId}/${userDetails?.userDetails?._id}`);
+                if (res.data.status == 'success') {
+                    console.log('responses', res.data.completedLectures.length);
+                    return res.data.completedLectures.length;
+                } else {
+                    alert('An unexpected error occurred. Please try again');
+                    // return 0; // Return a consistent type (e.g., 0) for errors
+                }
+            } catch (error) {
+                console.error('Error fetching completion details:', error);
+                // return 0; // Return a consistent type (e.g., 0) for errors
+            }
         }
 
-        if (learningCourses.length > 0) {
-            learningCourses.forEach(course => {
+        // if (learningCourses.length > 0) {
+        //     var response = []
 
-                getCompletionDetails(course._id)
-            });
+        //     learningCourses.forEach((course) => {
 
+        //         getCompletionDetails(course._id, response)
+        //         console.log('rrrrrrrrrrrrrrrrrrrrrrrrrr2',response)
+        //         // setCompleted([...completed, res.data.completedLectures.length])
+        //     });
+        //     console.log('>>>>>>>>>>>>>>>>>.3',response)
+        //     setCompleted(response)
+
+        // }
+        const fetchCompletionDetailsForCourses=async()=>{
+
+            if (learningCourses.length > 0) {
+                try {
+                    const promises = learningCourses.map((course) => getCompletionDetails(course._id));
+                    const response = await Promise.all(promises);
+                    console.log('All responses:', response);
+                    setCompleted(response)
+                } catch (error) {
+                    console.error('Error in fetching completion details for courses:', error);
+                }
+            }
         }
+        fetchCompletionDetailsForCourses();
 
     }, [learningCourses])
+
+    useEffect(() => {
+
+        const calculatePercentages = () => {
+
+            const newPercentages = learningCourses?.map((item, i) => {
+
+                var totalLectures = 0
+                item.sections.forEach(sect => {
+                    totalLectures += sect.curriculum.length
+
+                });
+
+                const percentage = Math.floor((completed[i] / totalLectures) * 100)
+                // console.log(completed[i], totalLectures, percentage)
+                return percentage
+            })
+            setPercentages(newPercentages)
+
+        }
+
+        if (completed.length > 0 && completed.length == learningCourses.length) {
+
+            calculatePercentages()
+        }
+        console.log('completed list', completed)
+
+    }, [completed])
+
+    console.log(percentages)
 
 
 
@@ -62,12 +117,7 @@ function Learning({ from, setFrom }) {
             <p className='text-3xl font-bold'>My Learning</p>
             <section className=' flex flex-wrap gap-10 px-10  py-10'>
                 {!loading ? learningCourses?.map((item, i) => {
-                    var totalLectures = 0
-                    item.sections.forEach(sect => {
-                        totalLectures += sect.curriculum.length
 
-                    });
-                    const percentage = Math.floor((completed[i] / totalLectures) * 100)
                     return (
                         <Link key={i} href={`/coursesDetails/${item._id}/${userDetails?.userDetails?._id}`} target='_blank'
                             className='flex flex-col gap-1  w-[300px] cursor-pointer' onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}>
@@ -75,17 +125,17 @@ function Learning({ from, setFrom }) {
 
                                 <img src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${item.image}`} className='w-[300px]' alt="" />
                                 {hover == i && (<div className='w-full flex items-center justify-center h-full bg-black bg-opacity-40 absolute top-0 left-0'>
-                                    <div className='w-14 h-14 flex justify-center items-center rounded-full bg-white'><IoPlaySharp className='text-[1.8em] ms-1'/></div>
+                                    <div className='w-14 h-14 flex justify-center items-center rounded-full bg-white'><IoPlaySharp className='text-[1.8em] ms-1' /></div>
                                 </div>)}
                             </div>
 
                             <p className='font-bold px-2'>{item.landingPageDetails.title}</p>
                             <p className='text-xs px-2 text-gray-500 font-medium'>{item.author.username} sikandhar</p>
                             <div className='w-full h-1 mt-1 bg-violet-200 '>
-                                <div style={{ width: `${percentage}%` }} className={` h-full bg-violet-500 rounded-e-full `}></div>
+                                <div style={{ width: `${percentages[i]}%` }} className={` h-full bg-violet-500 rounded-e-full `}></div>
 
                             </div>
-                            <p className='text-xs'>{Math.floor((completed[i] / totalLectures) * 100)}% completed</p>
+                            <p className='text-xs'>{percentages[i]}% completed</p>
                         </Link>
                     )
                 }) :

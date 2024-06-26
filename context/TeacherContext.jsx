@@ -77,7 +77,7 @@ function TeacherProvider({ children }) {
                 .then(res => {console.log(res.data)
                     if(res.data.status == 'saved'){
                         result = 'success'
-                        window.open(`/coursesDetails/${res.data.courseId}`,'_blank')
+                        window.open(`/coursesDetails/${res.data.courseId}/${res.data.authorId}`,'_blank')
                         
                     }
                 })

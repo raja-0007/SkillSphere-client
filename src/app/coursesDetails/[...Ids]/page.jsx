@@ -76,7 +76,7 @@ function page({ params }) {
           }
         }
       }
-      
+
     }
 
   }, [courseContent, completed])
@@ -127,15 +127,15 @@ function page({ params }) {
 
   const handleOpen = (action, id) => {
     if (action == 'open') {
-        setOpened([...opened, id])
+      setOpened([...opened, id])
     }
     else if (action == 'close') {
-        const list = [...opened]
-        // console.log('lcosee', list,id, list.filter(sect !== id))
+      const list = [...opened]
+      // console.log('lcosee', list,id, list.filter(sect !== id))
 
-        setOpened(list.filter(sect => sect !== id))
+      setOpened(list.filter(sect => sect !== id))
     }
-}
+  }
 
 
   return (
@@ -144,13 +144,57 @@ function page({ params }) {
       <div className='flex w-full relative' >
 
         <div className={`flex flex-col ${isSidebar ? 'w-[75%]' : 'w-full'} gap-8`}>
-          <div className=' bg-gray-100 '>
+          <div className=' w-full'>
             {(Object.keys(selected).length !== 0 && selected.content_type == 'article') ?
-              <div className='px-20 pe-32 pt-20 text-justify h-[400px] overflow-y-auto'>
-                {selected.content}
+              <div className='px-20 py-10  flex flex-col bg-slate-50 text-justify h-[500px] overflow-y-auto relative'>
+                {selected.content.blocks.map((block, block_i) => {
+                  const getHeaderText = () => {
+                    const headers = {
+                      h1: <h1 className='font-bold text-lg mb-2' dangerouslySetInnerHTML={{ __html: block.data.text }}></h1>,
+                      h2: <h2 className='font-bold text-xl mb-2' dangerouslySetInnerHTML={{ __html: block.data.text }}></h2>,
+                      h3: <h3 className='font-bold text-2xl mb-2' dangerouslySetInnerHTML={{ __html: block.data.text }}></h3>,
+                      h4: <h4 className='font-bold text-3xl mb-2' dangerouslySetInnerHTML={{ __html: block.data.text }}></h4>,
+                      h5: <h5 className='font-bold text-4xl mb-2' dangerouslySetInnerHTML={{ __html: block.data.text }}></h5>,
+                      h6: <h6 className='font-bold text-5xl mb-2' dangerouslySetInnerHTML={{ __html: block.data.text }}></h6>,
+
+                    }
+                    return headers[`h${block.data.level}`]
+                  }
+                  const getNestedList = (style, items, key) => {
+
+                    if (style === 'unordered') {
+                      return <ul className='list-disc ps-5 mb-3'>
+                        {items.map((listItem, list_i) => {
+                          return <>
+                            <li key={list_i + key} dangerouslySetInnerHTML={{ __html: listItem.content }}></li>
+                            {listItem.items.length > 0 && getNestedList('unordered', listItem.items, list_i + key)}
+                          </>
+                        })}
+                      </ul>
+                    }
+                    else {
+                      return <ol className='list-decimal ps-5 mb-5'>
+                        {items.map((listItem, list_i) => {
+                          return <>
+                            <li key={list_i + key} dangerouslySetInnerHTML={{ __html: listItem.content }}></li>
+                            {listItem.items.length > 0 && getNestedList('ordered', listItem.items, list_i + key)}
+                          </>
+                        })}
+                      </ol>
+                    }
+                  }
+                  return (
+                    <>
+                      {block.type == 'paragraph' ? <p dangerouslySetInnerHTML={{ __html: block.data.text }} className='mb-2'></p>
+                        : block.type == 'header' ? getHeaderText()
+                          : block.type == 'nestedList' && getNestedList(block.data.style, block.data.items, 0)}
+                      <span className='absolute w-full text-end   py-1 rounded-b-md  right-0 bottom-0 text-gray-200 px-5 font-bold text-2xl'>...</span>                                                                   </>
+
+                  )
+                })}
               </div>
               : (Object.keys(selected).length !== 0 && selected.content_type == 'video') ?
-                <div className='h-[500px]'>
+                <div className='h-[500px] bg-black'>
 
                   <iframe
                     ref={iframeRef}

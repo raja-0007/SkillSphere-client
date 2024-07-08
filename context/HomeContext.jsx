@@ -16,7 +16,54 @@ function HomeProvider({ children }) {
   const [dropDown, setDropDown] = useState(false)
   const [cart, setCart] = useState([])
   const [enrolled, setEnrolled] = useState([])
+  const [ratings, setRatings] = useState([])
+  const [isRatingModelOpen, setIsRatingModelOpen] = useState({})
 
+
+  const addRating = async (data, rating, setLoading) => {
+    try {
+      const token = userDetails?.token;
+      console.log(token)
+      const userId = userDetails?.userDetails?._id
+      if (data.rating == 0) {
+
+        await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/addRating`, { courseId: data.id, userId: userId, rating: rating }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+          .then(res => {
+            console.log(res.data); setRatings(res.data.ratings);
+            setTimeout(() => {
+
+              setIsRatingModelOpen({})
+            }, 2000);
+          })
+      }
+      else {
+        console.log('editingeditingeditingediting', data.id, data.rating)
+        await axios.put(`${process.env.NEXT_PUBLIC_BASE_URL}/editRating`, { courseId: data.id, userId: userId, rating: rating }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+          .then(res => {
+            console.log(res.data); setRatings(res.data.ratings);
+            setTimeout(() => {
+
+              setIsRatingModelOpen({})
+            }, 2000);
+          })
+
+      }
+    }
+    catch (err) {
+      console.log(err)
+
+      alert('An unexpected error occurred. Please try again')
+      setIsRatingModelOpen({})
+    }
+  }
 
   const logout = () => {
     sessionStorage.removeItem('userdetails')
@@ -31,12 +78,12 @@ function HomeProvider({ children }) {
   }, [cart])
 
   useEffect(() => {
-    
+
     const getCart = async () => {
       try {
         const token = userDetails?.token;
         console.log(token) // Replace with your actual token
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userDetails?.userDetails?._id}`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userDetails?.userDetails?._id}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -50,11 +97,11 @@ function HomeProvider({ children }) {
       // await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userDetails?.userDetails?._id}`)
       //   .then(res => { console.log(res.data); setCart(res.data.cart) })
     }
-    
+
     if (userDetails?.userDetails?._id) {
       getCart()
     }
-    
+
   }, [userDetails])
 
 
@@ -69,6 +116,7 @@ function HomeProvider({ children }) {
       searchData, setSearchData,
       cart, setCart,
       enrolled, setEnrolled,
+      ratings, setRatings, addRating, isRatingModelOpen, setIsRatingModelOpen,
       logout
     }}>
 

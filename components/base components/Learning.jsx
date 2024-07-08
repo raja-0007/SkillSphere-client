@@ -1,3 +1,4 @@
+import { printRating } from '@components/home components/courses'
 import { useHomeContext } from '@contexts/HomeContext'
 import axios from 'axios'
 import Link from 'next/link'
@@ -7,13 +8,15 @@ import { IoPlaySharp } from "react-icons/io5";
 
 
 
-function Learning({ from, setFrom }) {
+function Learning({ from, setFrom, isRatingModelOpen, setIsRatingModelOpen }) {
     const [learningCourses, setLearningCourses] = useState([])
     const { userDetails, setActive } = useHomeContext()
     const [loading, setLoading] = useState(false)
     const [completed, setCompleted] = useState([])
     const [percentages, setPercentages] = useState([])
     const [hover, setHover] = useState(null)
+    const {ratings, setRatings} = useHomeContext()
+
     useEffect(() => {
         setLoading(true)
         const getEnrolled = async () => {
@@ -23,7 +26,9 @@ function Learning({ from, setFrom }) {
         }
 
 
-        if (userDetails?.userDetails?._id) getEnrolled()
+        if (userDetails?.userDetails?._id) {
+            getEnrolled()
+        }
     }, [])
 
     useEffect(() => {
@@ -58,7 +63,7 @@ function Learning({ from, setFrom }) {
         //     setCompleted(response)
 
         // }
-        const fetchCompletionDetailsForCourses=async()=>{
+        const fetchCompletionDetailsForCourses = async () => {
 
             if (learningCourses.length > 0) {
                 try {
@@ -71,6 +76,22 @@ function Learning({ from, setFrom }) {
                 }
             }
         }
+        const getRatings = async () => {
+            if (learningCourses.length == 0) return
+            const courseIds = learningCourses.map(course => course._id)
+            const userId = userDetails?.userDetails?._id
+            try {
+                await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getRating/${courseIds}/${userId}`)
+                    .then(res => setRatings(res.data.ratings))
+            }
+            catch (err) {
+                console.log(err)
+
+                alert('An unexpected error occurred. Please try again')
+            }
+        }
+        getRatings()
+
         fetchCompletionDetailsForCourses();
 
     }, [learningCourses])
@@ -105,6 +126,10 @@ function Learning({ from, setFrom }) {
 
     console.log(percentages)
 
+    console.log('ratingsratingsratingsratings>>>>',ratings)
+    
+
+
 
 
     return (
@@ -117,26 +142,41 @@ function Learning({ from, setFrom }) {
             <p className='text-3xl font-bold'>My Learning</p>
             <section className=' flex flex-wrap gap-10 px-10  py-10'>
                 {!loading ? learningCourses?.map((item, i) => {
-
+                    console.log('itemRatingitemRatingitemRating',
+                        ratings,
+                        ratings.filter(ratingitem => ratingitem.courseId == item._id))
                     return (
-                        <Link key={i} href={`/coursesDetails/${item._id}/${userDetails?.userDetails?._id}`} target='_blank'
-                            className='flex flex-col gap-1  w-[300px] cursor-pointer' onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}>
-                            <div className='w-[300px] h-[max-content] relative'>
+                        <div key={i}>
+                            <Link href={`/coursesDetails/${item._id}/${userDetails?.userDetails?._id}`} target='_blank'
+                                className='flex flex-col   w-[300px] cursor-pointer' onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}>
+                                <div className='w-[300px] h-[max-content] relative'>
 
-                                <img src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${item.image}`} className='w-[300px]' alt="" />
-                                {hover == i && (<div className='w-full flex items-center justify-center h-full bg-black bg-opacity-40 absolute top-0 left-0'>
-                                    <div className='w-14 h-14 flex justify-center items-center rounded-full bg-white'><IoPlaySharp className='text-[1.8em] ms-1' /></div>
-                                </div>)}
+                                    <img src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${item.image}`} className='w-[300px] h-[170px]' alt="" />
+                                    {hover == i && (<div className='w-full flex items-center justify-center h-full bg-black bg-opacity-40 absolute top-0 left-0'>
+                                        <div className='w-14 h-14 flex justify-center items-center rounded-full bg-white'><IoPlaySharp className='text-[1.8em] ms-1' /></div>
+                                    </div>)}
+                                </div>
+
+                                <p className='font-bold px-2'>{item.landingPageDetails.title}</p>
+                                <p className='text-xs px-2 text-gray-500 font-medium'>{item.author.username} sikandhar</p>
+                                <div className='w-full h-1 mt-1 bg-violet-200 '>
+                                    <div style={{ width: `${percentages[i]}%` }} className={` h-full bg-violet-500 rounded-e-full `}></div>
+
+                                </div>
+
+
+                            </Link>
+                            <div className='flex flex-col w-[300px] justify-end'>
+                                <span className='flex justify-between'>
+                                    <p className='text-xs'>{percentages[i]}% completed</p>
+                                    {percentages[i] > 0 &&
+                                        <span className='flex mt-1' onClick={() => setIsRatingModelOpen({id:item._id, rating:ratings.filter(ratingItem => ratingItem.courseId == item._id)[0]?.rating || 0})}>{printRating(ratings.filter(ratingItem => ratingItem.courseId == item._id)[0]?.rating || 0)}</span>
+                                    }
+                                </span>
+                                {percentages[i] > 0 && <p className='text-xs font-light self-end' onClick={() => setIsRatingModelOpen({id: item._id, rating:ratings.filter(ratingItem => ratingItem.courseId == item._id)[0]?.rating || 0})}>
+                                    {ratings.filter(ratingItem => ratingItem.courseId == item._id)[0]?.rating > 0 ? 'Edit ' : 'Leave a '}Rating</p>}
                             </div>
-
-                            <p className='font-bold px-2'>{item.landingPageDetails.title}</p>
-                            <p className='text-xs px-2 text-gray-500 font-medium'>{item.author.username} sikandhar</p>
-                            <div className='w-full h-1 mt-1 bg-violet-200 '>
-                                <div style={{ width: `${percentages[i]}%` }} className={` h-full bg-violet-500 rounded-e-full `}></div>
-
-                            </div>
-                            <p className='text-xs'>{percentages[i]}% completed</p>
-                        </Link>
+                        </div>
                     )
                 }) :
                     <>
@@ -167,6 +207,7 @@ function Learning({ from, setFrom }) {
                     </>
                 }
             </section>
+
         </div>
     )
 }

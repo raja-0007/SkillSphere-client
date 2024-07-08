@@ -111,7 +111,7 @@ function Courses() {
                   <small className='font-light text-gray-500'>{course.author}</small>
                   <span className='flex gap-2 items-center font-semibold text-amber-900'>
                     {course.rating}
-                    <span className=' flex'>{printRating(course.rating)}</span>
+                    <span className=' flex'>{printRating(course.rating.rating)}</span>
                     </span>
                   
                   <span className='font-bold'>&#8377;{course.cost}</span>

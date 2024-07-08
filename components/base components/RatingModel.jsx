@@ -45,7 +45,7 @@ function RatingModel({ isRatingModelOpen, setIsRatingModelOpen }) {
                         }
                     }}>submit</span>
                     :
-                    loading && <Spin className='mt-5 self-end me-5 text-violet-500' />
+                    loading && <Spin className='mt-5 self-end me-5' size="large" />
                 }  
             </div>
         </section>

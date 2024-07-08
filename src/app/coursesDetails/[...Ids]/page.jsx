@@ -9,6 +9,7 @@ import CourseSidebar from '@components/courseDetails components/CourseSidebar'
 import { FaStar } from "react-icons/fa";
 import { BsFileEarmark } from 'react-icons/bs'
 import { IoMdCheckmark } from 'react-icons/io'
+import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 
 
 function page({ params }) {
@@ -143,10 +144,10 @@ function page({ params }) {
       <CourseNavbar title={courseContent?.landingPageDetails?.title} />
       <div className='flex w-full relative' >
 
-        <div className={`flex flex-col ${isSidebar ? 'w-[75%]' : 'w-full'} gap-8`}>
+        <div className={`flex flex-col ${isSidebar ? 'w-[75%]' : 'w-full'}`}>
           <div className=' w-full'>
             {(Object.keys(selected).length !== 0 && selected.content_type == 'article') ?
-              <div className='px-20 py-10  flex flex-col bg-slate-50 text-justify h-[500px] overflow-y-auto relative'>
+              <div className='px-20 py-10  flex flex-col text-justify h-[500px] overflow-y-auto relative'>
                 {selected.content.blocks.map((block, block_i) => {
                   const getHeaderText = () => {
                     const headers = {
@@ -188,7 +189,8 @@ function page({ params }) {
                       {block.type == 'paragraph' ? <p dangerouslySetInnerHTML={{ __html: block.data.text }} className='mb-2'></p>
                         : block.type == 'header' ? getHeaderText()
                           : block.type == 'nestedList' && getNestedList(block.data.style, block.data.items, 0)}
-                      <span className='absolute w-full text-end   py-1 rounded-b-md  right-0 bottom-0 text-gray-200 px-5 font-bold text-2xl'>...</span>                                                                   </>
+                      {/* <span className='absolute w-full text-end   py-1 rounded-b-md  right-0 bottom-0 text-gray-200 px-5 font-bold text-2xl'>...</span>                                                                   */}
+                       </>
 
                   )
                 })}
@@ -207,17 +209,17 @@ function page({ params }) {
                 : <div className='h-[500px]'></div>
             }
           </div>
-          <span className='w-full flex justify-between items-start text-xl px-10'>
-            <span className='w-[70%]'>{courseContent?.landingPageDetails?.subtitle}</span>
+          <span className='w-full flex justify-between items-center text-xl py-5 px-10 bg-slate-100 border-b'>
+            <span className='w-[70%] font-bold'>{courseContent?.landingPageDetails?.subtitle}</span>
             {!completed?.includes(selected.currId) ?
-              <div className='bg-green-500 cursor-pointer text-white font-semibold text-sm p-2' onClick={() => updateCompletion(selected.currId)}>mark as completed</div>
-              : <div className='bg-green-200 text-white font-semibold text-sm p-2' onClick={() => updateCompletion(selected.currId)}>completed</div>
+              <div className='bg-green-500 cursor-pointer text-white font-semibold text-sm p-2 w-[20%] text-center flex justify-center items-center gap-2' onClick={() => updateCompletion(selected.currId)}><IoIosCheckmarkCircleOutline className='text-white text-2xl font-bold'/>mark as completed</div>
+              : <div className='bg-green-300 text-white font-semibold text-sm p-2 w-[15%] text-center'>completed</div>
             }
           </span>
-          <span className='px-10 flex items-center gap-10'>
+          <span className='px-10 mt-8 flex items-center gap-10'>
             <span >
-              <p className='flex items-center font-bold text-yellow-600'>{courseContent?.rating} <FaStar className='text-yellow-400' /></p>
-              <p className='text-xs text-gray-400'>12,234 ratings</p>
+              <p className='flex items-center font-bold text-yellow-600'>{courseContent?.rating?.rating} <FaStar className='text-yellow-400' /></p>
+              <p className='text-xs text-gray-400'>{courseContent?.rating?.TotalRatings} ratings</p>
             </span>
             <span><p className='font-bold'>12334</p> <p className='text-xs text-gray-400'>students</p></span>
             <div className='text-sm text-gray-800'>
@@ -226,7 +228,7 @@ function page({ params }) {
             </div>
           </span>
 
-          <div className='px-10 flex flex-col gap-10 '>
+          <div className='px-10 flex mt-8 flex-col gap-10 '>
             <div className='border border-gray-300 p-3 '>
 
               <span className='text-2xl font-bold'>what you'll learn</span>

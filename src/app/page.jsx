@@ -16,13 +16,15 @@ import Cart from "@components/cart components/Cart";
 import Profile from "@components/profile components/Profile";
 import Learning from "@components/base components/Learning";
 import WishList from "@components/base components/WishList";
+import RatingModel from "@components/base components/RatingModel";
 
 
 export default function Page() {
   const [scrollpos, setScrollpos] = useState(0)
   const [isopen, setIsopen] = useState(false)
-  const {active, setCart, userDetails} = useHomeContext()
+  const {active, setCart, userDetails, isRatingModelOpen, setIsRatingModelOpen} = useHomeContext()
   const [authType, setAuthType] = useState('')
+
   const [from, setFrom] = useState('')
   const sideref = useRef()
   let handleopen = () => {
@@ -78,12 +80,18 @@ export default function Page() {
   // useEffect(()=>{
   //   console.log(coursesList)
   // },[coursesList])
-
+  useEffect(()=>{
+    if(Object.keys(isRatingModelOpen).length !== 0){
+      document.body.style.overflow = 'hidden'
+    }else{
+      document.body.style.overflow = 'visible'
+    }
+  },[isRatingModelOpen])
 
 
 
   return (
-    <div className={"w-full flex flex-col "}>
+    <div className={"w-full flex flex-col relative"}>
       {/* <div id="sidebar-wrapper" className={isopen ? ` h-[100vh] bg-black bg-opacity-[0.3] absolute z-20 w-full ` : " min-h-screen bg-black bg-opacity-[0.3] top-0 absolute z-10 opacity-[0] overflow-hidden transition-all ease-in duration-500"} style={
           {
             transition: 'all .5s'
@@ -113,13 +121,13 @@ export default function Page() {
         : active == 'course overview' ? <CourseOverview from={from} setFrom={setFrom}/>
         : active == 'cart' ? <Cart from={from} setFrom={setFrom}/>
         : active == 'profile' ? <Profile setFrom={setFrom}/>
-        : active == 'learning' ? <Learning setFrom={setFrom} from={from}/>
+        : active == 'learning' ? <Learning setFrom={setFrom} from={from} isRatingModelOpen={isRatingModelOpen} setIsRatingModelOpen={setIsRatingModelOpen}/>
         : active == 'wishlist' && <WishList setFrom={setFrom} from={from}/>
         }
       
       <Footer />
 
-
+      {Object.keys(isRatingModelOpen).length !== 0 && <RatingModel isRatingModelOpen={isRatingModelOpen} setIsRatingModelOpen={setIsRatingModelOpen}/>}
     </div>
   )
 }

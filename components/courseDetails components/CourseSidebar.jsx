@@ -23,6 +23,7 @@ function CourseSidebar({ courseContent, opened, selected, setSelected, completed
 
     // },[courseContent])
 
+    console.log(completed)
     
     return (
         <div className={`w-[25%] ${scrollPos >= 40 ? 'h-[100vh] bottom-0' : 'h-[93vh] top-[7vh] '}  border-2  fixed  z-10 right-0 flex flex-col overflow-auto`}>
@@ -31,14 +32,19 @@ function CourseSidebar({ courseContent, opened, selected, setSelected, completed
                 <span className='font-bold'>Course Content</span> <span onClick={() => setIsSidebar(false)}><IoMdClose size={'1.5em'} /></span>
             </div>
             {courseContent?.sections?.map((sect, sect_i) => {
-
+                var completedInSection = 0
+                sect.curriculum.map((curr) => {
+                    if (completed.includes(curr.currId)) {
+                        completedInSection++
+                    }
+                })
                 return (
                     <div key={sect_i} className='border-b'>
                         <div className='p-3 flex justify-between items-start bg-slate-50  cursor-pointer' onClick={() => handleOpen(opened.includes(sect.id) ? 'close' : 'open', sect.id)}>
                             <span>
 
                                 <p className='font-bold '>section {sect_i + 1}: {sect.title}</p>
-                                <p className='text-xs text-gray-600'>0/{sect.curriculum.length} lectures</p>
+                                <p className='text-xs text-gray-600'>{completedInSection}/{sect.curriculum.length} lectures</p>
                             </span>
                             <span >{opened.includes(sect.id) ? <FaChevronUp /> : <FaChevronDown />}</span>
                         </div>

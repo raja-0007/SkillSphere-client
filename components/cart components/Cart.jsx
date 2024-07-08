@@ -106,7 +106,7 @@ function Cart({ from, setFrom }) {
                                         <div className='flex flex-col gap-1'>
                                             <span className='font-bold'>{item.landingPageDetails.title}</span>
                                             <span className='capitalize text-sm'>By {item.author.username}</span>
-                                            <span className='flex text-yellow-600 items-center font-bold text-sm'>{item.rating}{printRating(item.rating)}</span>
+                                            <span className='flex text-yellow-600 items-center font-bold text-sm'>{item.rating.rating}{printRating(item.rating.rating)}</span>
                                             <span className='flex items-center text-gray-600 text-sm'>{totalLectures()} lectures <GoDotFill className='text-xs mx-2' /> {item.landingPageDetails.level}</span>
                                         </div>
                                     </div>

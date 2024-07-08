@@ -150,7 +150,7 @@ function CourseOverview({ from, setFrom }) {
                 }
                 <span className='text-3xl font-bold w-[70%]'>{overviewCourse.landingPageDetails.title}</span>
                 <p className='w-[70%] mt-3'>{overviewCourse.landingPageDetails.subtitle}</p>
-                <p className='w-[70%] mt-3 flex items-center text-yellow-500'><span className='me-1 text-xl'>{overviewCourse.rating}</span> {printRating(overviewCourse.rating)}</p>
+                <p className='w-[70%] mt-3 flex items-center text-yellow-500'><span className='me-1 text-xl'>{overviewCourse.rating.rating}</span> {printRating(overviewCourse.rating.rating)} <span className='ms-2 text-blue-200 opacity-70 '>({overviewCourse.rating.TotalRatings} ratings)</span></p>
                 <p className='w-[70%] mt-3'>created by {overviewCourse.author.username}</p>
             </div>
             <div className='w-[25%] self-end fixed flex flex-col top-32   right-16 bg-white shadow-md'>

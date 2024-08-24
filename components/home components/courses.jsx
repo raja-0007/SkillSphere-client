@@ -11,6 +11,7 @@ import 'swiper/css/bundle';
 import { IoIosStar, IoIosStarOutline } from "react-icons/io";
 import { IoIosStarHalf } from "react-icons/io";
 export const printRating=(rating)=>{
+  console.log('ratingratingratingratingratingrating', rating, typeof rating)
   let result = []
   
   for(let i=0;i<parseInt(rating);i++){
@@ -110,7 +111,7 @@ function Courses() {
                   <h2 className='font-bold'>{course.title}</h2>
                   <small className='font-light text-gray-500'>{course.author}</small>
                   <span className='flex gap-2 items-center font-semibold text-amber-900'>
-                    {course.rating}
+                    {course.rating.rating}
                     <span className=' flex'>{printRating(course.rating.rating)}</span>
                     </span>
                   

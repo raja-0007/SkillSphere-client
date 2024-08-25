@@ -116,10 +116,22 @@ function SearchResults({ setFrom }) {
                                     <img src={`http://localhost:7777/images/${item.image}`} className='w-[250px] h-[150px]' alt="" />
                                     <div className='flex flex-col gap-1'>
                                         <span className='text-lg font-bold'>{item.landingPageDetails.title}</span>
-                                        <span className=' text-sm w-[600px]'>{item.landingPageDetails.description.slice(0, 200)}...</span>
+                                        {typeof item.landingPageDetails.description == 'string' ? <span className=' text-sm w-[600px]'>{item.landingPageDetails.description.slice(0, 330)}...</span>
+                                        : item.landingPageDetails.description.blocks.filter(block=>block.type == 'paragraph').slice(0, 1).map((block, block_i) => {
+                                            
+                                            
+                                            return (
+                                                <>
+                                                    <p dangerouslySetInnerHTML={{ __html: block.data.text.slice(0,330)+'...' }} className=' text-sm w-[600px]'></p>
+                                                        
+                                                    {/* <span className='absolute w-full text-end   py-1 rounded-b-md  right-0 bottom-0 text-gray-200 px-5 font-bold text-2xl'>...</span>                                                                   */}
+                                                </>
+                
+                                            )
+                                        })}                                        
                                         <span className="text-gray-500 text-xs">{item.author.username}, {item.author.email}</span>
-                                        <span className='text-md flex items-center gap-1'><span className={`font-bold ${item.rating == 'newly added' && 'border-2 border-yellow-500 rounded-md p-1 text-sm '}`}>{item.rating.rating}</span>
-                                            {item.rating.rating !== 'newly added' &&
+                                        <span className='text-md flex items-center gap-1'><span className={`font-bold ${item.rating.rating == '' && 'border-2 border-yellow-300 rounded-full font-normal text-gray-500 px-2 text-xs '}`}>{item.rating.rating == '' ? 'newly added (no reviews yet)' : item.rating.rating}</span>
+                                            {item.rating.rating !== '' &&
                                                 <span className='flex items-center'> {printRating(item.rating.rating)}
                                                     <span className='ms-2 text-gray-400 text-sm'>({item.rating.TotalRatings || 0} ratings)</span>
                                                 </span>}

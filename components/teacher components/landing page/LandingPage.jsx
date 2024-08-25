@@ -3,6 +3,7 @@ import SectionLayout from '../SectionLayout'
 import SectionHeader from '../SectionHeader'
 import { IoIosInformationCircle } from "react-icons/io";
 import { useTeacherContext } from '@contexts/TeacherContext';
+import Editor from '../content creation/Editor';
 
 
 function LandingPage({ activeSection }) {
@@ -30,6 +31,11 @@ function LandingPage({ activeSection }) {
         }
         else setSaved(false)
     },[])
+
+    const onSave=(currId, sectId, data)=>{
+        setLandingDetails({ ...landingDetails, description: data });
+        setSaved(false)
+    }
     return (
         <SectionLayout>
             <SectionHeader activeSection={activeSection} />
@@ -40,7 +46,10 @@ function LandingPage({ activeSection }) {
                         return (
                             <div key={i} className='flex flex-col gap-1 w-full'>
                                 <label htmlFor={item} className='font-semibold'>course {item} :</label>
-                                {item !== 'description' ? <input id={item} type='text' placeholder={`Insert your course ${item}`} value={landingDetails[item]} className='border outline-none border-black py-2 px-2 ' onChange={(e) => {setLandingDetails({ ...landingDetails, [item]: e.target.value }); setSaved(false)}} /> : <textarea name="" id={item} value={landingDetails[item]} placeholder='Insert your course description' className='w-full h-[70px] outline-none px-3 py-1 resize-none border border-black' onChange={(e) => {setLandingDetails({ ...landingDetails, [item]: e.target.value }); setSaved(false)}}></textarea>}
+                                {item !== 'description' ? <input id={item} type='text' placeholder={`Insert your course ${item}`} value={landingDetails[item]} className='border outline-none border-black py-2 px-2 ' onChange={(e) => {setLandingDetails({ ...landingDetails, [item]: e.target.value }); setSaved(false)}} /> 
+                                :<Editor id={item} data={landingDetails[item]} onSave={onSave}/> 
+                                // <textarea name="" id={item} value={landingDetails[item]} placeholder='Insert your course description' className='w-full h-[70px] outline-none px-3 py-1 resize-none border border-black' onChange={(e) => {setLandingDetails({ ...landingDetails, [item]: e.target.value }); setSaved(false)}}></textarea>
+                                }
                             </div>
                         )
                     })}

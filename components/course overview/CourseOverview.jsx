@@ -93,6 +93,7 @@ function CourseOverview({ from, setFrom }) {
     // console.log(cart?.filter(item=>item._id == overviewCourse._id).length == 0,'yesornoe', !overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id),'cart',cart,'price',overviewCourse.price !== 'free')
     useEffect(() => {
         setLoading(true)
+        window.scrollTo(0, 0);
         const getWishList = async () => {
             await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getWishlist/${userDetails?.userDetails?._id}`)
                 .then(res => {
@@ -150,8 +151,9 @@ function CourseOverview({ from, setFrom }) {
                 }
                 <span className='text-3xl font-bold w-[70%]'>{overviewCourse.landingPageDetails.title}</span>
                 <p className='w-[70%] mt-3'>{overviewCourse.landingPageDetails.subtitle}</p>
-                <p className='w-[70%] mt-3 flex items-center text-yellow-500'><span className='me-1 text-xl'>{overviewCourse.rating.rating}</span> {printRating(overviewCourse.rating.rating)} <span className='ms-2 text-blue-200 opacity-70 '>({overviewCourse.rating.TotalRatings} ratings)</span></p>
-                <p className='w-[70%] mt-3'>created by {overviewCourse.author.username}</p>
+                {overviewCourse.rating.rating !== '' ? <p className='w-[70%] mt-3 flex items-center text-yellow-500'><span className='me-1 text-xl'>{overviewCourse.rating.rating}</span> {printRating(overviewCourse.rating.rating)} <span className='ms-2 text-blue-200 opacity-70 '>({overviewCourse.rating.TotalRatings} ratings)</span></p>
+                    : <p>newly added (no ratings yet)</p>
+                }                <p className='w-[70%] mt-3'>created by {overviewCourse.author.username}</p>
             </div>
             <div className='w-[25%] self-end fixed flex flex-col top-32   right-16 bg-white shadow-md'>
                 <img src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${overviewCourse.image}`} className='w-full' alt="" />
@@ -159,8 +161,8 @@ function CourseOverview({ from, setFrom }) {
 
                     <div className='flex items-center w-full gap-2 pt-5'>
 
-                        <span className='flex items-center  text-xl font-bold uppercase text-violet-400'>{overviewCourse.price !== 'free' ? <FaRupeeSign size={'.85em'} />:'*'}{overviewCourse.price}</span>
-
+                        {!overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) && <span className='flex items-center  text-xl font-bold uppercase text-violet-400'>{overviewCourse.price !== 'free' ? <FaRupeeSign size={'.85em'} /> : '*'}{overviewCourse.price}</span>
+                        }
 
                         {(cart?.filter(item => item._id == overviewCourse._id).length == 0 && !overviewCourse?.enrolled?.includes(userDetails?.userDetails?._id) && overviewCourse.price !== 'free' && overviewCourse.author.authorId !== userDetails?.userDetails?._id) ?
                             <>
@@ -217,7 +219,54 @@ function CourseOverview({ from, setFrom }) {
                 </div>
                 <div>
                     <p className='text-2xl font-bold mb-2'>Description</p>
-                    <p>{overviewCourse.landingPageDetails.description}</p>
+                    {typeof overviewCourse.landingPageDetails.description == 'string' ? <p>{overviewCourse.landingPageDetails.description}</p>
+                        : overviewCourse.landingPageDetails.description.blocks.map((block, block_i) => {
+                            const getHeaderText = () => {
+                                const headers = {
+                                    h1: <h1 className='font-bold text-lg mb-2' dangerouslySetInnerHTML={{ __html: block.data.text }}></h1>,
+                                    h2: <h2 className='font-bold text-xl mb-2' dangerouslySetInnerHTML={{ __html: block.data.text }}></h2>,
+                                    h3: <h3 className='font-bold text-2xl mb-2' dangerouslySetInnerHTML={{ __html: block.data.text }}></h3>,
+                                    h4: <h4 className='font-bold text-3xl mb-2' dangerouslySetInnerHTML={{ __html: block.data.text }}></h4>,
+                                    h5: <h5 className='font-bold text-4xl mb-2' dangerouslySetInnerHTML={{ __html: block.data.text }}></h5>,
+                                    h6: <h6 className='font-bold text-5xl mb-2' dangerouslySetInnerHTML={{ __html: block.data.text }}></h6>,
+
+                                }
+                                return headers[`h${block.data.level}`]
+                            }
+                            const getNestedList = (style, items, key) => {
+
+                                if (style === 'unordered') {
+                                    return <ul className='list-disc ps-5 mb-3'>
+                                        {items.map((listItem, list_i) => {
+                                            return <>
+                                                <li key={list_i + key} dangerouslySetInnerHTML={{ __html: listItem.content }}></li>
+                                                {listItem.items.length > 0 && getNestedList('unordered', listItem.items, list_i + key)}
+                                            </>
+                                        })}
+                                    </ul>
+                                }
+                                else {
+                                    return <ol className='list-decimal ps-5 mb-5'>
+                                        {items.map((listItem, list_i) => {
+                                            return <>
+                                                <li key={list_i + key} dangerouslySetInnerHTML={{ __html: listItem.content }}></li>
+                                                {listItem.items.length > 0 && getNestedList('ordered', listItem.items, list_i + key)}
+                                            </>
+                                        })}
+                                    </ol>
+                                }
+                            }
+                            return (
+                                <>
+                                    {block.type == 'paragraph' ? <p dangerouslySetInnerHTML={{ __html: block.data.text }} className='mb-2'></p>
+                                        : block.type == 'header' ? getHeaderText()
+                                            : block.type == 'nestedList' && getNestedList(block.data.style, block.data.items, 0)}
+                                    {/* <span className='absolute w-full text-end   py-1 rounded-b-md  right-0 bottom-0 text-gray-200 px-5 font-bold text-2xl'>...</span>                                                                   */}
+                                </>
+
+                            )
+                        })
+                    }
                 </div>
             </div>
         </div >

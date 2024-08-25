@@ -11,7 +11,7 @@ import 'swiper/css/bundle';
 import { IoIosStar, IoIosStarOutline } from "react-icons/io";
 import { IoIosStarHalf } from "react-icons/io";
 export const printRating=(rating)=>{
-  console.log('ratingratingratingratingratingrating', rating, typeof rating)
+  // console.log('ratingratingratingratingratingrating', rating, typeof rating)
   let result = []
   
   for(let i=0;i<parseInt(rating);i++){

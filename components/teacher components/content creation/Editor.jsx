@@ -9,12 +9,12 @@ import dynamic from 'next/dynamic'; // Import dynamic from next/dynamic for clie
 // import headerUmd from '@editorjs/header';
 // import NestedList from '@editorjs/nested-list'
 
-function Editor({ id, sectId, onSave, data }) {
+function Editor({ id='', sectId='', onSave, data }) {
 
     const editorInstance = useRef(null);
 
     useEffect(() => {
-        console.log(data)
+        // console.log(data)
         // Initialize EditorJS instance when component mounts on the client-side
         const initializeEditor = async () => {
 
@@ -57,7 +57,8 @@ function Editor({ id, sectId, onSave, data }) {
         initializeEditor()
     }, []); // Ensure useEffect runs whenever id or defaultData changes
 
-    const handleSave = async () => {
+    const handleSave = async (e) => {
+        e.preventDefault()
         if (editorInstance.current) {
             try {
                 const savedData = await editorInstance.current.save();
@@ -75,7 +76,7 @@ function Editor({ id, sectId, onSave, data }) {
     return (
         <div className='flex items-start w-full flex-col'>
             <div id={id} className='h-[250px] overflow-y-auto w-full' style={{ border: '1px solid #ccc', padding: '10px' }} />
-            <button className='mt-2 self-end relative z-20 py-1 w-[max-content] px-2 bg-slate-800 text-white text-center font-bold cursor-pointer' onClick={(e) => handleSave()}>Save</button>
+            <button className='mt-2 self-end relative z-20 py-1 w-[max-content] px-2 bg-slate-800 text-white text-center font-bold cursor-pointer' onClick={(e) => handleSave(e)}>Save</button>
         </div>
     )
 }

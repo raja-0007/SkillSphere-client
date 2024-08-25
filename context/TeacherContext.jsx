@@ -35,7 +35,7 @@ function TeacherProvider({ children }) {
     const [landingDetails, setLandingDetails] = useState({
         title: '',
         subtitle: '',
-        description: '',
+        description: {},
         language: '',
         level: '',
         category: '',
@@ -62,6 +62,7 @@ function TeacherProvider({ children }) {
         formdata.append('landingDetails', JSON.stringify(landingDetails))
         formdata.append('image', landingDetails.image)
         formdata.append('price', JSON.stringify(price))
+        formdata.append('rating', JSON.stringify({rating:''}))
         formdata.append('messages', JSON.stringify(messages))
         // formdata.append('title', title)
 
@@ -96,7 +97,7 @@ function TeacherProvider({ children }) {
 
 
     useEffect(() => {
-        // console.log('changed>>>>>>>>>>>>>>>>>>.',landingDetails)
+        console.log('changed>>>>>>>>>>>>>>>>>>.',landingDetails)
         // setSaved(false)
         if (filledStatus.includes('course landing page')) {
             setFilledStatus(filledStatus.filter(stat => stat !== 'course landing page'))

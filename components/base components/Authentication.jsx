@@ -10,18 +10,18 @@ import { TiWeatherPartlySunny } from "react-icons/ti";
 import { GiFertilizerBag } from "react-icons/gi";
 import { GiWheat } from "react-icons/gi";
 import { GrPieChart } from "react-icons/gr";
-import { useHomeContext } from '@contexts/HomeContext'; 
+import { useHomeContext } from '@contexts/HomeContext';
 
 
 
 
 
-function Authentication({ type,setAuthType }) {
-  
+function Authentication({ type, setAuthType }) {
+
   const regform = useRef()
-  
+
   const [isOtpVerify, setIsOtpVerify] = useState(false)
-  const {setActive, setUserDetails} = useHomeContext()
+  const { setActive, setUserDetails } = useHomeContext()
   const [otp, setOtp] = useState('')
   const [isLoggedIn, setIsLoggedIn] = useState({})
   const [isEmail, setIsEmail] = useState(false)
@@ -92,7 +92,11 @@ function Authentication({ type,setAuthType }) {
 
   useEffect(() => {
     console.log(email)
-  }, [email])
+    if(email !== ''){
+      setIsEmail(true)
+    }
+    if(password !== '') setIsPword(true)
+  }, [email, password])
 
   const makeLogin = async () => {
     console.log(email, password)
@@ -110,32 +114,32 @@ function Authentication({ type,setAuthType }) {
   const makeRegisterPreload = async (e) => {
     e.preventDefault()
     // Math.floor(1000 + Math.random() * 9000) 
-    
+
     console.log(username, rEmail, rPassword)
     if (username === '' || rEmail === '' || rPassword === '') {
       alert('please enter all fields')
       return
     }
-    
+
     setOtp(Math.floor(1000 + Math.random() * 9000))
-    
-    
+
+
 
   }
-  const makeregister = async () =>{
+  const makeregister = async () => {
     await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/authorization`, { username: username, email: rEmail, password: rPassword, action: 'register' })
       .then(res => setIsLoggedIn(res.data))
       .catch(err => console.log('error in sending request', err))
   }
-  useEffect(()=>{
-    if(otp !== ''){
+  useEffect(() => {
+    if (otp !== '') {
       // makeregister()
-      
-      emailjs.send("service_90isnjq","template_gjxbssk",{
+
+      emailjs.send("service_90isnjq", "template_gjxbssk", {
         to_name: username,
         message: otp,
         to_email: rEmail,
-        },{publicKey: '3T82ASRjzD5bj2PmC'})
+      }, { publicKey: '3T82ASRjzD5bj2PmC' })
         .then(
           () => {
             console.log('SUCCESS!');
@@ -146,7 +150,7 @@ function Authentication({ type,setAuthType }) {
           },
         );
     }
-  },[otp])
+  }, [otp])
   useEffect(() => {
 
     console.log(type, isLoggedIn, isLoggedIn.token)
@@ -168,7 +172,7 @@ function Authentication({ type,setAuthType }) {
         // router.push('/')
       }
       else if (isLoggedIn.status === 'already exists') {
-        alert('email already exists'); 
+        alert('email already exists');
         setIsOtpVerify(false)
         setREmail('')
         setRPassword('')
@@ -177,8 +181,8 @@ function Authentication({ type,setAuthType }) {
         setIsEmail2(false)
         setIsPword2(false)
       }
-      
-      else if (isLoggedIn.status === false) {alert('invalid emailId'); setIsOtpVerify(false)}
+
+      else if (isLoggedIn.status === false) { alert('invalid emailId'); setIsOtpVerify(false) }
     }
 
   }, [isLoggedIn])
@@ -189,65 +193,65 @@ function Authentication({ type,setAuthType }) {
       {/* <Navbar /> */}
       <section className='flex justify-evenly  items-center '>
         <div className={`py-10 my-5 px-5 z-10 flex items-center justify-center bg-white w-[max-content]  .shadow-md .shadow-gray-700 .bg-opacity-80`}>
-          {!isOtpVerify ? 
-          type == 'login' ?
-            <div className='p-5 flex flex-col items-center justify-center gap-4'>
+          {!isOtpVerify ?
+            type == 'login' ?
+              <div className='p-5 flex flex-col items-center justify-center gap-4'>
 
-              <span className=' self-start text-md font-bold'>Login to your account</span>
-              <span className='flex flex-col gap-2 justify-center items-center'>
-                <FaUserCircle className='text-7xl text-slate-800' />
-                <span className='text-sm font-light text-center '>
-                  <p>
-                    welcome to SkillSphere
-                  </p>
-                  
-                </span>
+                <span className=' self-start text-md font-bold'>Login to your account</span>
+                <span className='flex flex-col gap-2 justify-center items-center'>
+                  <FaUserCircle className='text-7xl text-slate-800' />
+                  <span className='text-sm font-light text-center '>
+                    <p>
+                      welcome to SkillSphere
+                    </p>
 
-              </span>
-
-              <form className='flex flex-col gap-4'>
-
-                <span ref={emailref}
-                  className={`border-[1px] border-slate-800 bg-white bg-opacity-20 .shadow-sm .shadow-gray-400 ${isEmail ? 'rounded-md' : 'rounded-none'} flex flex-col cursor-text h-[55px] w-[350px] justify-center relative`}
-                  onClick={() => { setIsEmail(true) }}>
-                  <label
-                    htmlFor='email'
-                    className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isEmail ? 'text-xs  transform -translate-y-[25px] left-0 rounded-full text-white border-[1px]  bg-slate-600 px-2' : 'text-md top-auto left-5 bottom-auto text-slate-800'}`} >
-                    Email</label>
-
-                  <input type="email"
-                    value={email}
-                    onChange={(e) => changeHandler(e, 1)}
-                    placeholder={isEmail ? `enter email` : ''}
-                    // ${isEmail ? '' : 'hidden'}
-                    className={`outline-none transition-all bg-opacity-0 bg-white duration-200 w-full px-3 ease-in-out h-full`}
-                    name="name1" id="email" />
+                  </span>
 
                 </span>
-                <span ref={pwordref}
-                  className={`border-[1px] border-slate-800 bg-white bg-opacity-20 .shadow-sm .shadow-gray-400 ${isPword ? 'rounded-md' : 'rounded-none'} flex flex-col cursor-text h-[55px] w-[350px] justify-center relative`}
-                  onClick={() => setIsPword(true)}>
-                  <label htmlFor='password'
-                    className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isPword ? 'text-xs transform -translate-y-[25px] left-0 rounded-full text-white border-[1px]  bg-slate-600 px-2' : 'text-md top-auto left-5 bottom-auto text-slate-800'}`} >
-                    Password</label>
-                  <input type="password"
-                    value={password}
-                    onChange={(e) => changeHandler(e, 2)}
-                    placeholder={isPword ? `enter password` : ''}
-                    className={`outline-none transition-all bg-opacity-0 bg-white duration-200 w-full px-3 ease-in-out h-full`}
-                    name="" id="password" />
 
-                </span>
-                <button type='button' className='w-full bg-purple-600 text-center text-white font-bold py-3 mt-1 hover:bg-purple-700 transition-all duration-100' onClick={makeLogin}>Log in</button>
-              </form>
+                <form className='flex flex-col gap-4'>
 
-              <span className='text-sm'>Don't have an account? <span  onClick={()=>setAuthType('register')} className='text-purple-700 cursor-pointer font-semibold underline-offset-2 underline'>Sign up</span></span>
-            </div>
-            : type == 'register' &&
-            <div className='px-5 flex flex-col items-center justify-center gap-4'>
+                  <span ref={emailref}
+                    className={`border-[1px] border-slate-800 bg-white bg-opacity-20 .shadow-sm .shadow-gray-400 ${isEmail ? 'rounded-md' : 'rounded-none'} flex flex-col cursor-text h-[55px] w-[350px] justify-center relative`}
+                    onClick={() => { setIsEmail(true) }}>
+                    <label
+                      htmlFor='email'
+                      className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isEmail ? 'text-xs  transform -translate-y-[25px] left-0 rounded-full text-white border-[1px]  bg-slate-600 px-2' : 'text-md top-auto left-5 bottom-auto text-slate-800'}`} >
+                      Email</label>
 
-              <span className=' text-md self-start font-bold'>Signup and start learning</span>
-              {/* <span className='flex flex-col gap-2 justify-center items-center'>
+                    <input type="email"
+                      value={email}
+                      onChange={(e) => changeHandler(e, 1)}
+                      placeholder={isEmail ? `enter email` : ''}
+                      // ${isEmail ? '' : 'hidden'}
+                      className={`outline-none transition-all bg-opacity-0 bg-white duration-200 w-full px-3 ease-in-out h-full`}
+                      name="name1" id="email" />
+
+                  </span>
+                  <span ref={pwordref}
+                    className={`border-[1px] border-slate-800 bg-white bg-opacity-20 .shadow-sm .shadow-gray-400 ${isPword ? 'rounded-md' : 'rounded-none'} flex flex-col cursor-text h-[55px] w-[350px] justify-center relative`}
+                    onClick={() => setIsPword(true)}>
+                    <label htmlFor='password'
+                      className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isPword ? 'text-xs transform -translate-y-[25px] left-0 rounded-full text-white border-[1px]  bg-slate-600 px-2' : 'text-md top-auto left-5 bottom-auto text-slate-800'}`} >
+                      Password</label>
+                    <input type="password"
+                      value={password}
+                      onChange={(e) => changeHandler(e, 2)}
+                      placeholder={isPword ? `enter password` : ''}
+                      className={`outline-none transition-all bg-opacity-0 bg-white duration-200 w-full px-3 ease-in-out h-full`}
+                      name="" id="password" />
+
+                  </span>
+                  <button type='button' className='w-full bg-purple-600 text-center text-white font-bold py-3 mt-1 hover:bg-purple-700 transition-all duration-100' onClick={makeLogin}>Log in</button>
+                </form>
+
+                <span className='text-sm'>Don't have an account? <span onClick={() => setAuthType('register')} className='text-purple-700 cursor-pointer font-semibold underline-offset-2 underline'>Sign up</span></span>
+              </div>
+              : type == 'register' &&
+              <div className='px-5 flex flex-col items-center justify-center gap-4'>
+
+                <span className=' text-md self-start font-bold'>Signup and start learning</span>
+                {/* <span className='flex flex-col gap-2 justify-center items-center'>
                 <FaUserCircle className='text-7xl text-slate-800' />
                 <span className='text-sm text-gray-500 text-center'>
                   <p>
@@ -259,60 +263,66 @@ function Authentication({ type,setAuthType }) {
                 </span>
               </span> */}
 
-              <form className='flex flex-col gap-4' ref={regform}>
-                <span ref={userref}
-                  className={`border-[1px] border-slate-800 bg-white bg-opacity-20 .shadow-sm .shadow-gray-400 ${isUser ? 'rounded-md' : 'rounded-none'} flex flex-col cursor-text h-[55px] w-[350px] justify-center relative`}
-                  onClick={() => { setIsUser(true) }}>
-                  <label htmlFor='username'
-                    className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isUser ? 'text-xs  transform -translate-y-[25px] left-0 rounded-full text-white border-[1px]  bg-slate-600 px-2' : 'text-md top-auto left-5 bottom-auto text-slate-800'}`} >
-                    username</label>
-                  <input type="text"
-                    value={username}
-                    onChange={(e) => changeHandler2(e, 1)}
-                    className={`outline-none transition-all bg-opacity-0 bg-white duration-200 w-full px-3 ease-in-out h-full`}
+                <form className='flex flex-col gap-4' ref={regform}>
+                  <span ref={userref}
+                    className={`border-[1px] border-slate-800 bg-white bg-opacity-20 .shadow-sm .shadow-gray-400 ${isUser ? 'rounded-md' : 'rounded-none'} flex flex-col cursor-text h-[55px] w-[350px] justify-center relative`}
+                    onClick={() => { setIsUser(true) }}>
+                    <label htmlFor='username'
+                      className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isUser ? 'text-xs  transform -translate-y-[25px] left-0 rounded-full text-white border-[1px]  bg-slate-600 px-2' : 'text-md top-auto left-5 bottom-auto text-slate-800'}`} >
+                      username</label>
+                    <input type="text"
+                      value={username}
+                      autoComplete='new-username'
+                      placeholder={isUser ? `enter username` : ''}
+                      onChange={(e) => changeHandler2(e, 1)}
+                      className={`outline-none transition-all bg-opacity-0 bg-white duration-200 w-full px-3 ease-in-out h-full`}
 
-                    name="to_name" id="username" />
+                      name="to_name" id="username" />
 
-                </span>
-                <span ref={emailref2}
-                  className={`border-[1px] border-slate-800 bg-white bg-opacity-20 .shadow-sm .shadow-gray-400 ${isEmail2 ? 'rounded-md' : 'rounded-none'} flex flex-col cursor-text h-[55px] w-[350px] justify-center relative`}
-                  onClick={() => { setIsEmail2(true) }}>
-                  <label htmlFor='email2'
-                    className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isEmail2 ? 'text-xs  transform -translate-y-[25px] left-0 rounded-full text-white border-[1px]  bg-slate-600 px-2' : 'text-md top-auto left-5 bottom-auto text-slate-800'}`} >
-                    email</label>
-                  <input type="email"
-                    value={rEmail}
-                    onChange={(e) => changeHandler2(e, 2)}
-                    className={`outline-none transition-all bg-opacity-0 bg-white duration-200 w-full px-3 ease-in-out h-full`}
-                    name="to_email" id="email2" />
-                  <input type="text" value={'1234'} name="message" className='hidden' id="" />
-                </span>
-                <span ref={pwordref2}
-                  className={`border-[1px] border-slate-800 bg-white bg-opacity-20 .shadow-sm .shadow-gray-400 ${isPword2 ? 'rounded-md' : 'rounded-none'} flex flex-col cursor-text h-[55px] w-[350px] justify-center relative`}
-                  onClick={() => setIsPword2(true)}>
-                  <label htmlFor='password2'
-                    className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isPword2 ? 'text-xs  transform -translate-y-[25px] left-0 rounded-full text-white border-[1px]  bg-slate-600 px-2' : 'text-md top-auto left-5 bottom-auto text-slate-800'}`} >
-                    password</label>
-                  <input type="password"
-                    value={rPassword}
-                    onChange={(e) => changeHandler2(e, 3)}
-                    className={`outline-none transition-all bg-opacity-0 bg-white duration-200 w-full px-3 ease-in-out h-full`}
-                    name="" id="password2" />
+                  </span>
+                  <span ref={emailref2}
+                    className={`border-[1px] border-slate-800 bg-white bg-opacity-20 .shadow-sm .shadow-gray-400 ${isEmail2 ? 'rounded-md' : 'rounded-none'} flex flex-col cursor-text h-[55px] w-[350px] justify-center relative`}
+                    onClick={() => { setIsEmail2(true) }}>
+                    <label htmlFor='email2'
+                      className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isEmail2 ? 'text-xs  transform -translate-y-[25px] left-0 rounded-full text-white border-[1px]  bg-slate-600 px-2' : 'text-md top-auto left-5 bottom-auto text-slate-800'}`} >
+                      email</label>
+                    <input type="email"
+                      value={rEmail}
+                      autoComplete='new-email'
+                      placeholder={isEmail2 ? `enter email` : ''}
+                      onChange={(e) => changeHandler2(e, 2)}
+                      className={`outline-none transition-all bg-opacity-0 bg-white duration-200 w-full px-3 ease-in-out h-full`}
+                      name="to_email" id="email2" />
+                    <input type="text" value={'1234'} name="message" className='hidden' id="" />
+                  </span>
+                  <span ref={pwordref2}
+                    className={`border-[1px] border-slate-800 bg-white bg-opacity-20 .shadow-sm .shadow-gray-400 ${isPword2 ? 'rounded-md' : 'rounded-none'} flex flex-col cursor-text h-[55px] w-[350px] justify-center relative`}
+                    onClick={() => setIsPword2(true)}>
+                    <label htmlFor='password2'
+                      className={`font-semibold cursor-text transition-all ease-in-out duration-300 absolute ${isPword2 ? 'text-xs  transform -translate-y-[25px] left-0 rounded-full text-white border-[1px]  bg-slate-600 px-2' : 'text-md top-auto left-5 bottom-auto text-slate-800'}`} >
+                      password</label>
+                    <input type="password"
+                      value={rPassword}
+                      autoComplete='new-password'
+                      placeholder={isPword2 ? `enter password` : ''}
+                      onChange={(e) => changeHandler2(e, 3)}
+                      className={`outline-none transition-all bg-opacity-0 bg-white duration-200 w-full px-3 ease-in-out h-full`}
+                      name="" id="password2" />
 
-                </span>
-                <button type='button' className='w-full bg-purple-600 text-white font-bold text-center py-3 mt-1 hover:bg-purple-700 transition-all duration-100' onClick={makeRegisterPreload}>Sign up</button>
-              </form>
-              <p className='text-xs py-2 border-b-[1px] border-gray-300 '>By signing up, you agree to our Terms of Use and Privacy Policy.</p>
-              <span className='text-sm'>Already have an account? <span onClick={()=>setAuthType('login')} className='text-purple-700 cursor-pointer font-semibold underline-offset-2 underline'>log in</span></span>
+                  </span>
+                  <button type='button' className='w-full bg-purple-600 text-white font-bold text-center py-3 mt-1 hover:bg-purple-700 transition-all duration-100' onClick={makeRegisterPreload}>Sign up</button>
+                </form>
+                <p className='text-xs py-2 border-b-[1px] border-gray-300 '>By signing up, you agree to our Terms of Use and Privacy Policy.</p>
+                <span className='text-sm'>Already have an account? <span onClick={() => setAuthType('login')} className='text-purple-700 cursor-pointer font-semibold underline-offset-2 underline'>log in</span></span>
 
-            </div>
-            :<OtpVerify otp={otp} setIsOtpVerify={setIsOtpVerify} makeregister={makeregister} />
-            
+              </div>
+            : <OtpVerify otp={otp} setIsOtpVerify={setIsOtpVerify} makeregister={makeregister} />
+
           }
-          
+
         </div>
-        
-        
+
+
         {/* <div className='z-10 flex flex-col gap-2 self-start mt-24 items-center justify-center'>
           <div className='flex flex-col gap-0 items-center justify-center'>
             <span className='text-9xl text-blue-400'>SkillSphere</span>

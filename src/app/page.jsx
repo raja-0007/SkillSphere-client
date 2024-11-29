@@ -23,7 +23,7 @@ export default function Page() {
   const [scrollpos, setScrollpos] = useState(0)
   const [isopen, setIsopen] = useState(false)
   const {active, setCart, userDetails, isRatingModelOpen, setIsRatingModelOpen} = useHomeContext()
-  const [authType, setAuthType] = useState('')
+  const [authType, setAuthType] = useState('login')
 
   const [from, setFrom] = useState('')
   const sideref = useRef()

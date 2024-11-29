@@ -29,6 +29,13 @@ function Learning({ from, setFrom, isRatingModelOpen, setIsRatingModelOpen }) {
         if (userDetails?.userDetails?._id) {
             getEnrolled()
         }
+        else{
+            alert('please login to see your progress')
+            setTimeout(() => {
+                setActive('authentication')
+            }, 1000);
+            return
+        }
     }, [])
 
     useEffect(() => {

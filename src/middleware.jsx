@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server'
 // Define your app routes (static + dynamic patterns)
 const routes = [
   '/',
-  '/authentication',
   '/teacher',
   '/cart',
   '/profile',
@@ -15,9 +14,8 @@ const routes = [
 
 const publicRoutes = [
   '/',
-  '/authentication',
+  '/authentication/[type]',
   '/search-results',
-  '/course-overview',
   '/course-overview/[id]',
 ];
 

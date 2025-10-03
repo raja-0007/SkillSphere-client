@@ -124,7 +124,7 @@ function Navbar({ setAuthType, onFocusNavigate }) {
   const gotoCart = async () => {
     if (Object.keys(userDetails || {}).length === 0) {
       alert('Please login to access your cart.');
-      router.push('/authentication');
+      router.push('/authentication/login');
     } else {
       try {
         const token = userDetails?.accessToken;
@@ -142,7 +142,7 @@ function Navbar({ setAuthType, onFocusNavigate }) {
         if (error.response?.status === 403) {
           alert('Session expired. Please login again to continue.');
           logout();
-          router.push('/authentication');
+          router.push('/authentication/login');
         }
       }
     }
@@ -155,7 +155,7 @@ function Navbar({ setAuthType, onFocusNavigate }) {
     } else {
       if (Object.keys(userDetails || {}).length === 0) {
         alert('Please login to access this section.');
-        router.push('/authentication');
+        router.push('/authentication/login');
         return;
       }
       router.push(`/${item.action}`);
@@ -232,7 +232,7 @@ function Navbar({ setAuthType, onFocusNavigate }) {
       <span className="font-light hidden lg:block cursor-pointer" onClick={() => {
         if (Object.keys(userDetails || {}).length === 0) {
           // alert('Please login to access Teacher mode.');
-          router.push('/authentication');
+          router.push('/authentication/login');
         } else {
           router.push('/teacher');
         }
@@ -240,7 +240,7 @@ function Navbar({ setAuthType, onFocusNavigate }) {
       <span className="font-light cursor-pointer" onClick={() => {
         if (Object.keys(userDetails || {}).length === 0) {
           // alert('Please login to access My learning.');
-          router.push('/authentication');
+          router.push('/authentication/login');
         } else {
           router.push('/learning');
         }
@@ -248,7 +248,7 @@ function Navbar({ setAuthType, onFocusNavigate }) {
       <span className="relative cursor-pointer" onClick={() => {
         if (Object.keys(userDetails || {}).length === 0) {
           // alert('Please login to access Wishlist.');
-          router.push('/authentication');
+          router.push('/authentication/login');
         } else {
           router.push('/wishlist');
         }

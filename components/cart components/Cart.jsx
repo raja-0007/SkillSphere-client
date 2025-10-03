@@ -1,5 +1,5 @@
 import { useHomeContext } from '@contexts/HomeContext'
-import React from 'react'
+import React, { useState } from 'react'
 import { FaTag } from "react-icons/fa6";
 import { FaRupeeSign } from "react-icons/fa";
 import { printRating } from '../home components/courses';
@@ -7,9 +7,12 @@ import { GoDotFill } from "react-icons/go";
 import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
 import { IoChevronBackOutline } from 'react-icons/io5';
+import { useRouter } from 'next/navigation';
 
 
 function Cart({ from, setFrom }) {
+    const [loading, setLoading] = useState(false);
+    const router = useRouter()
     const { cart, setCart, userDetails, logout, setActive } = useHomeContext()
 
     const getTotal = () => {
@@ -20,29 +23,94 @@ function Cart({ from, setFrom }) {
         return total
     }
 
+    const loadScript = (src) => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+    
+    // const checkOutHandler = async () => {
+    //     if (getTotal() > 0) {
+
+    //         const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
+    //         // if (!Object.values(details).includes('')) {
+    //         // await axios.post('http://localhost:3000/api/payment', { name: details.name, amount: details.amount })
+    //         //     .then((res) => console.log(res.data))
+    //         console.log('payment', cart)
+    //         const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/create-checkout-session`, { cart: JSON.stringify(cart), userId: userDetails?.userDetails?._id })
+
+    //         const session = await response.data
+
+    //         const result = stripe.redirectToCheckout({
+    //             sessionId: session.id
+    //         })
+
+    //         if ((await result).error) {
+    //             console.log(result.error)
+    //         }
+    //         // }
+    //     }
+
+    // }
+
     const checkOutHandler = async () => {
         if (getTotal() > 0) {
-
-            const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
-            // if (!Object.values(details).includes('')) {
-            // await axios.post('http://localhost:3000/api/payment', { name: details.name, amount: details.amount })
-            //     .then((res) => console.log(res.data))
-            console.log('payment', cart)
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/create-checkout-session`, { cart: JSON.stringify(cart), userId: userDetails?.userDetails?._id })
-
-            const session = await response.data
-
-            const result = stripe.redirectToCheckout({
-                sessionId: session.id
-            })
-
-            if ((await result).error) {
-                console.log(result.error)
+            const totalAmount = getTotal(); // Convert to smallest currency unit (e.g., paise for INR)
+            setLoading(true);
+        
+            // 1. Load Razorpay checkout.js script
+            const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+            if (!res) {
+              alert("Razorpay SDK failed to load. Are you online?");
+              setLoading(false);
+              return;
             }
-            // }
+        
+            try {
+              // 2. Create order on your backend
+              const { data: order } = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/create-order`, {
+                amount: totalAmount, // Example: ₹500
+              });
+        
+              // 3. Configure options for Razorpay
+              const options = {
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // public key
+                amount: order.amount,
+                currency: order.currency,
+                name: "SkillSphere",
+                description: "Test Transaction",
+                order_id: order.id,
+                handler: function (response) {
+                  console.log("Payment Success:", response);
+                  if(response.razorpay_payment_id){
+                    router.push(`/success/${cart.map(item=>item._id)}`)
+                  }
+                  // 🔒 send response.razorpay_payment_id & response.razorpay_signature to backend for verification
+                },
+                prefill: {
+                  name: "John Doe",
+                  email: "john@example.com",
+                  contact: "9876543210",
+                },
+                theme: {
+                  color: "#3399cc",
+                },
+              };
+        
+              // 4. Open Razorpay popup
+              const rzp = new window.Razorpay(options);
+              rzp.open();
+            } catch (err) {
+              console.error("Error creating order:", err);
+            }
+        
+            setLoading(false);
         }
-
-    }
+  };
 
     const removeFromCart = async (Id) => {
         console.log(Id)

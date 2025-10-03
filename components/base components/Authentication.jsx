@@ -1,5 +1,6 @@
 
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 import React, { useEffect, useRef, useState } from 'react'
 import { FaUserCircle } from "react-icons/fa";
@@ -11,6 +12,7 @@ import { GiFertilizerBag } from "react-icons/gi";
 import { GiWheat } from "react-icons/gi";
 import { GrPieChart } from "react-icons/gr";
 import { useHomeContext } from '@contexts/HomeContext';
+import { useRouter } from 'next/navigation';
 
 
 
@@ -19,7 +21,7 @@ import { useHomeContext } from '@contexts/HomeContext';
 function Authentication({ type, setAuthType }) {
 
   const regform = useRef()
-
+  const router = useRouter()
   const [isOtpVerify, setIsOtpVerify] = useState(false)
   const { setActive, setUserDetails } = useHomeContext()
   const [otp, setOtp] = useState('')
@@ -105,9 +107,29 @@ function Authentication({ type, setAuthType }) {
       return
     }
     await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/authorization`, { email: email, password: password, action: 'login' })
-      .then(console.log('req sent'))
-      .then(res => { console.log(res.data); setIsLoggedIn(res.data) })
-
+      .then(res => {
+        console.log('req sent');
+        console.log(res.data);
+        setIsLoggedIn(res.data);
+        // Store tokens and user details in cookies
+        if (res.data.refreshToken) {
+          Cookies.set('refreshToken', res.data.refreshToken, { expires: 7 });
+        }
+        if (res.data.accessToken) {
+          Cookies.set('accessToken', res.data.accessToken, { expires: 1 });
+        }
+        if (res.data.userDetails) {
+          Cookies.set('user', JSON.stringify(res.data.userDetails), { expires: 7 });
+        }
+        // Fetch redirectUrl from cookies, if present, route to it, else route to '/'
+        const redirectUrl = Cookies.get('redirectUrl');
+        if (redirectUrl) {
+          Cookies.remove('redirectUrl');
+          router.push(redirectUrl);
+        } else {
+          router.push('/');
+        }
+      })
       .catch(err => console.log('error in sending request', err))
   }
 

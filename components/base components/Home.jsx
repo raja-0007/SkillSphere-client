@@ -1,3 +1,4 @@
+"use client"
 import React, { useContext } from 'react'
 import Carousel from '../home components/carousel'
 import TrustedCompanies from '../home components/TrustedCompanies'

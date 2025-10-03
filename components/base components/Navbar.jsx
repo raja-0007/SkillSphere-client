@@ -15,7 +15,7 @@ import { MdNotificationsNone } from "react-icons/md";
 
 
 import { useHomeContext } from "@contexts/HomeContext";
-function Navbar({ setAuthType, setFrom }) {
+function Navbar({ setAuthType, onFocusNavigate }) {
   const [isCategories, setIsCategories] = useState(false)
   const { setActive, active, userDetails, setUserDetails, logout, search, cart, setCart, setSearch, dropDown, setDropDown, searchResults, setSearchResults, setSearchData, setOverviewCourse } = useHomeContext()
   const [isTopics, setIsTopics] = useState(false)
@@ -27,6 +27,7 @@ function Navbar({ setAuthType, setFrom }) {
   const searchDropRef = useRef(null)
   const [isProfile, setIsProfile] = useState(false)
   const pathname = usePathname()
+  const router = useRouter();
 
   const profileItems = [
     { tag: 'My learning', action: 'learning' },
@@ -87,7 +88,13 @@ function Navbar({ setAuthType, setFrom }) {
     const getSearchResults = async () => {
       // console.log(search)
       await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/searchResults/${search}`)
-        .then(res => { setSearchResults(res.data); })
+        .then(res => { setSearchResults(res.data);
+          setSearchData({
+      search: search,
+      searchResults: res.data
+    })
+
+         })
     }
     if (search !== '') getSearchResults()
     else setSearchResults([])
@@ -104,65 +111,54 @@ function Navbar({ setAuthType, setFrom }) {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    console.log('clickec')
     setSearchData({
       search: search,
       searchResults: searchResults
     })
-    setActive('search results')
+    // router.push('/search-results');
+    // setActive('search results')
   }
   // console.log(cart)
 
   const gotoCart = async () => {
     if (Object.keys(userDetails || {}).length === 0) {
-      alert('please login')
-    }
-    else {
-
+      alert('Please login to access your cart.');
+      router.push('/authentication');
+    } else {
       try {
-        const token = userDetails?.token;
-        console.log(token) // Replace with your actual token
+        const token = userDetails?.accessToken;
         await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userDetails?.userDetails?._id}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         })
           .then(response => {
-
-            console.log('Data:', response.data);
             if (response.data.status == 'success') {
-              if(active !== 'cart'){
-
-                setActive('cart')
-                setFrom(active)
-              }
-              else setActive('cart')
+              router.push('/cart');
             }
-
           })
-
       } catch (error) {
-        if (error.response.status === 403) {
-          alert('session expired please login again to continue')
-          logout()
+        if (error.response?.status === 403) {
+          alert('Session expired. Please login again to continue.');
+          logout();
+          router.push('/authentication');
         }
-
-        console.error('Error fetching data:', error);
       }
-      // setActive('cart')
     }
   }
 
   const profileItemHandler = (item) => {
-    if (item.tag == 'Log out') {
-      logout()
-    }
-    else {
-      if(item.action !== active){
-        setActive(item.action)
-  
-        setFrom(active)
-
+    if (item.tag === 'Log out') {
+      logout();
+      router.push('/');
+    } else {
+      if (Object.keys(userDetails || {}).length === 0) {
+        alert('Please login to access this section.');
+        router.push('/authentication');
+        return;
       }
+      router.push(`/${item.action}`);
     }
   }
 
@@ -210,37 +206,58 @@ function Navbar({ setAuthType, setFrom }) {
         id="searchForm"
         className="w-[45%] hidden lg:flex gap-2 bg-white border-[1px]  border-black px-3 rounded-3xl h-11 overflow-x-hidden" onSubmit={(e) => submitHandler(e)}>
         <button type="submit"><IoSearch className="text-gray-400 text-xl" /></button>
-        <input type="text" placeholder="search for anything..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full outline-none " name="" id="" />
+        <input type="text" onFocus={()=>{
+          if(onFocusNavigate){
+            router.push('/search-results')
+          }
+        }} placeholder="search for anything..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full outline-none " name="" id="" />
 
       </form>
-      {dropDown && <div ref={searchDropRef} className="w-[45%] ms-[18%] bg-white rounded-md overflow-hidden absolute top-[10vh] h-[max-content] flex flex-col">
+      {/* {dropDown && searchResults.length > 0 && <div ref={searchDropRef} className="w-[45%] ms-[18%] bg-white rounded-md overflow-hidden absolute top-[10vh] h-[max-content] flex flex-col">
         {searchResults.map((res, i) => {
           return (
             <span onClick={() => {
               setOverviewCourse(res);
               setActive('course overview'); setSearchResults([]); setSearch('')
-               setFrom(active)
+              //  setFrom(active)
+              router.push('/search-results')
             }} key={i} className="w-full p-2 py-2 hover:shadow-md hover:bg-slate-100">{res.landingPageDetails.title}</span>
           )
         })}
-      </div>}
+        <div className="flex justify-end">
+          <button type="submit" className="p-1" onClick={submitHandler}>view all</button>
+        </div>
+      </div>} */}
 
-      <Link href={''} onClick={() => setActive('teacher')} className="font-light hidden lg:block">Teacher mode</Link>
-      <div className="font-light cursor-pointer" onClick={()=>{
-        setActive('learning'); 
-        active !== 'learning' && setFrom(active)
-        }}>
-        My learning
-      </div>
-      <div className="relative cursor-pointer" onClick={()=>{
-        setActive('wishlist'); 
-        active !== 'wishlist' && setFrom(active)
-        }}>
+      <span className="font-light hidden lg:block cursor-pointer" onClick={() => {
+        if (Object.keys(userDetails || {}).length === 0) {
+          // alert('Please login to access Teacher mode.');
+          router.push('/authentication');
+        } else {
+          router.push('/teacher');
+        }
+      }}>Teacher mode</span>
+      <span className="font-light cursor-pointer" onClick={() => {
+        if (Object.keys(userDetails || {}).length === 0) {
+          // alert('Please login to access My learning.');
+          router.push('/authentication');
+        } else {
+          router.push('/learning');
+        }
+      }}>My learning</span>
+      <span className="relative cursor-pointer" onClick={() => {
+        if (Object.keys(userDetails || {}).length === 0) {
+          // alert('Please login to access Wishlist.');
+          router.push('/authentication');
+        } else {
+          router.push('/wishlist');
+        }
+      }}>
         <FaRegHeart className="text-xl text-black" />
         {/* {cart.length > 0 && <div className="absolute top-[-5px] right-[-5px] bg-violet-500 text-center text-white text-xs rounded-full w-4 h-4">
             {cart.length}
           </div>} */}
-      </div>
+      </span>
       <span className="flex gap-4">
         {/* <IoSearch className="lg:hidden text-2xl text-black" /> */}
 

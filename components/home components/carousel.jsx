@@ -12,7 +12,7 @@ function Carousel() {
        spaceBetween={0}
        slidesPerView={1}
        navigation={{clickable:true}}
-       effect='cube'
+      //  effect='cube'
        cubeEffect={{shadow:false, shadowOffset:1, shadowScale:0.6, slideShadows:true}}
        parallax={{enabled:true}}
        cardsEffect={{perSlideOffset:8, perSlideRotate:2, rotate:true, slideShadows:true}}

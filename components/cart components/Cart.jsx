@@ -47,7 +47,7 @@ function Cart({ from, setFrom }) {
     const removeFromCart = async (Id) => {
         console.log(Id)
         try {
-            const token = userDetails?.token;
+            const token = userDetails?.accessToken;
             await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/removeFromCart`, { courseId: Id, userId: userDetails.userDetails._id }, {
                 headers: {
                     'Authorization': `Bearer ${token}`

@@ -6,8 +6,8 @@ import { FaRegFile } from "react-icons/fa6";
 import { PiMonitorPlay } from "react-icons/pi";
 
 
-function CourseSections() {
-    const { overviewCourse } = useHomeContext()
+function CourseSections({overviewCourse}) {
+    // const { overviewCourse } = useHomeContext()
     const [openSections, setOpenSections] = useState([])
     const [isExpandAll, setIsExpandAll] = useState(false)
     const totalLectures = (sections) => {

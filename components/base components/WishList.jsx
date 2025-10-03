@@ -28,7 +28,7 @@ function WishList({from, setFrom}) {
         setItemLoading(id)
         await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/removeFromWishlist/${id}/${userDetails?.userDetails?._id}`,{
             headers:{
-                'Authorization':`Bearer ${userDetails?.token}`
+                'Authorization':`Bearer ${userDetails?.accessToken}`
             }
         })
         .then((res)=>{

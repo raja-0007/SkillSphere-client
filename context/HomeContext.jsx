@@ -3,6 +3,7 @@
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import Cookies from 'js-cookie';
 
 const homeContext = createContext()
 function HomeProvider({ children }) {
@@ -22,7 +23,7 @@ function HomeProvider({ children }) {
 
   const addRating = async (data, rating, setLoading) => {
     try {
-      const token = userDetails?.token;
+      const token = userDetails?.accessToken;
       console.log(token)
       const userId = userDetails?.userDetails?._id
       if (data.rating == 0) {
@@ -70,6 +71,9 @@ function HomeProvider({ children }) {
     router.push('/')
     setActive('home')
     setCart([])
+    Cookies.remove('user')
+    Cookies.remove('access_token')
+    Cookies.remove('refresh_token')
     setUserDetails({})
   }
 
@@ -81,7 +85,7 @@ function HomeProvider({ children }) {
 
     const getCart = async () => {
       try {
-        const token = userDetails?.token;
+        const token = userDetails?.accessToken;
         console.log(token) // Replace with your actual token
         const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userDetails?.userDetails?._id}`, {
           headers: {

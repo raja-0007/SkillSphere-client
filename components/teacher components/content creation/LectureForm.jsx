@@ -10,7 +10,7 @@ function LectureForm({addCurrItem, setIsCurrForm, setSelectedType, sectId}) {
             </form>
             <div className='flex justify-start items-center gap-3 font-semibold'>
                 <span className='cursor-pointer' onClick={()=>{setIsCurrForm(''); setSelectedType(''); setTitle('');}}>cancel</span>
-                <button type='submit' className='py-1 px-2 bg-slate-800 text-white cursor-pointer' >add</button>
+                <button type='submit' onClick={()=>{addCurrItem(title, sectId); setTitle('');}} className='py-1 px-2 bg-slate-800 text-white cursor-pointer' >add</button>
             </div>
         </div>
     )

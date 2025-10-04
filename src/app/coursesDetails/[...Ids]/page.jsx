@@ -3,18 +3,22 @@
 import Footer from '@components/base components/Footer'
 import CourseNavbar from '@components/courseDetails components/CourseNavbar'
 import axios from 'axios'
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FaArrowLeftLong, FaCirclePlay } from "react-icons/fa6";
 import CourseSidebar from '@components/courseDetails components/CourseSidebar'
-import { FaStar } from "react-icons/fa";
+import { FaCheckCircle, FaChevronDown, FaChevronUp, FaStar, FaTrophy } from "react-icons/fa";
 import { BsFileEarmark } from 'react-icons/bs'
 import { IoMdCheckmark } from 'react-icons/io'
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
+import { IoClose } from 'react-icons/io5'
+import { MdCelebration } from 'react-icons/md'
 
 
 function page({ params }) {
   const [opened, setOpened] = useState([])
-
+const [loading, setLoading] = useState(true)
+  const [showCongrats, setShowCongrats] = useState(false)
+  const [error, setError] = useState(null)  
   const iframeRef = useRef(null)
   const [scrollPos, setScrollPos] = useState(0)
   const [isSidebar, setIsSidebar] = useState(true)
@@ -25,38 +29,47 @@ function page({ params }) {
 
   const [completed, setCompleted] = useState([])
   useEffect(() => {
-    const getCourseContent = async () => {
-      await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCourseDetails/${params.Ids[0]}`)
-        .then(res => {
-          console.log(res.data);
-          SetCourseContent(res.data)
-        })
+    if (!params?.Ids || !Array.isArray(params.Ids) || params.Ids.length < 2) {
+      setError("Invalid or missing course parameters in URL.")
+      setLoading(false)
+      return
     }
 
+    const [courseId, userId] = params.Ids
+
+    const getCourseContent = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCourseDetails/${courseId}`)
+        SetCourseContent(response.data)
+        setLoading(false)
+      } catch (error) {
+        console.error('Error fetching course:', error)
+        setError("Failed to fetch course details. Please try again later.")
+        setLoading(false)
+      }
+    }
 
     const getCompletionDetails = async () => {
-      await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCompletionDetails/${params.Ids[0]}/${params.Ids[1]}`)
-        .then(res => {
-          if (res.data.status == 'success') {
-            setCompleted(res.data.completedLectures)
-          }
-          else {
-            alert('an unexpected error had occured. please try again')
-          }
-        })
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCompletionDetails/${courseId}/${userId}`)
+        if (response.data.status === 'success') {
+          setCompleted(response.data.completedLectures || [])
+        }
+      } catch (error) {
+        console.error('Error fetching completion:', error)
+      }
     }
-
 
     getCourseContent()
     getCompletionDetails()
-    window.addEventListener("scroll", handleScroll, { passive: true, capture: true });
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
+
+    const handleScroll = () => {
+      setScrollPos(window.scrollY)
     }
 
-
-
-  }, [])
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [params.Ids])
 
 
   useEffect(() => {
@@ -138,10 +151,171 @@ function page({ params }) {
     }
   }
 
+  const renderDescription = () => {
+    const description = courseContent?.landingPageDetails?.description
+    
+    if (!description) return null
+    
+    if (typeof description === 'string') {
+      return (
+        <section className='mb-8'>
+          <h3 className='text-2xl font-bold mb-4'>Description</h3>
+          <p className='text-gray-700 whitespace-pre-line'>{description}</p>
+        </section>
+      )
+    }
+    
+    if (description.blocks && Array.isArray(description.blocks)) {
+      return (
+        <section className='mb-8'>
+          <h3 className='text-2xl font-bold mb-4'>Description</h3>
+          <div className='prose max-w-none text-gray-700'>
+            {description.blocks.map((block, i) => {
+              if (block.type === 'paragraph') {
+                return <p key={i} className='mb-3' dangerouslySetInnerHTML={{ __html: block.data.text }} />
+              }
+              if (block.type === 'nestedList') {
+                const ListTag = block.data.style === 'ordered' ? 'ol' : 'ul'
+                return (
+                  <ListTag key={i} className={`${block.data.style === 'ordered' ? 'list-decimal' : 'list-disc'} pl-6 mb-4 space-y-1`}>
+                    {block.data.items?.map((item, j) => (
+                      <li key={j} dangerouslySetInnerHTML={{ __html: item.content }} />
+                    ))}
+                  </ListTag>
+                )
+              }
+              return null
+            })}
+          </div>
+        </section>
+      )
+    }
+    
+    return null
+  }
+
+  useEffect(() => {
+    const totalLectures = courseContent?.sections?.reduce((acc, sect) => 
+      acc + (sect.curriculum?.length || 0), 0) || 0
+    
+    if (totalLectures > 0 && completed.length === totalLectures && !showCongrats) {
+      setShowCongrats(true)
+    }
+  }, [completed, courseContent])
+
+  
+  const completionPercentage = () => {
+    const totalLectures = courseContent?.sections?.reduce((acc, sect) => 
+      acc + (sect.curriculum?.length || 0), 0) || 0
+    return totalLectures > 0 ? Math.round((completed.length / totalLectures) * 100) : 0
+  }
+
+if (error) {
+    return (
+      <div className='flex min-h-screen items-center justify-center bg-gray-50'>
+        <div className='bg-white p-8 rounded-lg shadow-lg text-center max-w-md'>
+          <h2 className='text-2xl font-bold text-red-600 mb-3'>Error</h2>
+          <p className='text-gray-700 mb-6'>{error}</p>
+          <button
+            onClick={() => window.location.href = '/learning'}
+            className='px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition'
+          >
+            Go to My Courses
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className='flex min-h-screen items-center justify-center'>
+        <div className='w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin'></div>
+      </div>
+    )
+  }
 
   return (
     <div className='flex flex-col ' ref={containerRef} >
-      <CourseNavbar title={courseContent?.landingPageDetails?.title} />
+      {showCongrats && (
+        <div className='fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 animate-fade-in'>
+          <div className='bg-white rounded-3xl shadow-2xl p-12 max-w-lg w-full text-center relative animate-scale-up'>
+            <button 
+              onClick={() => setShowCongrats(false)}
+              className='absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl'
+            >
+              <IoClose />
+            </button>
+            
+            <div className='mb-6'>
+              <div className='w-32 h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full mx-auto flex items-center justify-center animate-bounce-slow'>
+                <FaTrophy className='text-white text-6xl' />
+              </div>
+              <div className='flex justify-center gap-2 mt-4'>
+                <MdCelebration className='text-4xl text-yellow-500 animate-wiggle' />
+                <MdCelebration className='text-4xl text-purple-500 animate-wiggle' style={{ animationDelay: '0.2s' }} />
+                <MdCelebration className='text-4xl text-pink-500 animate-wiggle' style={{ animationDelay: '0.4s' }} />
+              </div>
+            </div>
+
+            <h2 className='text-4xl font-bold text-gray-800 mb-4'>Congratulations!</h2>
+            <p className='text-xl text-gray-600 mb-2'>
+              {courseContent?.messages?.congratulations || 'You have completed the course!'}
+            </p>
+            <p className='text-lg text-gray-500 mb-8'>
+              You've finished all {completed.length} lectures in "{courseContent?.landingPageDetails?.title}"
+            </p>
+
+            <div className='bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 mb-6'>
+              <p className='text-sm text-gray-700 mb-3'>Course created by</p>
+              <p className='font-bold text-2xl text-gray-800'>{courseContent?.author?.username}</p>
+            </div>
+
+            <div className='flex gap-3'>
+              <button
+                onClick={() => setShowCongrats(false)}
+                className='flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-bold hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg'
+              >
+                Continue Learning
+              </button>
+              <button
+                onClick={() => window.location.href = '/learning'}
+                className='flex-1 border-2 border-gray-300 text-gray-700 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all'
+              >
+                My Courses
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* <CourseNavbar title={courseContent?.landingPageDetails?.title} /> */}
+      <header className='bg-gray-900 text-white sticky top-0 z-20 shadow-lg'>
+        <div className='px-6 py-4 flex items-center justify-between'>
+          <div className='flex items-center gap-4'>
+            {/* <button onClick={() => window.history.back()} className='hover:bg-gray-800 p-2 rounded-lg transition-colors'>
+              <FaArrowLeft className='text-xl' />
+            </button> */}
+            <div>
+              <h1 className='font-bold text-lg line-clamp-1'>{courseContent?.landingPageDetails?.title}</h1>
+              <div className='flex items-center gap-4 text-sm text-gray-300 mt-1'>
+                <span className='flex items-center gap-1'>
+                  <FaStar className='text-yellow-400' />
+                  {courseContent?.rating?.rating || 'N/A'}
+                </span>
+                <span>{completed.length} / {courseContent?.sections?.reduce((acc, s) => acc + (s.curriculum?.length || 0), 0)} completed</span>
+              </div>
+            </div>
+          </div>
+          <div className='flex items-center gap-4'>
+            <div className='hidden md:flex flex-col items-end'>
+              <div className='bg-gray-800 rounded-full h-2 w-32'>
+                <div className='bg-green-500 h-2 rounded-full transition-all' style={{ width: `${completionPercentage()}%` }}></div>
+              </div>
+              <span className='text-xs text-gray-400 mt-1'>{completionPercentage()}% Complete</span>
+            </div>
+          </div>
+        </div>
+      </header>
       <div className='flex w-full relative' >
 
         <div className={`flex flex-col ${isSidebar ? 'w-[75%]' : 'w-full'}`}>
@@ -206,15 +380,25 @@ function page({ params }) {
                   ></iframe>
 
                 </div>
-                : <div className='h-[500px]'></div>
+                : <div className='h-[500px] flex items-center justify-center text-gray-500'><p>Select a lecture to begin</p></div>
             }
           </div>
           <span className='w-full flex justify-between items-center text-xl py-5 px-10 bg-slate-100 border-b'>
             <span className='w-[70%] font-bold'>{courseContent?.landingPageDetails?.subtitle}</span>
-            {!completed?.includes(selected.currId) ?
-              <div className='bg-green-500 cursor-pointer text-white font-semibold text-sm p-2 w-[20%] text-center flex justify-center items-center gap-2' onClick={() => updateCompletion(selected.currId)}><IoIosCheckmarkCircleOutline className='text-white text-2xl font-bold'/>mark as completed</div>
-              : <div className='bg-green-300 text-white font-semibold text-sm p-2 w-[15%] text-center'>completed</div>
-            }
+            {selected && (
+              <button
+                onClick={() => updateCompletion(selected.currId)}
+                disabled={completed.includes(selected.currId)}
+                className={`px-6 py-3 rounded-lg font-semibold flex items-center gap-2 transition-all ${
+                  completed.includes(selected.currId)
+                    ? 'bg-green-100 text-green-700 cursor-default'
+                    : 'bg-green-600 text-white hover:bg-green-700'
+                }`}
+              >
+                <FaCheckCircle />
+                {completed.includes(selected.currId) ? 'Completed' : 'Mark Complete'}
+              </button>
+            )}
           </span>
           <span className='px-10 mt-8 flex items-center gap-10'>
             <span >
@@ -250,24 +434,69 @@ function page({ params }) {
                 )
               })}
             </div>
-            <div>
-              <p className='text-2xl font-bold mb-2'>Description</p>
-              <p>{courseContent?.landingPageDetails?.description}</p>
-            </div>
+            {renderDescription()}
           </div>
 
 
           <Footer />
         </div>
 
-        {isSidebar ?
-          <CourseSidebar courseContent={courseContent} opened={opened} handleOpen={handleOpen} scrollPos={scrollPos} selected={selected} completed={completed} setSelected={setSelected} setIsSidebar={setIsSidebar} />
-          :
-          <div onClick={() => setIsSidebar(true)} className='w-8 h-10 cursor-pointer text-white z-10 px-2 py-2 gap-2 justify-start bg-slate-700  overflow-hidden  hover:w-[max-content]  absolute right-0 top-20 flex items-center'>
-            <span ><FaArrowLeftLong /></span><span className='font-bold inline-block'>course content</span>
-          </div>
+        {isSidebar ? (
+          <aside className='fixed right-0 top-[73px] bottom-0 w-96 bg-white border-l shadow-lg overflow-y-auto z-10'>
+            <div className='sticky top-0 bg-white border-b px-4 py-3 flex items-center justify-between z-10'>
+              <h3 className='font-bold text-lg'>Course Content</h3>
+              <button onClick={() => setIsSidebar(false)} className='p-2 hover:bg-gray-100 rounded-lg'>
+                <IoClose className='text-xl' />
+              </button>
+            </div>
 
-        }
+            <div className='p-4'>
+              {courseContent?.sections?.map((section, i) => (
+                <div key={section.id} className='mb-2'>
+                  <button
+                    onClick={() => handleOpen(opened.includes(section.id) ? 'close' : 'open', section.id)}
+                    className='w-full bg-gray-100 hover:bg-gray-200 px-4 py-3 rounded-lg flex items-center justify-between font-semibold text-left transition-colors'
+                  >
+                    <span>Section {i + 1}: {section.title}</span>
+                    {opened.includes(section.id) ? <FaChevronUp /> : <FaChevronDown />}
+                  </button>
+
+                  {opened.includes(section.id) && (
+                    <div className='mt-2 space-y-1'>
+                      {section.curriculum?.map((curr) => (
+                        <button
+                          key={curr.currId}
+                          onClick={() => setSelected(curr)}
+                          className={`w-full px-4 py-3 text-left rounded-lg transition-all flex items-center gap-3 ${
+                            selected?.currId === curr.currId
+                              ? 'bg-blue-100 border-2 border-blue-500 text-blue-700'
+                              : 'hover:bg-gray-50 border-2 border-transparent'
+                          }`}
+                        >
+                          {completed.includes(curr.currId) ? (
+                            <FaCheckCircle className='text-green-600 flex-shrink-0' />
+                          ) : curr.content_type === 'video' ? (
+                            <FaCirclePlay className='text-gray-400 flex-shrink-0' />
+                          ) : (
+                            <BsFileEarmark className='text-gray-400 flex-shrink-0' />
+                          )}
+                          <span className='flex-1 text-sm'>{curr.title}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </aside>
+        ) : (
+          <button
+            onClick={() => setIsSidebar(true)}
+            className='fixed right-0 top-24 bg-gray-900 text-white px-4 py-3 rounded-l-lg hover:bg-gray-800 transition-colors z-10 shadow-lg'
+          >
+            <span className='text-sm font-semibold'>Course Content</span>
+          </button>
+        )}
 
       </div>
 

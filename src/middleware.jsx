@@ -48,7 +48,7 @@ export function middleware(request) {
   const currentPath = request.nextUrl.pathname
 
   // If user not logged in and visiting non-public route
-  console.log('MIDDLEWARE>>>',  currentPath, request.url )
+  // console.log('MIDDLEWARE>>>',  currentPath, request.url )
   if (!user && !isPublicRoute(currentPath)) {
     if (isValidRoute(currentPath)) {
       const response = NextResponse.redirect(new URL('/', request.url))

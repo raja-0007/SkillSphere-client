@@ -6,7 +6,7 @@ import Cart from "@components/cart components/Cart";
 export default function CartPage() {
   return (
     <div className="w-full flex flex-col min-h-screen">
-      <Navbar />
+      <Navbar onFocusNavigate={true}/>
       <Cart />
       <Footer />
     </div>

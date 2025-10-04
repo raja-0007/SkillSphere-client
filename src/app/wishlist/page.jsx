@@ -6,7 +6,7 @@ import WishList from "@components/base components/WishList";
 export default function WishListPage() {
   return (
     <div className="w-full flex flex-col min-h-screen">
-      <Navbar />
+      <Navbar onFocusNavigate={true}/>
       <WishList />
       <Footer />
     </div>

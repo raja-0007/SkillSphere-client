@@ -6,6 +6,8 @@ import Courses from '../home components/courses'
 import LearnersReview from '../home components/LearnersReview'
 import BecomeInstructor from '../home components/BecomeInstructor'
 import { useHomeContext } from '@contexts/HomeContext' 
+import LiveWebinars from '@components/home components/LiveWebinars'
+import LearningStatistics from '@components/home components/LearningStatistics'
 
 function Home() {
     const {active} = useHomeContext()
@@ -15,6 +17,8 @@ function Home() {
       <Carousel />
       <TrustedCompanies/>
       <Courses />
+      <LiveWebinars/>
+      <LearningStatistics/>
       <LearnersReview/>
       <BecomeInstructor/>
     </>

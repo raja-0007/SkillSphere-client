@@ -46,7 +46,7 @@ function Navbar({ setAuthType, onFocusNavigate }) {
 
     })
     getCategories()
-    setUserDetails(JSON.parse(sessionStorage.getItem('userdetails')) || '')
+    // setUserDetails(JSON.parse(sessionStorage.getItem('userdetails')) || '')
 
 
   }, [])
@@ -279,8 +279,14 @@ function Navbar({ setAuthType, onFocusNavigate }) {
 
       {Object.keys(userDetails || {}).length === 0 ?
         <div className="hidden lg:flex gap-3">
-          <span className="px-3 py-1 border-2 border-slate-800 hover:bg-slate-200 cursor-pointer" onClick={() => { setAuthType('login'); setActive('authentication') }}>login</span>
-          <span className="px-3 py-1 bg-slate-800 text-white border-2 border-slate-950 cursor-pointer hover:bg-slate-700" onClick={() => { setAuthType('register'); setActive('authentication') }}>signup</span>
+          <span className="px-3 py-1 border-2 border-slate-800 hover:bg-slate-200 cursor-pointer" onClick={() => { 
+            // setAuthType('login'); setActive('authentication')
+            router.push('/authentication/login')
+             }}>login</span>
+          <span className="px-3 py-1 bg-slate-800 text-white border-2 border-slate-950 cursor-pointer hover:bg-slate-700" onClick={() => { 
+            // setAuthType('register'); setActive('authentication')
+            router.push('/authentication/register')
+             }}>signup</span>
         </div>
         :
         <div className="flex flex-col  relative" onClick={() => setIsProfile(!isProfile)} >

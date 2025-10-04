@@ -6,7 +6,7 @@ import Profile from "@components/profile components/Profile";
 export default function ProfilePage() {
   return (
     <div className="w-full flex flex-col min-h-screen">
-      <Navbar />
+      <Navbar onFocusNavigate={true}/>
       <Profile />
       <Footer />
     </div>

@@ -75,6 +75,7 @@ function Curriculum({ activeSection }) {
     }
 
     const addCurrItem = (title, id) => {
+        console.log("currrr",title, id)
         if (title !== '') {
 
             const curriculum = {
@@ -340,7 +341,7 @@ function Curriculum({ activeSection }) {
                                                                     <input type="file" name="" id="lecture_video" className='hidden' accept='video/*' onChange={(e) => { setVideoFile(e.target.files[0]); }} />
 
                                                                 </div>
-                                                                {item.content == '' && <span className='py-2 w-[max-content] h-[max-content]  px-2 bg-slate-800 text-white text-center font-bold ' onClick={() => { addVideoContent(section.id, item.currId, videoFIle); }}>done</span>}                                                    </>
+                                                                {item.content == '' && <span className='py-2 w-[max-content] h-[max-content] cursor-pointer  px-2 bg-slate-800 text-white text-center font-bold ' onClick={() => { addVideoContent(section.id, item.currId, videoFIle); }}>done</span>}                                                    </>
                                                             : <>
                                                                 {/* <span className='p-2 py-1 border-r bg-white text-blue-700 border-black me-2'>
                                                                 <AiOutlineLink size={'1.2em'} />

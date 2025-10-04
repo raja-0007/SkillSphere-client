@@ -6,7 +6,7 @@ import CourseOverview from "@components/course overview/CourseOverview";
 export default function CourseOverviewPage() {
   return (
     <div className="w-full flex flex-col min-h-screen">
-      <Navbar />
+      <Navbar onFocusNavigate={true}/>
       <CourseOverview />
       <Footer />
     </div>

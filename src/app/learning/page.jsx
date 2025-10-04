@@ -6,7 +6,7 @@ import Learning from "@components/base components/Learning";
 export default function LearningPage() {
   return (
     <div className="w-full flex flex-col min-h-screen">
-      <Navbar />
+      <Navbar onFocusNavigate={true}/>
       <Learning />
       <Footer />
     </div>

@@ -212,7 +212,7 @@ function Authentication({ type, setAuthType }) {
   return (
     <div className=' flex flex-col relative'>
       {/* <img src="/home_bg3.jpg" className='absolute h-full z-0 w-full object-cover top-0' alt="" /> */}
-      {/* <Navbar /> */}
+      {/* <Navbar onFocusNavigate={true}/> */}
       <section className='flex justify-evenly  items-center '>
         <div className={`py-10 my-5 px-5 z-10 flex items-center justify-center bg-white w-[max-content]  .shadow-md .shadow-gray-700 .bg-opacity-80`}>
           {!isOtpVerify ?

@@ -77,9 +77,6 @@ function HomeProvider({ children }) {
     setUserDetails({})
   }
 
-  useEffect(() => {
-    console.log('cnaasdgoai 89', cart)
-  }, [cart])
 
   useEffect(() => {
 
@@ -108,6 +105,17 @@ function HomeProvider({ children }) {
 
   }, [userDetails])
 
+  useEffect(()=>{
+    const user = Cookies.get('user');
+    const access_token = Cookies.get('accessToken');
+    const refresh_token = Cookies.get('refreshToken');
+    console.log(user, access_token, refresh_token)
+    if(user && access_token && refresh_token){
+      let userObject = {userDetails:JSON.parse(user), accessToken: access_token, refreshToken: refresh_token}
+      setUserDetails(userObject)
+    }
+
+  },[])
 
   return (
     <homeContext.Provider value={{

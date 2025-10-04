@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 import {Swiper, SwiperSlide} from 'swiper/react'
 import { Navigation, Pagination, Autoplay, EffectCoverflow, Parallax, EffectCards, EffectCube } from 'swiper/modules';

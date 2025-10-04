@@ -11,7 +11,7 @@ import { IoPlaySharp } from "react-icons/io5";
 function Learning({ from, setFrom, isRatingModelOpen, setIsRatingModelOpen }) {
     const [learningCourses, setLearningCourses] = useState([])
     const { userDetails, setActive } = useHomeContext()
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [completed, setCompleted] = useState([])
     const [percentages, setPercentages] = useState([])
     const [hover, setHover] = useState(null)
@@ -29,14 +29,8 @@ function Learning({ from, setFrom, isRatingModelOpen, setIsRatingModelOpen }) {
         if (userDetails?.userDetails?._id) {
             getEnrolled()
         }
-        else{
-            alert('please login to see your progress')
-            setTimeout(() => {
-                setActive('authentication')
-            }, 1000);
-            return
-        }
-    }, [])
+        
+    }, [userDetails])
 
     useEffect(() => {
 
@@ -141,14 +135,17 @@ function Learning({ from, setFrom, isRatingModelOpen, setIsRatingModelOpen }) {
 
     return (
         <div className='px-32 py-10 relative min-h-[70vh]'>
-            {(from !== '') &&
+            {/* {(from !== '') &&
                 <div className=" absolute top-3 left-2 flex  w-[max-content]  cursor-pointer items-center text-sm font-medium  text-gray-400" onClick={() => { setActive(from); setFrom('') }}>
                     <IoChevronBackOutline className='font-bold' />back to {from}
                 </div>
-            }
+            } */}
             <p className='text-3xl font-bold'>My Learning</p>
             <section className=' flex flex-wrap gap-10 px-10  py-10'>
-                {!loading ? learningCourses?.map((item, i) => {
+                {
+                (!loading && learningCourses.length == 0) ? <p className='text-2xl font-bold text-gray-400'>You have not enrolled in any course yet.</p> :
+
+                !loading ? learningCourses?.map((item, i) => {
                     console.log('itemRatingitemRatingitemRating',
                         ratings,
                         ratings.filter(ratingitem => ratingitem.courseId == item._id))

@@ -14,6 +14,7 @@ function WishList({from, setFrom}) {
     useEffect(() => {
         setLoading(true)
         const getWishList = async () => {
+            console.log("calleddddddddddddddddddddd",userDetails?.userDetails?._id)
             await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getWishlist/${userDetails?.userDetails?._id}`)
                 .then(res => { 
                     // console.log('wishlist>>>', res.data);
@@ -22,7 +23,7 @@ function WishList({from, setFrom}) {
         }
 
         if (userDetails?.userDetails?._id) getWishList()
-    }, [])
+    }, [userDetails])
 
     const removeFromWishlist=async(id)=>{
         setItemLoading(id)
@@ -44,14 +45,17 @@ function WishList({from, setFrom}) {
     }
   return (
     <div className='px-32 py-10 relative min-h-[70vh]'>
-            {(from !== '') &&
+            {/* {(from !== '') &&
                 <div className=" absolute top-3 left-2 flex  w-[max-content]  cursor-pointer items-center text-sm font-medium  text-gray-400" onClick={() => { setActive(from); setFrom('') }}>
                     <IoChevronBackOutline className='font-bold' />back to {from}
                 </div>
-            }
+            } */}
             <p className='text-3xl font-bold'>My WishList</p>
             <section className=' flex flex-wrap gap-10 px-10  py-10'>
-                {!loading ? wishList?.map((item, i) => {
+                {
+                                    (!loading && wishList.length == 0) ? <p className='text-2xl font-bold text-gray-400'>Your wishlist is empty.</p> :
+
+                !loading ? wishList?.map((item, i) => {
                     return (
                         <div key={i} 
                         onClick={()=>{setOverviewCourse(item); setActive('course overview'); setFrom(active)}}

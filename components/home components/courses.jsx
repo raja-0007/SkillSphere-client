@@ -80,8 +80,8 @@ function Courses() {
       <div className='w-full flex justify-start items-center gap-5 flex-wrap mt-5'>
         <span className={`${selected == 'python' ? 'font-bold ' : ''}  cursor-pointer`} onClick={(e) => selectHandler(e, 'python')}>python</span>
         <span className={`${selected == 'javascript' ? 'font-bold ' : ''} cursor-pointer`} onClick={(e) => selectHandler(e, 'javascript')}>javascript</span>
-        <span className='cursor-pointer' onClick={(e) => selectHandler(e, 'python')}>android development</span>
-        <span className='cursor-pointer' onClick={(e) => selectHandler(e, 'javascript')}>java</span>
+        <span className={`${selected == 'android development' ? 'font-bold ' : ''} cursor-pointer`} onClick={(e) => selectHandler(e, 'android development')}>android development</span>
+        <span className={`${selected == 'java' ? 'font-bold ' : ''} cursor-pointer`} onClick={(e) => selectHandler(e, 'java')}>java</span>
       </div>
 
       <div className='w-full mx-auto flex flex-col flex-wrap justify-start gap-5 mt-2 border-2 border-gray-300 px-5 py-8'>

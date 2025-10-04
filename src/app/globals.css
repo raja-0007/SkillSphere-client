@@ -6,4 +6,19 @@
 .gradient-opacity {
     background: linear-gradient(to top,  rgba(15, 23, 42, 0.3) , rgba(248, 250, 252, 0.6) 20%);
   }
+
+html, body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Still allow scrolling */
+body {
+  overflow-y: scroll;
+}
   

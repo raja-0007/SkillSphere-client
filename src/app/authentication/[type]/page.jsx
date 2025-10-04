@@ -13,7 +13,7 @@ export default function AuthenticationPage({params}) {
     },[params.type])
   return (
     <div className="w-full flex flex-col min-h-screen">
-      <Navbar />
+      <Navbar onFocusNavigate={true}/>
       <Authentication type={type} setAuthType={setAuthType}/>
       <Footer />
     </div>

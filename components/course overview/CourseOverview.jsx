@@ -143,7 +143,7 @@ function CourseOverview({ id }) {
                         {(cart?.filter(item => item._id === course._id).length === 0 && !course?.enrolled?.includes(userDetails?.userDetails?._id) && course.price !== 'free' && course.author.authorId !== userDetails?.userDetails?._id) ?
                             <span className='px-3 py-2 cursor-pointer bg-violet-500 text-center text-white w-full' onClick={addToCart}>Add to cart</span>
                             : cart?.filter(item => item._id === course._id).length !== 0 ?
-                                <span className='px-3 py-2 bg-slate-700 text-center cursor-pointer text-white w-full'>Go to cart</span>
+                                <Link href={`/cart`} className='px-3 py-2 bg-slate-700 text-center cursor-pointer text-white w-full'>Go to cart</Link>
                                 : (!course?.enrolled?.includes(userDetails?.userDetails?._id) && course.price === 'free') ? <span className='px-3 py-2 bg-slate-700 text-center text-white cursor-pointer w-full' onClick={() => enrollFree(course._id, userDetails?.userDetails?._id)}>Enroll for free</span>
                                     : (course?.enrolled?.includes(userDetails?.userDetails?._id) || course.price === 'free' || course.author.authorId === userDetails?.userDetails?._id) &&
                                     <Link href={`/coursesDetails/${course._id}/${userDetails?.userDetails?._id}`} target='_blank' className='px-3 py-2 bg-slate-700 text-center cursor-pointer text-white w-full'>Go to course</Link>

@@ -18,7 +18,7 @@ function HomeProvider({ children }) {
   const [cart, setCart] = useState([])
   const [enrolled, setEnrolled] = useState([])
   const [ratings, setRatings] = useState([])
-  const [isRatingModelOpen, setIsRatingModelOpen] = useState({})
+  const [isRatingModelOpen, setIsRatingModelOpen] = useState(null)
 
 
   const addRating = async (data, rating, setLoading) => {
@@ -37,7 +37,7 @@ function HomeProvider({ children }) {
             console.log(res.data); setRatings(res.data.ratings);
             setTimeout(() => {
 
-              setIsRatingModelOpen({})
+              setIsRatingModelOpen(null)
             }, 2000);
           })
       }
@@ -52,7 +52,7 @@ function HomeProvider({ children }) {
             console.log(res.data); setRatings(res.data.ratings);
             setTimeout(() => {
 
-              setIsRatingModelOpen({})
+              setIsRatingModelOpen(null)
             }, 2000);
           })
 
@@ -62,7 +62,7 @@ function HomeProvider({ children }) {
       console.log(err)
 
       alert('An unexpected error occurred. Please try again')
-      setIsRatingModelOpen({})
+      setIsRatingModelOpen(null)
     }
   }
 

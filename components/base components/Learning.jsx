@@ -5,17 +5,18 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { IoChevronBackOutline } from 'react-icons/io5'
 import { IoPlaySharp } from "react-icons/io5";
+import RatingModel from './RatingModel'
 
 
 
-function Learning({ from, setFrom, isRatingModelOpen, setIsRatingModelOpen }) {
+function Learning({ from, setFrom }) {
     const [learningCourses, setLearningCourses] = useState([])
-    const { userDetails, setActive } = useHomeContext()
+    const { userDetails, setActive, isRatingModelOpen, setIsRatingModelOpen } = useHomeContext()
     const [loading, setLoading] = useState(true)
     const [completed, setCompleted] = useState([])
     const [percentages, setPercentages] = useState([])
     const [hover, setHover] = useState(null)
-    const {ratings, setRatings} = useHomeContext()
+    const { ratings, setRatings } = useHomeContext()
 
     useEffect(() => {
         setLoading(true)
@@ -29,7 +30,7 @@ function Learning({ from, setFrom, isRatingModelOpen, setIsRatingModelOpen }) {
         if (userDetails?.userDetails?._id) {
             getEnrolled()
         }
-        
+
     }, [userDetails])
 
     useEffect(() => {
@@ -127,14 +128,15 @@ function Learning({ from, setFrom, isRatingModelOpen, setIsRatingModelOpen }) {
 
     console.log(percentages)
 
-    console.log('ratingsratingsratingsratings>>>>',ratings)
-    
+    console.log('ratingsratingsratingsratings>>>>', ratings)
+
 
 
 
 
     return (
         <div className='px-32 py-10 relative min-h-[70vh]'>
+            {isRatingModelOpen && <RatingModel isRatingModelOpen={isRatingModelOpen} setIsRatingModelOpen={setIsRatingModelOpen} />}
             {/* {(from !== '') &&
                 <div className=" absolute top-3 left-2 flex  w-[max-content]  cursor-pointer items-center text-sm font-medium  text-gray-400" onClick={() => { setActive(from); setFrom('') }}>
                     <IoChevronBackOutline className='font-bold' />back to {from}
@@ -143,72 +145,72 @@ function Learning({ from, setFrom, isRatingModelOpen, setIsRatingModelOpen }) {
             <p className='text-3xl font-bold'>My Learning</p>
             <section className=' flex flex-wrap gap-10 px-10  py-10'>
                 {
-                (!loading && learningCourses.length == 0) ? <p className='text-2xl font-bold text-gray-400'>You have not enrolled in any course yet.</p> :
+                    (!loading && learningCourses.length == 0) ? <p className='text-2xl font-bold text-gray-400'>You have not enrolled in any course yet.</p> :
 
-                !loading ? learningCourses?.map((item, i) => {
-                    console.log('itemRatingitemRatingitemRating',
-                        ratings,
-                        ratings.filter(ratingitem => ratingitem.courseId == item._id))
-                    return (
-                        <div key={i}>
-                            <Link href={`/coursesDetails/${item._id}/${userDetails?.userDetails?._id}`} target='_blank'
-                                className='flex flex-col   w-[300px] cursor-pointer' onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}>
-                                <div className='w-[300px] h-[max-content] relative'>
+                        !loading ? learningCourses?.map((item, i) => {
+                            console.log('itemRatingitemRatingitemRating',
+                                ratings,
+                                ratings.filter(ratingitem => ratingitem.courseId == item._id))
+                            return (
+                                <div key={i}>
+                                    <Link href={`/coursesDetails/${item._id}/${userDetails?.userDetails?._id}`} target='_blank'
+                                        className='flex flex-col   w-[300px] cursor-pointer' onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}>
+                                        <div className='w-[300px] h-[max-content] relative'>
 
-                                    <img src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${item.image}`} className='w-[300px] h-[170px]' alt="" />
-                                    {hover == i && (<div className='w-full flex items-center justify-center h-full bg-black bg-opacity-40 absolute top-0 left-0'>
-                                        <div className='w-14 h-14 flex justify-center items-center rounded-full bg-white'><IoPlaySharp className='text-[1.8em] ms-1' /></div>
-                                    </div>)}
+                                            <img src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${item.image}`} className='w-[300px] h-[170px]' alt="" />
+                                            {hover == i && (<div className='w-full flex items-center justify-center h-full bg-black bg-opacity-40 absolute top-0 left-0'>
+                                                <div className='w-14 h-14 flex justify-center items-center rounded-full bg-white'><IoPlaySharp className='text-[1.8em] ms-1' /></div>
+                                            </div>)}
+                                        </div>
+
+                                        <p className='font-bold px-2'>{item.landingPageDetails.title}</p>
+                                        <p className='text-xs px-2 text-gray-500 font-medium'>{item.author.username} sikandhar</p>
+                                        <div className='w-full h-1 mt-1 bg-violet-200 '>
+                                            <div style={{ width: `${percentages[i]}%` }} className={` h-full bg-violet-500 rounded-e-full `}></div>
+
+                                        </div>
+
+
+                                    </Link>
+                                    <div className='flex flex-col w-[300px] justify-end'>
+                                        <span className='flex justify-between'>
+                                            <p className='text-xs'>{percentages[i]}% completed</p>
+                                            {percentages[i] > 0 &&
+                                                <span className='flex mt-1' onClick={() => setIsRatingModelOpen({ id: item._id, rating: ratings.filter(ratingItem => ratingItem.courseId == item._id)[0]?.rating || 0 })}>{printRating(ratings.filter(ratingItem => ratingItem.courseId == item._id)[0]?.rating || 0)}</span>
+                                            }
+                                        </span>
+                                        {percentages[i] > 0 && <p className='text-xs font-light self-end' onClick={() => setIsRatingModelOpen({ id: item._id, rating: ratings.filter(ratingItem => ratingItem.courseId == item._id)[0]?.rating || 0 })}>
+                                            {ratings.filter(ratingItem => ratingItem.courseId == item._id)[0]?.rating > 0 ? 'Edit ' : 'Leave a '}Rating</p>}
+                                    </div>
                                 </div>
+                            )
+                        }) :
+                            <>
+                                <div
+                                    className='flex flex-col gap-2  border   pb-2 w-[300px] hover:scale-[1.03] hover:shadow-md hover:shadow-violet-400 transition-all duration-200 cursor-pointer'>
+                                    <div className='w-[300px] bg-gray-400 h-[150px]  animate-pulse' alt="" ></div>
 
-                                <p className='font-bold px-2'>{item.landingPageDetails.title}</p>
-                                <p className='text-xs px-2 text-gray-500 font-medium'>{item.author.username} sikandhar</p>
-                                <div className='w-full h-1 mt-1 bg-violet-200 '>
-                                    <div style={{ width: `${percentages[i]}%` }} className={` h-full bg-violet-500 rounded-e-full `}></div>
+                                    <p className='font-bold px-2 mx-3 rounded-full  w-[200px] py-1 bg-gray-300 animate-pulse '></p>
+                                    <p className='font-bold px-2 mx-3 rounded-full  w-[250px] py-1 bg-gray-300 animate-pulse'></p>
 
                                 </div>
+                                <div
+                                    className='flex flex-col gap-2  border   pb-2 w-[300px] hover:scale-[1.03] hover:shadow-md hover:shadow-violet-400 transition-all duration-200 cursor-pointer'>
+                                    <div className='w-[300px] bg-gray-400 h-[150px] animate-pulse' alt="" ></div>
 
+                                    <p className='font-bold px-2 mx-3 rounded-full  w-[200px] py-1 bg-gray-300 animate-pulse'></p>
+                                    <p className='font-bold px-2 mx-3 rounded-full  w-[250px] py-1 bg-gray-300 animate-pulse'></p>
 
-                            </Link>
-                            <div className='flex flex-col w-[300px] justify-end'>
-                                <span className='flex justify-between'>
-                                    <p className='text-xs'>{percentages[i]}% completed</p>
-                                    {percentages[i] > 0 &&
-                                        <span className='flex mt-1' onClick={() => setIsRatingModelOpen({id:item._id, rating:ratings.filter(ratingItem => ratingItem.courseId == item._id)[0]?.rating || 0})}>{printRating(ratings.filter(ratingItem => ratingItem.courseId == item._id)[0]?.rating || 0)}</span>
-                                    }
-                                </span>
-                                {percentages[i] > 0 && <p className='text-xs font-light self-end' onClick={() => setIsRatingModelOpen({id: item._id, rating:ratings.filter(ratingItem => ratingItem.courseId == item._id)[0]?.rating || 0})}>
-                                    {ratings.filter(ratingItem => ratingItem.courseId == item._id)[0]?.rating > 0 ? 'Edit ' : 'Leave a '}Rating</p>}
-                            </div>
-                        </div>
-                    )
-                }) :
-                    <>
-                        <div
-                            className='flex flex-col gap-2  border   pb-2 w-[300px] hover:scale-[1.03] hover:shadow-md hover:shadow-violet-400 transition-all duration-200 cursor-pointer'>
-                            <div className='w-[300px] bg-gray-400 h-[150px]  animate-pulse' alt="" ></div>
+                                </div>
+                                <div
+                                    className='flex flex-col gap-2  border   pb-2 w-[300px] hover:scale-[1.03] hover:shadow-md hover:shadow-violet-400 transition-all duration-200 cursor-pointer'>
+                                    <div className='w-[300px] bg-gray-400 h-[150px] animate-pulse' alt="" ></div>
 
-                            <p className='font-bold px-2 mx-3 rounded-full  w-[200px] py-1 bg-gray-300 animate-pulse '></p>
-                            <p className='font-bold px-2 mx-3 rounded-full  w-[250px] py-1 bg-gray-300 animate-pulse'></p>
+                                    <p className='font-bold px-2 mx-3 rounded-full  w-[200px] py-1 bg-gray-300 animate-pulse'></p>
+                                    <p className='font-bold px-2 mx-3 rounded-full  w-[250px] py-1 bg-gray-300 animate-pulse'></p>
 
-                        </div>
-                        <div
-                            className='flex flex-col gap-2  border   pb-2 w-[300px] hover:scale-[1.03] hover:shadow-md hover:shadow-violet-400 transition-all duration-200 cursor-pointer'>
-                            <div className='w-[300px] bg-gray-400 h-[150px] animate-pulse' alt="" ></div>
-
-                            <p className='font-bold px-2 mx-3 rounded-full  w-[200px] py-1 bg-gray-300 animate-pulse'></p>
-                            <p className='font-bold px-2 mx-3 rounded-full  w-[250px] py-1 bg-gray-300 animate-pulse'></p>
-
-                        </div>
-                        <div
-                            className='flex flex-col gap-2  border   pb-2 w-[300px] hover:scale-[1.03] hover:shadow-md hover:shadow-violet-400 transition-all duration-200 cursor-pointer'>
-                            <div className='w-[300px] bg-gray-400 h-[150px] animate-pulse' alt="" ></div>
-
-                            <p className='font-bold px-2 mx-3 rounded-full  w-[200px] py-1 bg-gray-300 animate-pulse'></p>
-                            <p className='font-bold px-2 mx-3 rounded-full  w-[250px] py-1 bg-gray-300 animate-pulse'></p>
-
-                        </div>
-                    </>
+                                </div>
+                            </>
                 }
             </section>
 

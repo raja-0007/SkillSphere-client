@@ -30,7 +30,7 @@ function RatingModel({ isRatingModelOpen, setIsRatingModelOpen }) {
     return (
         <section className='flex items-center justify-center bg-black backdrop-blur-sm bg-opacity-50 absolute top-0 left-0 min-h-screen w-full z-10'>
             <div className='flex flex-col  p-5  items-center bg-white '>
-                <span className='self-end' onClick={() => setIsRatingModelOpen('')}><IoMdClose className='text-[1.3em]' /></span>
+                <span className='self-end' onClick={() => setIsRatingModelOpen(null)}><IoMdClose className='text-[1.3em]' /></span>
                 <p className='font-bold px-20 text-xl'>How would you rate this course?</p>
                 <p className='font-bold mt-5 capitalize'>{ratingCatagories[hoverRating] || ratingCatagories[rating]}</p>
                 <span><Rate allowHalf className='text-5xl mt-5' onHoverChange={(val) => setHoverRating(val)} onChange={(val) => setRating(val)} defaultValue={isRatingModelOpen.rating} /></span>
@@ -41,7 +41,7 @@ function RatingModel({ isRatingModelOpen, setIsRatingModelOpen }) {
                             addRating(isRatingModelOpen, rating, setLoading)
                         }
                         else{
-                            setIsRatingModelOpen({})
+                            setIsRatingModelOpen(null)
                         }
                     }}>submit</span>
                     :

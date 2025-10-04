@@ -1,4 +1,3 @@
-"use client"
 import Navbar from "@components/base components/Navbar";
 import Footer from "@components/base components/Footer";
 import TeacherMode from "@components/base components/TeacherMode";

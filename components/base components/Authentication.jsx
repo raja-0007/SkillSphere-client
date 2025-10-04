@@ -150,7 +150,26 @@ function Authentication({ type, setAuthType }) {
   }
   const makeregister = async () => {
     await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/authorization`, { username: username, email: rEmail, password: rPassword, action: 'register' })
-      .then(res => setIsLoggedIn(res.data))
+      .then(res =>{
+         setIsLoggedIn(res.data)
+         if (res.data.refreshToken) {
+          Cookies.set('refreshToken', res.data.refreshToken, { expires: 7 });
+        }
+        if (res.data.accessToken) {
+          Cookies.set('accessToken', res.data.accessToken, { expires: 1 });
+        }
+        if (res.data.userDetails) {
+          Cookies.set('user', JSON.stringify(res.data.userDetails), { expires: 7 });
+        }
+        // Fetch redirectUrl from cookies, if present, route to it, else route to '/'
+        const redirectUrl = Cookies.get('redirectUrl');
+        if (redirectUrl) {
+          Cookies.remove('redirectUrl');
+          router.push(redirectUrl);
+        } else {
+          router.push('/');
+        }
+        })
       .catch(err => console.log('error in sending request', err))
   }
   useEffect(() => {
@@ -332,7 +351,7 @@ function Authentication({ type, setAuthType }) {
                       name="" id="password2" />
 
                   </span>
-                  <button type='button' className='w-full bg-purple-600 text-white font-bold text-center py-3 mt-1 hover:bg-purple-700 transition-all duration-100' onClick={makeRegisterPreload}>Sign up</button>
+                  <button type='button' className='w-full bg-purple-600 text-white font-bold text-center py-3 mt-1 hover:bg-purple-700 transition-all duration-100' onClick={makeregister}>Sign up</button>
                 </form>
                 <p className='text-xs py-2 border-b-[1px] border-gray-300 '>By signing up, you agree to our Terms of Use and Privacy Policy.</p>
                 <span className='text-sm'>Already have an account? <span onClick={() => setAuthType('login')} className='text-purple-700 cursor-pointer font-semibold underline-offset-2 underline'>log in</span></span>

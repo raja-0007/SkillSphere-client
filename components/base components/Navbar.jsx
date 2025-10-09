@@ -17,7 +17,7 @@ import { MdNotificationsNone } from "react-icons/md";
 import { useHomeContext } from "@contexts/HomeContext";
 function Navbar({ setAuthType, onFocusNavigate }) {
   const [isCategories, setIsCategories] = useState(false)
-  const { setActive, active, userDetails, setUserDetails, logout, search, cart, setCart, setSearch, dropDown, setDropDown, searchResults, setSearchResults, setSearchData, setOverviewCourse } = useHomeContext()
+  const { setActive, active, userDetails, setUserDetails, logout, search, cart, setCart, setSearch, dropDown, setDropDown, searchResults, setSearchResults, setSearchData, searchData, setOverviewCourse } = useHomeContext()
   const [isTopics, setIsTopics] = useState(false)
   const [topics, setTopics] = useState([])
   const [clickedCategory, setClickedCategory] = useState('')
@@ -87,7 +87,7 @@ function Navbar({ setAuthType, onFocusNavigate }) {
     // console.log('rinnnn')
     const getSearchResults = async () => {
       // console.log(search)
-      await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/searchResults/${search}`)
+      await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/searchResults?search=${search}`)
         .then(res => { setSearchResults(res.data);
           setSearchData({
       search: search,
@@ -96,8 +96,15 @@ function Navbar({ setAuthType, onFocusNavigate }) {
 
          })
     }
-    if (search !== '') getSearchResults()
-    else setSearchResults([])
+    getSearchResults()
+    // if (search !== '') 
+    // else{
+  // setSearchData({
+  //   ...searchData,
+  //     search: search,
+  //   })
+  //  setSearchResults([])
+  // }
   }, [search])
 
   useEffect(() => {
@@ -210,7 +217,9 @@ function Navbar({ setAuthType, onFocusNavigate }) {
           if(onFocusNavigate){
             router.push('/search-results')
           }
-        }} placeholder="search for anything..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full outline-none " name="" id="" />
+        }}
+        autoFocus={pathname.includes('search-results')}
+         placeholder="search for anything..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full outline-none " name="" id="" />
 
       </form>
       {/* {dropDown && searchResults.length > 0 && <div ref={searchDropRef} className="w-[45%] ms-[18%] bg-white rounded-md overflow-hidden absolute top-[10vh] h-[max-content] flex flex-col">

@@ -1,3 +1,4 @@
+"use client"
 import { useHomeContext } from '@contexts/HomeContext'
 import React, { useEffect, useState } from 'react'
 import { LuDot } from "react-icons/lu";

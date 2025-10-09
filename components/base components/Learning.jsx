@@ -16,7 +16,7 @@ function Learning({ from, setFrom }) {
     const [completed, setCompleted] = useState([])
     const [percentages, setPercentages] = useState([])
     const [hover, setHover] = useState(null)
-    const { ratings, setRatings } = useHomeContext()
+    const { ratings, setRatings, getCart } = useHomeContext()
 
     useEffect(() => {
         setLoading(true)
@@ -93,6 +93,7 @@ function Learning({ from, setFrom }) {
             }
         }
         getRatings()
+        getCart()
 
         fetchCompletionDetailsForCourses();
 

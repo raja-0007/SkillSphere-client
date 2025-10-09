@@ -1,118 +1,59 @@
-import React, { useEffect, useState } from 'react';
+"use client"
+import React from 'react';
 import { printRating } from '../home components/courses';
 import { IoMdCheckmark } from "react-icons/io";
 import { FaRupeeSign } from "react-icons/fa";
 import { FaRegHeart } from "react-icons/fa";
 import { BsFileEarmark } from 'react-icons/bs';
 import { FaCirclePlay } from "react-icons/fa6";
-import CourseSections from './CourseSections';
+// import CourseSections from './CourseSections';
+import dynamic from 'next/dynamic';
+const CourseSections = dynamic(() => import('./CourseSections'), { ssr: false });
 import axios from 'axios';
 import Link from 'next/link';
 import { FaHeart } from "react-icons/fa6";
 import { useHomeContext } from '@contexts/HomeContext';
-import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
-function CourseOverview({ id }) {
-    const router = useRouter();
-    const [course, setCourse] = useState(null);
-    const [wishList, setWishList] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const { overviewCourse, userDetails, setUserDetails, cart, setCart, enrolled, setActive, searchResults } = useHomeContext()
+function CourseOverview({ courseData }) {
+  const course = courseData
+  const { userDetails, setCart, cart, wishList, wishlistLoading, addToWishlist, removeFromWishlist } = useHomeContext();
 
+  const addToCart = async () => {
+    if (!userDetails?.userDetails?._id) {
+      alert('Please login to enroll');
+      window.location.href = '/authentication'
+      return;
+    }
+    const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/addToCart`, {
+      course: JSON.stringify(course),
+      userId: userDetails.userDetails._id,
+    });
+    if (res.data.status === 'success') setCart(res.data.cart);
+  };
 
-    useEffect(() => {
-        setLoading(true);
-        window.scrollTo(0, 0);
-        const fetchCourse = async () => {
-            if (!id) return;
-            try {
-                const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCourseDetails/${id}`);
-                setCourse(res.data);
-                setLoading(false);
-            } catch (err) {
-                setLoading(false);
-            }
-        };
-        fetchCourse();
-    }, [id]);
+  if (!course)
+    return (
+      <div className="flex justify-center items-center h-screen text-xl font-bold">
+        Loading course details...
+      </div>
+    );
 
-    const totalArticleLectures = (sections) => {
-        let total = 0;
-        sections?.forEach(sect => {
-            const curr = sect.curriculum.filter(curri => curri.content_type === 'article');
-            total += curr.length;
-        });
-        return total;
-    };
-    const totalVideoLectures = (sections) => {
-        let total = 0;
-        sections?.forEach(sect => {
-            const curr = sect.curriculum.filter(curri => curri.content_type === 'video');
-            total += curr.length;
-        });
-        return total;
-    };
+  // Helper functions
+  const totalArticleLectures = (sections) =>
+    sections?.reduce(
+      (total, sect) =>
+        total + sect.curriculum.filter((curri) => curri.content_type === 'article').length,
+      0
+    );
+  const totalVideoLectures = (sections) =>
+    sections?.reduce(
+      (total, sect) =>
+        total + sect.curriculum.filter((curri) => curri.content_type === 'video').length,
+      0
+    );
 
-    const addToCart = async () => {
-        if (Object.keys(userDetails).length !== 0 && course) {
-            await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/addToCart`, { course: JSON.stringify(course), userId: userDetails.userDetails._id })
-                .then((res) => {
-                    if (res.data.status === 'success') {
-                        setCart(res.data.cart);
-                    }
-                });
-        } else{
-             alert('please login to enroll')
-             router.push('/authentication')
-        };
-    };
-
-    const addToWishlist = async () => {
-        if (Object.keys(userDetails).length !== 0 && course) {
-            await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/addToWishlist`, { courseId: course._id, userId: userDetails.userDetails._id }, {
-                headers: {
-                    'Authorization': `Bearer ${userDetails?.accessToken}`
-                }
-            })
-                .then((res) => {
-                    if (res.status === 403) {
-                        alert('session expired please login again to continue');
-                    } else if (res.data.status === 'success') {
-                        setWishList([...wishList, course._id]);
-                    }
-                });
-        } else alert('please login to access wishlist');
-    };
-
-    useEffect(() => {
-        const getWishList = async () => {
-            if (!userDetails?.userDetails?._id) return;
-            await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getWishlist/${userDetails?.userDetails?._id}`)
-                .then(res => {
-                    setWishList(res.data.RawList);
-                });
-        };
-        getWishList();
-    }, [userDetails]);
-
-    const removeFromWishlist = async (id) => {
-        setLoading(true);
-        await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/removeFromWishlist/${id}/${userDetails?.userDetails?._id}`, {
-            headers: {
-                'Authorization': `Bearer ${userDetails?.accessToken}`
-            }
-        })
-            .then((res) => {
-                setLoading(false);
-                if (res.status === 403) {
-                    alert('session expired, please log in to continue');
-                } else if (res.data.status === 'success') {
-                    setWishList(res.data.wishList);
-                }
-            });
-    };
-
-    const enrollFree = async (courseId, userId) => {
+     const enrollFree = async (courseId, userId) => {
         await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/enroll`, { userId: userId, courseIds: JSON.stringify([courseId]) })
             .then(res => {
                 if (res.data.status === 'success') {
@@ -121,9 +62,10 @@ function CourseOverview({ id }) {
             });
     };
 
-    if (loading || !course) {
-        return <div className="flex justify-center items-center h-screen text-xl font-bold">Loading course details...</div>;
-    }
+
+    // if (loading || !course) {
+    //     return <div className="flex justify-center items-center h-screen text-xl font-bold">Loading course details...</div>;
+    // }
 
     return (
         <div className='flex flex-col overflow-hidden'>
@@ -136,7 +78,12 @@ function CourseOverview({ id }) {
                 <p className='w-[70%] mt-3'>created by {course.author.username} {course.author.authorId === userDetails?.userDetails?._id && '(you)'}</p>
             </div>
             <div className='w-[25%] self-end fixed flex flex-col top-32 right-16 bg-white shadow-md'>
-                <img src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${course.image}`} className='w-full' alt="" />
+                <Image src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${course.image}`} alt={course.landingPageDetails.title}
+    // // fill                  // makes image fill parent
+    // style={{ objectFit: 'cover' }}
+    width={400}
+    height={400}
+     />
                 <div className='flex flex-col items-center gap-3 px-5 pb-10'>
                     <div className='flex items-center w-full gap-2 pt-5'>
                         {!course?.enrolled?.includes(userDetails?.userDetails?._id) && <span className='flex items-center text-xl font-bold uppercase text-violet-400'>{course.price !== 'free' ? <FaRupeeSign size={'.85em'} /> : '*'}{course.price}</span>}
@@ -148,7 +95,7 @@ function CourseOverview({ id }) {
                                     : (course?.enrolled?.includes(userDetails?.userDetails?._id) || course.price === 'free' || course.author.authorId === userDetails?.userDetails?._id) &&
                                     <Link href={`/coursesDetails/${course._id}/${userDetails?.userDetails?._id}`} target='_blank' className='px-3 py-2 bg-slate-700 text-center cursor-pointer text-white w-full'>Go to course</Link>
                         }
-                        <span className={`px-2 py-2 border border-black ${loading && ' animate-pulse'}`} onClick={() => wishList.includes(course?._id) ? removeFromWishlist(course?._id) : addToWishlist()}>
+                        <span className={`px-2 py-2 border border-black `} onClick={() => wishList.includes(course?._id) ? removeFromWishlist(course?._id) : addToWishlist()}>
                             {wishList.includes(course?._id) ? <FaHeart className='text-red-400' size={'1.2em'} /> : <FaRegHeart size={'1.2em'} />}
                         </span>
                     </div>

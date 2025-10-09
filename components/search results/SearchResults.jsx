@@ -75,16 +75,16 @@ const SearchResultsPage = ()=>{
         levels: { value: [], open: false },
         price: { value: [], open: false }
     });
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        setSearch('');
-        setDropDown(false);
-        setLoading(true);
-        // Simulate loading for UI improvement
-        const timer = setTimeout(() => setLoading(false), 600);
-        return () => clearTimeout(timer);
-    }, []);
+    // useEffect(() => {
+    //     setSearch('');
+    //     setDropDown(false);
+    //     setLoading(true);
+    //     // Simulate loading for UI improvement
+    //     const timer = setTimeout(() => setLoading(false), 600);
+    //     return () => clearTimeout(timer);
+    // }, []);
 
     const priceChangeHandler = (e) => {
         var price = [...filters.price.value];
@@ -100,9 +100,12 @@ const SearchResultsPage = ()=>{
     return (
         <div className="flex flex-col gap-10 px-4 md:px-16 lg:px-28 py-10 bg-gray-50 min-h-screen">
             <div className="flex flex-col gap-5 font-bold">
-                <span className="text-2xl md:text-3xl">
-                    {searchData?.searchResults?.length} results for "{searchData?.search}"
+                {searchData?.search == "" ? <span className="text-2xl md:text-3xl">
+                    Start typing to search for courses
                 </span>
+                :<span className="text-2xl md:text-3xl">
+                    {searchData?.searchResults?.length} results for "{searchData?.search}"
+                </span>}
                 {searchData?.searchResults?.length > 0 && (
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-2">
                         <span className="flex items-center gap-3">

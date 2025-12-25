@@ -1,6 +1,6 @@
 import Footer from '@components/base components/ModernFooter';
 import Navbar from '@components/base components/ModernNavbar';
-import CourseOverview from '@components/course overview/CourseOverview';
+import ModernCourseOverview from '@components/course/ModernCourseOverview';
 import axios from 'axios';
 
 
@@ -25,7 +25,7 @@ export default async function DynamicCourseOverviewPage({ params }) {
 
     return <>
     <Navbar onFocusNavigate={true} />
-  <CourseOverview courseData={courseData} />;
+  <ModernCourseOverview courseData={courseData} />;
   {/* <CourseOverview id={params.id} /> */}
   <Footer />
     </>

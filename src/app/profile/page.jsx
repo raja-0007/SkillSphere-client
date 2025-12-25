@@ -1,6 +1,6 @@
 "use client"
-import Navbar from "@components/base components/Navbar";
-import Footer from "@components/base components/Footer";
+import Navbar from "@components/base components/ModernNavbar";
+import Footer from "@components/base components/ModernFooter";
 import Profile from "@components/profile components/Profile";
 
 export default function ProfilePage() {

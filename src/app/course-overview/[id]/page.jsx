@@ -1,5 +1,5 @@
-import Footer from '@components/base components/Footer';
-import Navbar from '@components/base components/Navbar';
+import Footer from '@components/base components/ModernFooter';
+import Navbar from '@components/base components/ModernNavbar';
 import CourseOverview from '@components/course overview/CourseOverview';
 import axios from 'axios';
 

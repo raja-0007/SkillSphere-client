@@ -48,7 +48,6 @@ export function middleware(request) {
   const currentPath = request.nextUrl.pathname
 
   // If user not logged in and visiting non-public route
-  // console.log('MIDDLEWARE>>>',  currentPath, request.url )
   if (!user && !isPublicRoute(currentPath)) {
     if (isValidRoute(currentPath)) {
       const response = NextResponse.redirect(new URL('/', request.url))
@@ -60,14 +59,21 @@ export function middleware(request) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 
-  // If logged in and trying to visit public routes (login/signup)
-  // if (user && publicRoutes.includes(currentPath)) {
-  //   if (redirectUrl && redirectUrl.value !== '/') {
-  //     return NextResponse.redirect(new URL(redirectUrl.value, request.url))
-  //   } else {
-  //     return NextResponse.redirect(new URL('/dashboard', request.url))
-  //   }
-  // }
+  // If logged in and trying to visit home page, redirect to dashboard
+  if (user && currentPath === '/') {
+    return NextResponse.redirect(new URL('/learning', request.url))
+  }
+
+  // If logged in and trying to visit authentication pages
+  if (user && currentPath.startsWith('/authentication')) {
+    if (redirectUrl && redirectUrl.value !== '/') {
+      const response = NextResponse.redirect(new URL(redirectUrl.value, request.url))
+      response.cookies.delete('redirectUrl')
+      return response
+    } else {
+      return NextResponse.redirect(new URL('/learning', request.url))
+    }
+  }
 
   return NextResponse.next()
 }

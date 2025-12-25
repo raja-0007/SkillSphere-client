@@ -1,7 +1,7 @@
 "use client"
-import Navbar from "@components/base components/Navbar";
+import Navbar from "@components/base components/ModernNavbar";
 import Footer from "@components/base components/Footer";
-import Authentication from "@components/base components/Authentication";
+import ModernAuth from "@components/auth/ModernAuth";
 import { useEffect, useState } from "react";
 
 export default function AuthenticationPage({params}) {
@@ -13,9 +13,7 @@ export default function AuthenticationPage({params}) {
     },[params.type])
   return (
     <div className="w-full flex flex-col min-h-screen">
-      <Navbar onFocusNavigate={true}/>
-      <Authentication type={type} setAuthType={setAuthType}/>
-      <Footer />
+      <ModernAuth type={type} setAuthType={setAuthType}/>
     </div>
   );
 }

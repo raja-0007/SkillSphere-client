@@ -156,18 +156,25 @@ function Curriculum({ activeSection }) {
 
     const addContent = (sectId, currId, content) => {
         const section = sections.filter(sect => sect.id == sectId)[0]
+        if (!section) {
+            console.error('Section not found:', sectId)
+            return
+        }
+        
         const currlm = section.curriculum.filter(currlm => currlm.currId == currId)[0]
+        if (!currlm) {
+            console.error('Curriculum item not found:', currId, 'in section:', sectId)
+            return
+        }
+        
         currlm.content = content
         setArticleText('')
         setVideoUrl('')
-
         setIsEditContent('')
-
 
         setSections(sections.map(sect => sect.id == sectId ? { ...sect, curriculum: sect.curriculum.map(curr => curr.currId == currId ? currlm : curr) } : sect))
         setSaved(false)
         setConditionsSatisfied(false)
-
     }
 
     const addVideoContent = (sectId, currId, content) => {
@@ -257,8 +264,10 @@ function Curriculum({ activeSection }) {
         else setSaved(false)
     }, [])
 
-    const onSave = (currId, sectId, data) => {
+    const onSave = (editorId, sectId, data) => {
         console.log(data.blocks)
+        // Extract currId from editorId (remove 'editor-' prefix)
+        const currId = editorId.replace('editor-', '')
         addContent(sectId, currId, data)
     }
 

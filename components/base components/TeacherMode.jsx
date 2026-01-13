@@ -63,16 +63,42 @@ function TeacherMode() {
 
         {/* Success Modal */}
         {isCreationDone && (
-          <div className='fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center'>
+          <div 
+            className='fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center'
+            onClick={(e) => {
+              // Close modal when clicking outside
+              if (e.target === e.currentTarget) {
+                setIsCreationDone(false)
+              }
+            }}
+          >
             <Card className='w-full max-w-md mx-4 shadow-2xl'>
               <CardContent className='p-8 flex flex-col items-center text-center'>
                 <div className='w-20 h-20 flex items-center justify-center rounded-full bg-success/10 text-success mb-6'>
                   <CheckCircle2 className='w-12 h-12 animate-pulse' />
                 </div>
                 <h2 className='text-2xl font-bold text-foreground mb-2'>Course Created!</h2>
-                <p className='text-muted-foreground'>
+                <p className='text-muted-foreground mb-6'>
                   Your course has been submitted successfully. You can view it in your dashboard.
                 </p>
+                <div className='flex gap-3 w-full'>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsCreationDone(false)}
+                    className='flex-1'
+                  >
+                    Close
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      setIsCreationDone(false)
+                      setActive('home')
+                    }}
+                    className='flex-1'
+                  >
+                    Go to Dashboard
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>

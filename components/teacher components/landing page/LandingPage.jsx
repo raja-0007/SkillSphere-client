@@ -33,6 +33,7 @@ function LandingPage({ activeSection }) {
   }, [])
 
   const onSave = (currId, sectId, data) => {
+    // currId and sectId are not used for landing page description
     setLandingDetails({ ...landingDetails, description: data });
     setSaved(false)
   }
@@ -147,20 +148,24 @@ function LandingPage({ activeSection }) {
                     <strong>Guidelines:</strong> 750x422 pixels; .jpg, .jpeg, .gif, or .png; no text on the image.
                   </p>
                 </div>
-                <label className='block'>
+                <div className='relative'>
                   <input
                     type="file"
+                    id="course-image-upload"
                     className='hidden'
                     accept='image/*'
                     onChange={(e) => { setLandingDetails({ ...landingDetails, image: e.target.files[0] }); setSaved(false) }}
                   />
-                  <Button type="button" variant="outline" className='w-full' asChild>
-                    <span className='cursor-pointer'>
-                      <Upload className='w-4 h-4 mr-2' />
-                      {landingDetails.image ? 'Replace Image' : 'Upload Image'}
-                    </span>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    className='w-full'
+                    onClick={() => document.getElementById('course-image-upload').click()}
+                  >
+                    <Upload className='w-4 h-4 mr-2' />
+                    {landingDetails.image ? 'Replace Image' : 'Upload Image'}
                   </Button>
-                </label>
+                </div>
                 {landingDetails.image && (
                   <Badge variant="secondary" className='text-xs'>
                     {landingDetails.image.name}

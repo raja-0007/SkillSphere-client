@@ -101,11 +101,11 @@ function LearningStatistics() {
       bgColor: 'bg-pink-50'
     },
     {
-      icon: <FaTrophy className='text-5xl text-yellow-600' />,
+      icon: <FaTrophy className='text-5xl text-primary' />,
       value: counters.hours,
       label: 'Learning Hours',
-      color: 'from-yellow-500 to-yellow-600',
-      bgColor: 'bg-yellow-50'
+      color: 'from-primary to-primary',
+      bgColor: 'bg-primary/10'
     }
   ]
 
@@ -189,7 +189,7 @@ function LearningStatistics() {
             <p className='text-pink-100'>Average Course Rating</p>
             <div className='flex gap-1 mt-2'>
               {[1, 2, 3, 4, 5].map((star) => (
-                <span key={star} className='text-yellow-300 text-2xl'>★</span>
+                <span key={star} className='text-primary text-2xl'>★</span>
               ))}
             </div>
           </div>

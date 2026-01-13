@@ -72,7 +72,7 @@ function CourseOverview({ courseData }) {
             <div className='px-40 py-10 pt-20 text-white bg-slate-900 relative'>
                 <span className='text-3xl font-bold w-[70%]'>{course.landingPageDetails.title}</span>
                 <p className='w-[70%] mt-3'>{course.landingPageDetails.subtitle}</p>
-                {course.rating.rating !== '' ? <p className='w-[70%] mt-3 flex items-center text-yellow-500'><span className='me-1 text-xl'>{course.rating.rating}</span> {printRating(course.rating.rating)} <span className='ms-2 text-blue-200 opacity-70 '>({course.rating.TotalRatings || 'N/A'} ratings)</span></p>
+                {course.rating.rating !== '' ? <p className='w-[70%] mt-3 flex items-center text-accent-500'><span className='me-1 text-xl'>{course.rating.rating}</span> {printRating(course.rating.rating)} <span className='ms-2 text-blue-200 opacity-70 '>({course.rating.TotalRatings || 'N/A'} ratings)</span></p>
                     : <p>newly added (no ratings yet)</p>
                 }
                 <p className='w-[70%] mt-3'>created by {course.author.username} {course.author.authorId === userDetails?.userDetails?._id && '(you)'}</p>

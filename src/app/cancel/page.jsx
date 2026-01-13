@@ -52,11 +52,11 @@ function PaymentCancelPage() {
   }
 
   return (
-    <div className='flex min-h-screen w-full justify-center items-center bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 relative overflow-hidden'>
+    <div className='flex min-h-screen w-full justify-center items-center bg-gradient-to-br from-red-50 via-orange-50 to-accent-50 relative overflow-hidden'>
       {/* Animated background circles */}
       <div className='absolute top-10 left-10 w-32 h-32 bg-red-200 rounded-full opacity-20 animate-pulse'></div>
       <div className='absolute bottom-10 right-10 w-40 h-40 bg-orange-200 rounded-full opacity-20 animate-pulse' style={{ animationDelay: '1s' }}></div>
-      <div className='absolute top-1/3 right-1/4 w-24 h-24 bg-yellow-200 rounded-full opacity-20 animate-pulse' style={{ animationDelay: '2s' }}></div>
+      <div className='absolute top-1/3 right-1/4 w-24 h-24 bg-accent-200 rounded-full opacity-20 animate-pulse' style={{ animationDelay: '2s' }}></div>
 
       <div className='w-full max-w-lg mx-4 relative z-10'>
         <div className='bg-white rounded-3xl shadow-2xl p-12 flex flex-col items-center gap-6 border-4 border-red-300 animate-scale-in'>

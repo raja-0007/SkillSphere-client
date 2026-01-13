@@ -15,13 +15,15 @@ export default function PerformanceMonitor() {
     }
 
     // Measure Core Web Vitals
-    if (typeof window !== 'undefined' && 'web-vital' in window) {
+    if (typeof window !== 'undefined') {
       import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
         getCLS(reportWebVitals)
         getFID(reportWebVitals)
         getFCP(reportWebVitals)
         getLCP(reportWebVitals)
         getTTFB(reportWebVitals)
+      }).catch((error) => {
+        console.warn('Web Vitals not available:', error)
       })
     }
 

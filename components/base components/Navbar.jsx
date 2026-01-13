@@ -213,7 +213,7 @@ function Navbar({ setAuthType, onFocusNavigate }) {
         id="searchForm"
         className="w-[45%] hidden lg:flex gap-2 bg-white border-[1px]  border-black px-3 rounded-3xl h-11 overflow-x-hidden" onSubmit={(e) => submitHandler(e)}>
         <button type="submit"><IoSearch className="text-gray-400 text-xl" /></button>
-        <input type="text" onFocus={()=>{
+        <input type="text" onClick={()=>{
           if(onFocusNavigate){
             router.push('/search-results')
           }

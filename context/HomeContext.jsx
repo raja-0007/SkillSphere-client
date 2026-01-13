@@ -10,10 +10,12 @@ function HomeProvider({ children }) {
   const router = useRouter()
   const [active, setActive] = useState('home')
   const [userDetails, setUserDetails] = useState({})
+  const [userLoading, setUserLoading] = useState(true) // Track if user data is being loaded from cookies
   const [search, setSearch] = useState('')
   const [searchData, setSearchData] = useState({})
   const [overviewCourse, setOverviewCourse] = useState({})
   const [searchResults, setSearchResults] = useState([])
+  const [searchLoading, setSearchLoading] = useState(false)
   const [dropDown, setDropDown] = useState(false)
   const [cart, setCart] = useState([])
   const [enrolled, setEnrolled] = useState([])
@@ -133,22 +135,29 @@ function HomeProvider({ children }) {
 
 
   const getCart = async () => {
+    // Guard: Don't make API call if user ID is not available
+    if (!userDetails?.userDetails?._id || !userDetails?.accessToken) {
+      console.log('getCart: User not authenticated, skipping API call')
+      return
+    }
+    
     try {
-      const token = userDetails?.accessToken;
-      console.log(token) // Replace with your actual token
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userDetails?.userDetails?._id}`, {
+      const token = userDetails.accessToken;
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userDetails.userDetails._id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
 
-      console.log('Data:', response.data);
-      console.log(response.data); setCart(response.data.cart)
+      console.log('Cart Data:', response.data);
+      setCart(response.data.cart)
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching cart:', error);
+      // Handle 403 errors (expired token)
+      if (error.response?.status === 403) {
+        console.log('Token expired, user needs to re-login')
+      }
     }
-    // await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getCart/${userDetails?.userDetails?._id}`)
-    //   .then(res => { console.log(res.data); setCart(res.data.cart) })
   }
   useEffect(() => {
 
@@ -164,19 +173,27 @@ function HomeProvider({ children }) {
     const user = Cookies.get('user');
     const access_token = Cookies.get('accessToken');
     const refresh_token = Cookies.get('refreshToken');
-    console.log(user, access_token, refresh_token)
+    console.log('Loading user from cookies:', user, access_token, refresh_token)
     if(user && access_token && refresh_token){
       let userObject = {userDetails:JSON.parse(user), accessToken: access_token, refreshToken: refresh_token}
       setUserDetails(userObject)
+    }else{
+      console.log('access_token', access_token)
+      // Don't redirect here - let middleware handle authentication redirects
+      // This prevents conflicts between client-side and server-side routing
+      console.log('No valid authentication found in cookies')
     }
-
+    // Mark user loading as complete regardless of whether user was found
+    setUserLoading(false)
   },[])
 
   return (
     <homeContext.Provider value={{
       active, setActive,
       userDetails, setUserDetails,
+      userLoading, // Expose loading state for components to check
       search, setSearch,
+      searchLoading, setSearchLoading,
       dropDown, setDropDown,
       overviewCourse, setOverviewCourse,
       searchResults, setSearchResults,

@@ -14,7 +14,7 @@ function BecomeInstructor() {
                 <span className='text-4xl font-semibold'>Become an Instructor</span>
                 <span>Instructors from around the world teach millions of learners on Udemy. We provide the tools and skills to teach what you love.</span>
                 <button
-                 className='bg-slate-950 border-[1px] text-white font-bold hover:bg-white transition-all hover:text-black px-5 py-3 border-slate-950'
+                 className='bg-primary border-[1px] text-primary-foreground font-bold hover:bg-primary/90 transition-all px-5 py-3 border-primary'
                  onClick={()=>{
                     if (Object.keys(userDetails || {}).length === 0) {
           // alert('Please login to access Teacher mode.');

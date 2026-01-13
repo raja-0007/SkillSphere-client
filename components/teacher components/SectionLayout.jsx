@@ -1,10 +1,11 @@
 import React from 'react'
+import { Card } from '../ui/card'
 
-function SectionLayout({children}) {
+function SectionLayout({ children }) {
   return (
-    <div className='w-full flex flex-col gap-5 shadow-md border-t-2 border-gray-200 rounded-md shadow-gray-400'>
-        {children}
-    </div>
+    <Card className='w-full'>
+      {children}
+    </Card>
   )
 }
 

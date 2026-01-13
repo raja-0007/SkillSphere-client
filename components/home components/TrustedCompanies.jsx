@@ -2,9 +2,9 @@ import React from 'react'
 
 function TrustedCompanies() {
   return (
-    <div className='w-full bg-slate-50'>
+    <div className='w-full bg-muted/50 dark:bg-muted/50'>
       <div className='flex flex-col mx-auto w-[85%] py-20 gap-10 justify-center'>
-        <span className='w-[max-content]  mx-auto text-lg text-gray-500'>Trusted by over 15,000 companies and millions of learners around the world</span>
+        <span className='w-[max-content] mx-auto text-lg text-muted-foreground'>Trusted by over 15,000 companies and millions of learners around the world</span>
         <div className='flex w-full justify-around items-center'>
             <img src="/images/volkswagen.svg" alt="" />
             <img src="/images/samsung.svg" alt="" />

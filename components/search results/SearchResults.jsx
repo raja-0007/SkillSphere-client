@@ -54,7 +54,7 @@ const ResultCard = memo(function ResultCard({ item, setActive, setOverviewCourse
                     )}
                     <span className="text-gray-500 text-xs">{item.author.username}, {item.author.email}</span>
                     <span className="text-md flex items-center gap-1">
-                        <span className={`font-bold ${item.rating.rating === '' && 'border-2 border-yellow-300 rounded-full font-normal text-gray-500 px-2 text-xs '}`}>{item.rating.rating === '' ? 'newly added (no reviews yet)' : item.rating.rating}</span>
+                        <span className={`font-bold ${item.rating.rating === '' && 'border-2 border-accent-300 rounded-full font-normal text-gray-500 px-2 text-xs '}`}>{item.rating.rating === '' ? 'newly added (no reviews yet)' : item.rating.rating}</span>
                         {item.rating.rating !== '' && (
                             <span className="flex items-center">{printRating(item.rating.rating)}<span className="ms-2 text-gray-400 text-sm">({item.rating.TotalRatings || 0} ratings)</span></span>
                         )}

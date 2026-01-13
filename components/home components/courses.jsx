@@ -15,15 +15,15 @@ export const printRating=(rating)=>{
   let result = []
   
   for(let i=0;i<parseInt(rating);i++){
-    result.push(<IoIosStar key={i} className='text-yellow-400'/>)
+    result.push(<IoIosStar key={i} className='text-primary'/>)
     
   }
   if(parseInt(rating)!== parseFloat(rating)){
-    result.push(<IoIosStarHalf key={999} className='text-yellow-400'/>)
+    result.push(<IoIosStarHalf key={999} className='text-primary'/>)
   }
   if(result.length !== 5){
     for(let i=result.length; i<5;i++){
-        result.push(<IoIosStarOutline key={999+i} className='text-yellow-400' />)
+        result.push(<IoIosStarOutline key={999+i} className='text-primary' />)
 
     }
 }
@@ -72,8 +72,8 @@ function Courses() {
   return (
     <div className='w-full px-[10%] mx-auto mt-10 flex flex-col'>
       <div className='w-full flex flex-col gap-4'>
-        <span className='text-4xl font-bold '>A broad selection of courses</span>
-        <span className='text-lg'>Choose from over 210,000 online video courses with new additions published every month</span>
+        <span className='text-4xl font-bold text-foreground'>A broad selection of courses</span>
+        <span className='text-lg text-muted-foreground'>Choose from over 210,000 online video courses with new additions published every month</span>
       </div>
 
 
@@ -84,11 +84,11 @@ function Courses() {
         <span className={`${selected == 'java' ? 'font-bold ' : ''} cursor-pointer`} onClick={(e) => selectHandler(e, 'java')}>java</span>
       </div>
 
-      <div className='w-full mx-auto flex flex-col flex-wrap justify-start gap-5 mt-2 border-2 border-gray-300 px-5 py-8'>
+      <div className='w-full mx-auto flex flex-col flex-wrap justify-start gap-5 mt-2 border-2 border-border px-5 py-8 bg-card'>
         <div className='flex flex-col flex-wrap gap-3'>
-          <span className='text-2xl font-bold'>Expand your career opportunities with {selected}</span>
-          <span className='w-[70%]'>{description}</span>
-          <button className='w-[max-content] border-[1px] hover:bg-slate-200  border-black px-2 py-2'>Explore {selected}</button>
+          <span className='text-2xl font-bold text-card-foreground'>Expand your career opportunities with {selected}</span>
+          <span className='w-[70%] text-muted-foreground'>{description}</span>
+          <button className='w-[max-content] border-[1px] hover:bg-muted border-border px-2 py-2 text-foreground transition-colors'>Explore {selected}</button>
         </div>
         <div className='w-full'>
           <Swiper
@@ -108,14 +108,14 @@ function Courses() {
               <SwiperSlide key={index}>
                 <div className='flex flex-col gap-1 w-60 p-3' >
                   <img src="/images/webdev.jpeg" className='mx-auto w-full' alt="" />
-                  <h2 className='font-bold'>{course.title}</h2>
-                  <small className='font-light text-gray-500'>{course.author}</small>
-                  <span className='flex gap-2 items-center font-semibold text-amber-900'>
+                  <h2 className='font-bold text-foreground'>{course.title}</h2>
+                  <small className='font-light text-muted-foreground'>{course.author}</small>
+                  <span className='flex gap-2 items-center font-semibold text-primary'>
                     {course.rating.rating}
                     <span className=' flex'>{printRating(course.rating.rating)}</span>
                     </span>
                   
-                  <span className='font-bold'>&#8377;{course.cost}</span>
+                  <span className='font-bold text-foreground'>&#8377;{course.cost}</span>
                 </div>
               </SwiperSlide>
             )}
@@ -128,7 +128,7 @@ function Courses() {
                   <img src="/images/webdev.jpeg" className='mx-auto w-full' alt="" />
                   <h2 className='font-bold'>{course.title}</h2>
                   <small className='font-light text-gray-500'>{course.author}</small>
-                  <span className='flex gap-2 items-center font-semibold text-amber-900'>
+                  <span className='flex gap-2 items-center font-semibold text-primary'>
                     {course.rating}
                     <span className=' flex'>{printRating(course.rating)}</span>
                     </span>

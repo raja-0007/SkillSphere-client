@@ -1,17 +1,9 @@
 "use client"
 
 import Footer from '@components/base components/Footer'
-import CourseNavbar from '@components/courseDetails components/CourseNavbar'
 import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
-import { FaArrowLeftLong, FaCirclePlay } from "react-icons/fa6";
-import CourseSidebar from '@components/courseDetails components/CourseSidebar'
-import { FaCheckCircle, FaChevronDown, FaChevronUp, FaStar, FaTrophy } from "react-icons/fa";
-import { BsFileEarmark } from 'react-icons/bs'
-import { IoMdCheckmark } from 'react-icons/io'
-import { IoIosCheckmarkCircleOutline } from "react-icons/io";
-import { IoClose } from 'react-icons/io5'
-import { MdCelebration } from 'react-icons/md'
+import { PlayCircle, CheckCircle, ChevronDown, ChevronUp, Star, Trophy, FileText, X, PartyPopper, Check } from 'lucide-react'
 
 
 function page({ params }) {
@@ -20,7 +12,6 @@ const [loading, setLoading] = useState(true)
   const [showCongrats, setShowCongrats] = useState(false)
   const [error, setError] = useState(null)  
   const iframeRef = useRef(null)
-  const [scrollPos, setScrollPos] = useState(0)
   const [isSidebar, setIsSidebar] = useState(true)
   const [courseContent, SetCourseContent] = useState({})
   const containerRef = useRef(null)
@@ -62,13 +53,6 @@ const [loading, setLoading] = useState(true)
 
     getCourseContent()
     getCompletionDetails()
-
-    const handleScroll = () => {
-      setScrollPos(window.scrollY)
-    }
-
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
   }, [params.Ids])
 
 
@@ -94,18 +78,6 @@ const [loading, setLoading] = useState(true)
     }
 
   }, [courseContent, completed])
-
-
-
-  const handleScroll = () => {
-    // console.log('triggered')
-    if (containerRef && containerRef.current) {
-
-      const divElement = containerRef.current;
-      // console.log(divElement.scrollY, window.scrollY);
-      setScrollPos(window.scrollY)
-    }
-  };
 
 
   const totalArticleLectures = (sections) => {
@@ -244,17 +216,17 @@ if (error) {
               onClick={() => setShowCongrats(false)}
               className='absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl'
             >
-              <IoClose />
+              <X className="w-6 h-6" />
             </button>
             
             <div className='mb-6'>
-              <div className='w-32 h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full mx-auto flex items-center justify-center animate-bounce-slow'>
-                <FaTrophy className='text-white text-6xl' />
+              <div className='w-32 h-32 bg-gradient-to-br from-accent-400 to-orange-500 rounded-full mx-auto flex items-center justify-center animate-bounce-slow'>
+                <Trophy className='text-white w-16 h-16' />
               </div>
               <div className='flex justify-center gap-2 mt-4'>
-                <MdCelebration className='text-4xl text-yellow-500 animate-wiggle' />
-                <MdCelebration className='text-4xl text-purple-500 animate-wiggle' style={{ animationDelay: '0.2s' }} />
-                <MdCelebration className='text-4xl text-pink-500 animate-wiggle' style={{ animationDelay: '0.4s' }} />
+                <PartyPopper className='w-10 h-10 text-accent-500 animate-wiggle' />
+                <PartyPopper className='w-10 h-10 text-purple-500 animate-wiggle' style={{ animationDelay: '0.2s' }} />
+                <PartyPopper className='w-10 h-10 text-pink-500 animate-wiggle' style={{ animationDelay: '0.4s' }} />
               </div>
             </div>
 
@@ -299,7 +271,7 @@ if (error) {
               <h1 className='font-bold text-lg line-clamp-1'>{courseContent?.landingPageDetails?.title}</h1>
               <div className='flex items-center gap-4 text-sm text-gray-300 mt-1'>
                 <span className='flex items-center gap-1'>
-                  <FaStar className='text-yellow-400' />
+                  <Star className='w-4 h-4 text-accent-400 fill-accent-400' />
                   {courseContent?.rating?.rating || 'N/A'}
                 </span>
                 <span>{completed.length} / {courseContent?.sections?.reduce((acc, s) => acc + (s.curriculum?.length || 0), 0)} completed</span>
@@ -395,20 +367,20 @@ if (error) {
                     : 'bg-green-600 text-white hover:bg-green-700'
                 }`}
               >
-                <FaCheckCircle />
+                <CheckCircle className="w-5 h-5" />
                 {completed.includes(selected.currId) ? 'Completed' : 'Mark Complete'}
               </button>
             )}
           </span>
           <span className='px-10 mt-8 flex items-center gap-10'>
             <span >
-              <p className='flex items-center font-bold text-yellow-600'>{courseContent?.rating?.rating} <FaStar className='text-yellow-400' /></p>
+              <p className='flex items-center font-bold text-accent-600'>{courseContent?.rating?.rating} <Star className='w-4 h-4 text-accent-400 fill-accent-400 ml-1' /></p>
               <p className='text-xs text-gray-400'>{courseContent?.rating?.TotalRatings} ratings</p>
             </span>
             <span><p className='font-bold'>12334</p> <p className='text-xs text-gray-400'>students</p></span>
             <div className='text-sm text-gray-800'>
-              <p className='flex items-center gap-2 '><BsFileEarmark size={'.8em'} />{totalArticleLectures(courseContent?.sections)} articles</p>
-              <p className='flex items-center gap-2 '><FaCirclePlay size={'.8em'} />{totalVideoLectures(courseContent?.sections)} video lectures</p>
+              <p className='flex items-center gap-2 '><FileText className="w-4 h-4" />{totalArticleLectures(courseContent?.sections)} articles</p>
+              <p className='flex items-center gap-2 '><PlayCircle className="w-4 h-4" />{totalVideoLectures(courseContent?.sections)} video lectures</p>
             </div>
           </span>
 
@@ -418,10 +390,10 @@ if (error) {
               <span className='text-2xl font-bold'>what you'll learn</span>
               <div className='w-full mt-2 flex flex-wrap'>
                 {courseContent?.outcomes?.map((outcome, i) => {
-                  return <span key={i} className='flex items-center gap-2 w-[50%] mb-3'><IoMdCheckmark size={'1.2em'} />{outcome}</span>
+                  return <span key={i} className='flex items-center gap-2 w-[50%] mb-3'><Check className="w-5 h-5" />{outcome}</span>
                 })}
                 {courseContent?.outcomes?.map((outcome, i) => {
-                  return <span key={i} className='flex items-center gap-2 w-[50%] mb-3'><IoMdCheckmark size={'1.2em'} />{outcome}</span>
+                  return <span key={i} className='flex items-center gap-2 w-[50%] mb-3'><Check className="w-5 h-5" />{outcome}</span>
                 })}
               </div>
             </div>
@@ -446,7 +418,7 @@ if (error) {
             <div className='sticky top-0 bg-white border-b px-4 py-3 flex items-center justify-between z-10'>
               <h3 className='font-bold text-lg'>Course Content</h3>
               <button onClick={() => setIsSidebar(false)} className='p-2 hover:bg-gray-100 rounded-lg'>
-                <IoClose className='text-xl' />
+                <X className='w-5 h-5' />
               </button>
             </div>
 
@@ -458,7 +430,7 @@ if (error) {
                     className='w-full bg-gray-100 hover:bg-gray-200 px-4 py-3 rounded-lg flex items-center justify-between font-semibold text-left transition-colors'
                   >
                     <span>Section {i + 1}: {section.title}</span>
-                    {opened.includes(section.id) ? <FaChevronUp /> : <FaChevronDown />}
+                    {opened.includes(section.id) ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
 
                   {opened.includes(section.id) && (
@@ -474,11 +446,11 @@ if (error) {
                           }`}
                         >
                           {completed.includes(curr.currId) ? (
-                            <FaCheckCircle className='text-green-600 flex-shrink-0' />
+                            <CheckCircle className='w-4 h-4 text-green-600 flex-shrink-0' />
                           ) : curr.content_type === 'video' ? (
-                            <FaCirclePlay className='text-gray-400 flex-shrink-0' />
+                            <PlayCircle className='w-4 h-4 text-gray-400 flex-shrink-0' />
                           ) : (
-                            <BsFileEarmark className='text-gray-400 flex-shrink-0' />
+                            <FileText className='w-4 h-4 text-gray-400 flex-shrink-0' />
                           )}
                           <span className='flex-1 text-sm'>{curr.title}</span>
                         </button>

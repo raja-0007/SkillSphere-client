@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-01-03T15:39:09.015Z",
+  "summary": {
+    "totalViolations": 1167,
+    "highSeverityViolations": 1128,
+    "mediumSeverityViolations": 39,
+    "totalRecommendations": 1167,
+    "passRate": "50.0"
+  },
+  "highPriorityViolations": 1128,
+  "mediumPriorityViolations": 39,
+  "lowPriorityViolations": 0,
+  "passRate": "NaN"
+}

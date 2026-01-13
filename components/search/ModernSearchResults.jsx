@@ -13,7 +13,7 @@ import Image from 'next/image'
 
 // Optimized skeleton components
 const SkeletonCard = memo(() => (
-  <Card className="animate-pulse">
+  <Card className="animate-pulse transition-colors-smooth">
     <div className="flex gap-4 p-4">
       <Skeleton className="w-64 h-36 rounded-lg" />
       <div className="flex-1 space-y-3">
@@ -49,24 +49,54 @@ const ResultCard = memo(({ item, onCourseClick }) => {
     router.push(`/course-overview/${item._id}`)
   }, [item, onCourseClick, router])
 
-  const description = useMemo(() => {
-    if (typeof item.landingPageDetails?.description === 'string') {
-      return item.landingPageDetails.description.slice(0, 200) + '...'
+  // Enhanced description rendering function (same as ModernCourseOverview)
+  const renderDescription = useCallback(() => {
+    if (!item.landingPageDetails?.description) {
+      return 'No description available'
+    }
+
+    if (typeof item.landingPageDetails.description === 'string') {
+      return item.landingPageDetails.description.slice(0, 200) + (item.landingPageDetails.description.length > 200 ? '...' : '')
     }
     
-    const paragraphs = item.landingPageDetails?.description?.blocks?.filter(
-      block => block.type === 'paragraph'
-    ) || []
+    // Handle structured description (blocks format)
+    const blocks = item.landingPageDetails.description.blocks || []
+    let textContent = ''
     
-    if (paragraphs.length > 0) {
-      return paragraphs[0].data.text.slice(0, 200) + '...'
+    for (const block of blocks) {
+      switch (block.type) {
+        case 'paragraph':
+          textContent += block.data.text.replace(/<[^>]*>/g, '') + ' ' // Strip HTML tags
+          break
+        case 'header':
+          textContent += block.data.text.replace(/<[^>]*>/g, '') + ' ' // Strip HTML tags
+          break
+        case 'nestedList':
+          if (block.data.items) {
+            block.data.items.forEach(item => {
+              textContent += item.content.replace(/<[^>]*>/g, '') + ' ' // Strip HTML tags
+            })
+          }
+          break
+        default:
+          break
+      }
+      
+      // Stop if we have enough content
+      if (textContent.length > 200) break
     }
     
-    return 'No description available'
+    if (textContent.length === 0) {
+      return 'No description available'
+    }
+    
+    return textContent.slice(0, 200) + (textContent.length > 200 ? '...' : '')
   }, [item.landingPageDetails?.description])
 
+  const description = useMemo(() => renderDescription(), [renderDescription])
+
   return (
-    <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-0 shadow-sm">
+    <Card className="group hover:shadow-lg hover:shadow-primary-500/10 transition-all duration-200 cursor-pointer border-0 shadow-sm">
       <CardContent className="p-0">
         <div className="flex gap-4 p-4" onClick={handleClick}>
           <div className="relative w-64 h-36 flex-shrink-0">
@@ -82,15 +112,15 @@ const ResultCard = memo(({ item, onCourseClick }) => {
           
           <div className="flex-1 space-y-2">
             <div>
-              <h3 className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors">
+              <h3 className="text-lg font-semibold line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors text-neutral-900 dark:text-neutral-100">
                 {item.landingPageDetails?.title || 'Untitled Course'}
               </h3>
-              <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 mt-1">
                 {description}
               </p>
             </div>
             
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
               <span>By {item.author?.username || 'Unknown'}</span>
               <Separator orientation="vertical" className="h-4" />
               <span>{item.author?.email || ''}</span>
@@ -99,28 +129,28 @@ const ResultCard = memo(({ item, onCourseClick }) => {
             <div className="flex items-center gap-2">
               {item.rating?.rating ? (
                 <>
-                  <span className="font-semibold text-sm">
+                  <span className="font-semibold text-sm text-neutral-900 dark:text-neutral-100">
                     {item.rating.rating}
                   </span>
                   <printRating rating={item.rating.rating} />
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm text-neutral-600 dark:text-neutral-400">
                     ({item.rating.TotalRatings || 0} ratings)
                   </span>
                 </>
               ) : (
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="text-xs transition-colors-fast">
                   New Course
                 </Badge>
               )}
             </div>
             
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-4 text-sm text-neutral-600 dark:text-neutral-400">
               <div className="flex items-center gap-1">
                 <BookOpen className="w-4 h-4" />
                 <span>{totalLectures} lectures</span>
               </div>
               <div className="flex items-center gap-1">
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="text-xs transition-colors-fast">
                   {item.landingPageDetails?.level || 'Beginner'}
                 </Badge>
               </div>
@@ -128,7 +158,7 @@ const ResultCard = memo(({ item, onCourseClick }) => {
           </div>
           
           <div className="flex flex-col justify-between items-end">
-            <div className="text-lg font-bold text-primary">
+            <div className="text-lg font-bold text-primary-600 dark:text-primary-400">
               {item.price === 'free' ? 'Free' : `₹${item.price}`}
             </div>
           </div>
@@ -175,17 +205,17 @@ const FilterSection = memo(({ filters, setFilters, isOpen, setIsOpen }) => {
   if (!isOpen) return null
 
   return (
-    <Card className="w-80 h-fit sticky top-6">
+    <Card className="w-80 h-fit sticky top-6 transition-colors-smooth">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <SlidersHorizontal className="w-5 h-5" />
+          <SlidersHorizontal className="w-5 h-5 text-primary-600 dark:text-primary-400" />
           Filters
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Price Filter */}
         <div>
-          <h4 className="font-medium mb-3">Price</h4>
+          <h4 className="font-medium mb-3 text-neutral-900 dark:text-neutral-100">Price</h4>
           <div className="space-y-2">
             {priceOptions.map(option => (
               <label key={option.value} className="flex items-center gap-2 cursor-pointer">
@@ -193,9 +223,9 @@ const FilterSection = memo(({ filters, setFilters, isOpen, setIsOpen }) => {
                   type="checkbox"
                   checked={filters.price.value.includes(option.value)}
                   onChange={() => handleFilterChange('price', option.value)}
-                  className="rounded border-gray-300"
+                  className="rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500"
                 />
-                <span className="text-sm">{option.label}</span>
+                <span className="text-sm text-neutral-700 dark:text-neutral-300">{option.label}</span>
               </label>
             ))}
           </div>
@@ -205,7 +235,7 @@ const FilterSection = memo(({ filters, setFilters, isOpen, setIsOpen }) => {
 
         {/* Level Filter */}
         <div>
-          <h4 className="font-medium mb-3">Level</h4>
+          <h4 className="font-medium mb-3 text-neutral-900 dark:text-neutral-100">Level</h4>
           <div className="space-y-2">
             {levelOptions.map(option => (
               <label key={option.value} className="flex items-center gap-2 cursor-pointer">
@@ -213,9 +243,9 @@ const FilterSection = memo(({ filters, setFilters, isOpen, setIsOpen }) => {
                   type="checkbox"
                   checked={filters.levels.value.includes(option.value)}
                   onChange={() => handleFilterChange('levels', option.value)}
-                  className="rounded border-gray-300"
+                  className="rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500"
                 />
-                <span className="text-sm">{option.label}</span>
+                <span className="text-sm text-neutral-700 dark:text-neutral-300">{option.label}</span>
               </label>
             ))}
           </div>
@@ -225,7 +255,7 @@ const FilterSection = memo(({ filters, setFilters, isOpen, setIsOpen }) => {
 
         {/* Rating Filter */}
         <div>
-          <h4 className="font-medium mb-3">Rating</h4>
+          <h4 className="font-medium mb-3 text-neutral-900 dark:text-neutral-100">Rating</h4>
           <div className="space-y-2">
             {ratingOptions.map(option => (
               <label key={option.value} className="flex items-center gap-2 cursor-pointer">
@@ -237,11 +267,11 @@ const FilterSection = memo(({ filters, setFilters, isOpen, setIsOpen }) => {
                     ...prev,
                     ratings: { ...prev.ratings, value: option.value }
                   }))}
-                  className="rounded-full border-gray-300"
+                  className="rounded-full border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500"
                 />
                 <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm">{option.label}</span>
+                  <Star className="w-4 h-4 fill-accent-400 text-accent-400" />
+                  <span className="text-sm text-neutral-700 dark:text-neutral-300">{option.label}</span>
                 </div>
               </label>
             ))}
@@ -255,14 +285,13 @@ const FilterSection = memo(({ filters, setFilters, isOpen, setIsOpen }) => {
 FilterSection.displayName = 'FilterSection'
 
 const ModernSearchResults = () => {
-  const { searchData, setOverviewCourse, setActive } = useHomeContext()
+  const { searchData, setOverviewCourse, setActive, searchLoading } = useHomeContext()
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [filters, setFilters] = useState({
     ratings: { value: '', open: false },
     levels: { value: [], open: false },
     price: { value: [], open: false }
   })
-  const [loading, setLoading] = useState(false)
 
   const handleCourseClick = useCallback((course) => {
     setOverviewCourse(course)
@@ -300,14 +329,14 @@ const ModernSearchResults = () => {
   }, [searchData?.searchResults, filters])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 transition-colors-smooth">
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <Search className="w-8 h-8 text-primary" />
+            <Search className="w-8 h-8 text-primary-600 dark:text-primary-400" />
             <div>
-              <h1 className="text-3xl font-bold">
+              <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
                 {searchData?.search ? (
                   <>
                     {filteredResults.length} results for "{searchData.search}"
@@ -317,7 +346,7 @@ const ModernSearchResults = () => {
                 )}
               </h1>
               {searchData?.search && (
-                <p className="text-muted-foreground mt-1">
+                <p className="text-neutral-600 dark:text-neutral-400 mt-1">
                   Discover courses that match your interests
                 </p>
               )}
@@ -330,19 +359,19 @@ const ModernSearchResults = () => {
               <Button
                 variant="outline"
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 transition-colors-fast"
               >
                 <Filter className="w-4 h-4" />
                 Filters
                 {Object.values(filters).some(f => 
                   Array.isArray(f.value) ? f.value.length > 0 : f.value
                 ) && (
-                  <Badge variant="secondary" className="ml-1">
+                  <Badge variant="secondary" className="ml-1 transition-colors-fast">
                     Active
                   </Badge>
                 )}
               </Button>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-neutral-600 dark:text-neutral-400">
                 {filteredResults.length} of {searchData.searchResults.length} courses
               </span>
             </div>
@@ -361,7 +390,7 @@ const ModernSearchResults = () => {
 
           {/* Results */}
           <div className="flex-1">
-            {loading ? (
+            {searchLoading ? (
               <div className="space-y-4">
                 {[...Array(5)].map((_, i) => (
                   <SkeletonCard key={i} />
@@ -378,28 +407,28 @@ const ModernSearchResults = () => {
                 ))}
               </div>
             ) : searchData?.search ? (
-              <Card className="text-center py-16">
+              <Card className="text-center py-16 transition-colors-smooth">
                 <CardContent>
-                  <Search className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">No courses found</h3>
-                  <p className="text-muted-foreground mb-6">
+                  <Search className="w-16 h-16 text-neutral-400 dark:text-neutral-600 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold mb-2 text-neutral-900 dark:text-neutral-100">No courses found</h3>
+                  <p className="text-neutral-600 dark:text-neutral-400 mb-6">
                     Try adjusting your search terms or filters to find what you're looking for.
                   </p>
                   <Button onClick={() => setFilters({
                     ratings: { value: '', open: false },
                     levels: { value: [], open: false },
                     price: { value: [], open: false }
-                  })}>
+                  })} className="transition-colors-fast">
                     Clear Filters
                   </Button>
                 </CardContent>
               </Card>
             ) : (
-              <Card className="text-center py-16">
+              <Card className="text-center py-16 transition-colors-smooth">
                 <CardContent>
-                  <Search className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">Search for courses</h3>
-                  <p className="text-muted-foreground">
+                  <Search className="w-16 h-16 text-neutral-400 dark:text-neutral-600 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold mb-2 text-neutral-900 dark:text-neutral-100">Search for courses</h3>
+                  <p className="text-neutral-600 dark:text-neutral-400">
                     Use the search bar above to find courses that interest you.
                   </p>
                 </CardContent>

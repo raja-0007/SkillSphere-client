@@ -1,7 +1,7 @@
 "use client"
 import { usePathname, useRouter } from "next/navigation"
 import Link from "next/link"
-import { Search, ShoppingCart, Menu, Heart, Bell, User, ChevronDown, BookOpen, GraduationCap } from "lucide-react"
+import { Search, ShoppingCart, Menu, Heart, Bell, User, ChevronDown, BookOpen, GraduationCap, Loader2 } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import axios from "axios"
 import { useHomeContext } from "@contexts/HomeContext"
@@ -25,7 +25,9 @@ function ModernNavbar({ setAuthType, onFocusNavigate }) {
     searchResults, 
     setSearchResults, 
     setSearchData, 
-    setOverviewCourse 
+    setOverviewCourse,
+    searchLoading,
+    setSearchLoading
   } = useHomeContext()
   const [isTopics, setIsTopics] = useState(false)
   const [topics, setTopics] = useState([])
@@ -45,28 +47,36 @@ function ModernNavbar({ setAuthType, onFocusNavigate }) {
   ]
 
   useEffect(() => {
-    document.addEventListener('click', (e) => {
+    const handleCategoryClickOutside = (e) => {
       if (catref.current && !catref.current.contains(e.target)) {
         setIsCategories(false)
         setIsTopics(false)
         setClickedCategory('')
       }
-    })
+    }
+    
+    document.addEventListener('click', handleCategoryClickOutside)
     getCategories()
+    
+    return () => document.removeEventListener('click', handleCategoryClickOutside)
   }, [])
 
   useEffect(() => {
-    document.addEventListener('click', (e) => {
+    const handleClickOutside = (e) => {
       if (active !== 'teacher' && !pathname.split('/').includes('coursesDetails')) {
-        if (searchDropRef && searchDropRef.current && !searchDropRef.current.contains(e.target) && e.target !== document.getElementById('searchForm') && !Array.from(document.getElementById('searchForm').children).includes(e.target)) {
+        const searchForm = document.getElementById('searchForm')
+        if (searchDropRef && searchDropRef.current && !searchDropRef.current.contains(e.target) && searchForm && e.target !== searchForm && !Array.from(searchForm.children).includes(e.target)) {
           setDropDown(false)
         }
-        else if ((e.target == document.getElementById('searchForm') || Array.from(document.getElementById('searchForm').children).includes(e.target))) {
+        else if (searchForm && (e.target === searchForm || Array.from(searchForm.children).includes(e.target))) {
           setDropDown(true)
         }
       }
-    })
-  }, [active])
+    }
+    
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [active, pathname, setDropDown])
 
   const getCategories = async () => {
     await axios.get(process.env.NEXT_PUBLIC_BASE_URL + '/categorieslist')
@@ -80,14 +90,19 @@ function ModernNavbar({ setAuthType, onFocusNavigate }) {
 
   useEffect(() => {
     const getSearchResults = async () => {
-      await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/searchResults?search=${search}`)
-        .then(res => { 
-          setSearchResults(res.data)
-          setSearchData({
-            search: search,
-            searchResults: res.data
-          })
+      setSearchLoading(true)
+      try {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/searchResults?search=${search}`)
+        setSearchResults(res.data)
+        setSearchData({
+          search: search,
+          searchResults: res.data
         })
+      } catch (error) {
+        console.error('Error fetching search results:', error)
+      } finally {
+        setSearchLoading(false)
+      }
     }
     getSearchResults()
   }, [search])
@@ -150,15 +165,15 @@ function ModernNavbar({ setAuthType, onFocusNavigate }) {
   }
 
   return (
-    <nav className='w-full h-16 flex flex-row justify-between items-center relative lg:px-6 px-4 z-50 bg-white border-b border-gray-200 shadow-sm'>
+    <nav className='w-full h-16 flex flex-row justify-between items-center relative lg:px-6 px-4 z-50 bg-white dark:bg-slate-900 border-b border-border shadow-sm transition-colors-smooth'>
       
       {/* Mobile Menu Button */}
-      <Button variant="ghost" size="icon" className="lg:hidden">
+      <Button variant="ghost" size="icon" className="lg:hidden text-muted-foreground hover:text-foreground hover:bg-muted">
         <Menu className="h-5 w-5" />
       </Button>
 
       {/* Logo */}
-      <Link href={'/'} className="text-2xl font-bold text-primary flex items-center gap-2" onClick={() => setActive('home')}>
+      <Link href={'/'} className="text-2xl font-bold text-primary hover:text-primary-600 transition-colors-fast flex items-center gap-2" onClick={() => setActive('home')}>
         <GraduationCap className="h-8 w-8" />
         <span className="hidden sm:block">SkillSphere</span>
       </Link>
@@ -168,31 +183,31 @@ function ModernNavbar({ setAuthType, onFocusNavigate }) {
         <Button
           variant="ghost"
           onClick={() => { setIsCategories(!isCategories); setIsTopics(false); setClickedCategory('') }}
-          className="flex items-center gap-1"
+          className="flex items-center gap-1 text-muted-foreground hover:text-foreground hover:bg-muted"
         >
           Categories
-          <ChevronDown className="h-4 w-4" />
+          <ChevronDown className={`h-4 w-4 transition-transform ${isCategories && 'rotate-180'}`} />
         </Button>
         
         {isCategories && (
-          <Card className="absolute top-full left-0 mt-2 w-72 z-50">
+          <Card className="absolute top-full left-0 mt-2 w-72 z-50 shadow-lg border-border">
             <CardContent className="p-4">
               <div className="flex flex-col gap-2">
                 {categorieslist.map((course, i) => (
                   <Button
                     key={i}
                     variant="ghost"
-                    className="justify-between h-auto p-2"
+                    className="justify-between h-auto p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
                     onClick={() => { openTopics(course.topics); setClickedCategory(course.category) }}
                   >
                     <span>{course.category}</span>
-                    <ChevronDown className={`h-4 w-4 transition-transform ${clickedCategory === course.category ? 'rotate-90' : ''}`} />
+                    <ChevronDown className={`h-4 w-4 transition-transform ${clickedCategory === course.category ? '-rotate-90 text-primary' : ''}`} />
                   </Button>
                 ))}
               </div>
               
               {isTopics && (
-                <Card className="absolute top-0 left-full ml-2 w-60 z-50">
+                <Card className="absolute top-0 left-full ml-2 w-60 z-50 shadow-lg border-border">
                   <CardContent className="p-4">
                     <div className="flex flex-col gap-1">
                       <span className="font-semibold text-sm text-muted-foreground mb-2">Popular Topics</span>
@@ -200,7 +215,7 @@ function ModernNavbar({ setAuthType, onFocusNavigate }) {
                         <Link 
                           href={`/`} 
                           key={topic_i}
-                          className="text-sm p-2 hover:bg-accent rounded-md transition-colors"
+                          className="text-sm p-2 text-muted-foreground hover:bg-muted hover:text-foreground rounded-md transition-colors-fast"
                         >
                           {topic}
                         </Link>
@@ -221,13 +236,19 @@ function ModernNavbar({ setAuthType, onFocusNavigate }) {
         onSubmit={submitHandler}
       >
         <div className="relative w-full">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <div className="absolute left-3 top-0 h-full flex items-center pointer-events-none">
+            {searchLoading ? (
+              <Loader2 className="h-4 w-4 text-primary spinner-animate" />
+            ) : (
+              <Search className="h-4 w-4 text-muted-foreground" />
+            )}
+          </div>
           <Input
             type="text"
             placeholder="Search for courses..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            onFocus={() => {
+            onClick={() => {
               if (onFocusNavigate) {
                 router.push('/search-results')
               }
@@ -243,7 +264,7 @@ function ModernNavbar({ setAuthType, onFocusNavigate }) {
         {/* Teacher Mode */}
         <Button
           variant="ghost"
-          className="hidden lg:flex"
+          className="hidden lg:flex text-muted-foreground hover:text-primary hover:bg-primary/10"
           onClick={() => {
             if (Object.keys(userDetails || {}).length === 0) {
               router.push('/authentication/login')
@@ -258,6 +279,7 @@ function ModernNavbar({ setAuthType, onFocusNavigate }) {
         {/* My Learning */}
         <Button
           variant="ghost"
+          className="text-muted-foreground hover:text-primary hover:bg-primary/10"
           onClick={() => {
             if (Object.keys(userDetails || {}).length === 0) {
               router.push('/authentication/login')
@@ -274,6 +296,7 @@ function ModernNavbar({ setAuthType, onFocusNavigate }) {
         <Button
           variant="ghost"
           size="icon"
+          className="text-muted-foreground hover:text-error hover:bg-error/10"
           onClick={() => {
             if (Object.keys(userDetails || {}).length === 0) {
               router.push('/authentication/login')
@@ -289,19 +312,19 @@ function ModernNavbar({ setAuthType, onFocusNavigate }) {
         <Button
           variant="ghost"
           size="icon"
-          className="relative"
+          className="relative text-muted-foreground hover:text-primary hover:bg-primary/10"
           onClick={gotoCart}
         >
           <ShoppingCart className="h-4 w-4" />
           {cart.length > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+            <Badge variant="accent" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
               {cart.length}
             </Badge>
           )}
         </Button>
 
         {/* Notifications */}
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-info hover:bg-info/10">
           <Bell className="h-4 w-4" />
         </Button>
 
@@ -310,11 +333,14 @@ function ModernNavbar({ setAuthType, onFocusNavigate }) {
           <div className="hidden lg:flex gap-2">
             <Button 
               variant="outline" 
+              className="border-border text-muted-foreground hover:bg-muted hover:text-foreground"
               onClick={() => router.push('/authentication/login')}
             >
               Login
             </Button>
             <Button 
+              variant="default"
+              className="bg-primary text-primary-foreground hover:bg-primary-600"
               onClick={() => router.push('/authentication/register')}
             >
               Sign up
@@ -326,24 +352,24 @@ function ModernNavbar({ setAuthType, onFocusNavigate }) {
               variant="ghost"
               size="icon"
               onClick={() => setIsProfile(!isProfile)}
-              className="relative"
+              className="relative hover:bg-muted"
             >
-              <div className="flex font-semibold bg-primary rounded-full text-primary-foreground text-sm uppercase items-center justify-center h-8 w-8">
+              <div className="flex font-semibold bg-primary hover:bg-primary-600 transition-colors-fast rounded-full text-primary-foreground text-sm uppercase items-center justify-center h-8 w-8">
                 <span>{userDetails?.userDetails?.username?.split(' ')[0]?.slice(0, 1)}</span>
                 <span>{userDetails?.userDetails?.username?.split(' ')[1]?.slice(0, 1)}</span>
               </div>
             </Button>
 
             {isProfile && (
-              <Card className="absolute top-full right-0 mt-2 w-64 z-50">
+              <Card className="absolute top-full right-0 mt-2 w-64 z-50 shadow-lg border-border">
                 <CardContent className="p-0">
-                  <div className="flex gap-3 p-4 border-b">
+                  <div className="flex gap-3 p-4 border-b border-border">
                     <div className="flex font-semibold bg-primary rounded-full text-primary-foreground text-lg uppercase items-center justify-center h-10 w-10">
                       <span>{userDetails?.userDetails?.username?.split(' ')[0]?.slice(0, 1)}</span>
                       <span>{userDetails?.userDetails?.username?.split(' ')[1]?.slice(0, 1)}</span>
                     </div>
                     <div>
-                      <p className="font-semibold">{userDetails?.userDetails?.username}</p>
+                      <p className="font-semibold text-card-foreground">{userDetails?.userDetails?.username}</p>
                       <p className="text-sm text-muted-foreground">{userDetails?.userDetails?.email}</p>
                     </div>
                   </div>
@@ -354,7 +380,7 @@ function ModernNavbar({ setAuthType, onFocusNavigate }) {
                         <Button
                           key={i}
                           variant="ghost"
-                          className="w-full justify-start gap-2 h-auto p-3"
+                          className="w-full justify-start gap-2 h-auto p-3 text-muted-foreground hover:bg-muted hover:text-foreground"
                           onClick={() => profileItemHandler(item)}
                         >
                           <IconComponent className="h-4 w-4" />

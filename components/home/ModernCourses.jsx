@@ -23,11 +23,11 @@ export const printRating = React.memo(({ rating }) => {
     const numRating = parseFloat(rating) || 0
     
     for (let i = 0; i < Math.floor(numRating); i++) {
-      result.push(<Star key={i} className='w-4 h-4 fill-yellow-400 text-yellow-400' />)
+      result.push(<Star key={i} className='w-4 h-4 fill-primary text-primary' />)
     }
     
     if (numRating % 1 !== 0) {
-      result.push(<StarHalf key="half" className='w-4 h-4 fill-yellow-400 text-yellow-400' />)
+      result.push(<StarHalf key="half" className='w-4 h-4 fill-primary text-primary' />)
     }
     
     const remaining = 5 - Math.ceil(numRating)

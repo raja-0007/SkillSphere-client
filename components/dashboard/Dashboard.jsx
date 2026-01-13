@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { Progress } from '../ui/progress'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
-import { BookOpen, Clock, Trophy, TrendingUp, Play, Star, Calendar, Target } from 'lucide-react'
+import { BookOpen, Trophy, TrendingUp, Play, Star, Target } from 'lucide-react'
 import Link from 'next/link'
 import axios from 'axios'
 import { printRating } from '../home components/courses'
@@ -13,7 +13,7 @@ import RatingModel from '../base components/RatingModel'
 
 function Dashboard() {
     const [learningCourses, setLearningCourses] = useState([])
-    const { userDetails, isRatingModelOpen, setIsRatingModelOpen, ratings, setRatings, getCart } = useHomeContext()
+    const { userDetails, userLoading, isRatingModelOpen, setIsRatingModelOpen, ratings, setRatings, getCart } = useHomeContext()
     const [loading, setLoading] = useState(true)
     const [completed, setCompleted] = useState([])
     const [percentages, setPercentages] = useState([])
@@ -26,19 +26,32 @@ function Dashboard() {
     })
 
     useEffect(() => {
-        setLoading(true)
+        // Wait for user loading to complete before making API calls
+        if (userLoading) return
+        
+        console.log("Dashboard useEffect - userDetails:", userDetails, userLoading)
+        
         const getEnrolled = async () => {
-            await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getEnrolled/${userDetails?.userDetails?._id}`)
-                .then(res => { 
-                    setLearningCourses(res.data.enrolled)
-                    setLoading(false)
-                })
+            try {
+                setLoading(true)
+                await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/getEnrolled/${userDetails?.userDetails?._id}`)
+                    .then(res => { 
+                        setLearningCourses(res.data.enrolled)
+                        setLoading(false)
+                    })
+            } catch (error) {
+                console.error('Error fetching enrolled courses:', error)
+                setLoading(false)
+            }
         }
 
         if (userDetails?.userDetails?._id) {
             getEnrolled()
+        } else {
+            // User is not logged in, stop loading
+            setLoading(false)
         }
-    }, [userDetails])
+    }, [userDetails, userLoading])
 
     useEffect(() => {
         const getCompletionDetails = async (courseId) => {
@@ -54,7 +67,7 @@ function Dashboard() {
         }
 
         const fetchCompletionDetailsForCourses = async () => {
-            if (learningCourses.length > 0) {
+            if (learningCourses.length > 0 && userDetails?.userDetails?._id) {
                 try {
                     const promises = learningCourses.map((course) => getCompletionDetails(course._id))
                     const response = await Promise.all(promises)
@@ -66,7 +79,7 @@ function Dashboard() {
         }
 
         const getRatings = async () => {
-            if (learningCourses.length === 0) return
+            if (learningCourses.length === 0 || !userDetails?.userDetails?._id) return
             const courseIds = learningCourses.map(course => course._id)
             const userId = userDetails?.userDetails?._id
             try {
@@ -77,10 +90,12 @@ function Dashboard() {
             }
         }
 
-        getRatings()
-        getCart()
-        fetchCompletionDetailsForCourses()
-    }, [learningCourses])
+        if (userDetails?.userDetails?._id) {
+            getRatings()
+            getCart()
+            fetchCompletionDetailsForCourses()
+        }
+    }, [learningCourses, userDetails])
 
     useEffect(() => {
         const calculatePercentages = () => {
@@ -118,9 +133,9 @@ function Dashboard() {
     }, [percentages, learningCourses])
 
     const getStatusBadge = (percentage) => {
-        if (percentage === 100) return <Badge className="bg-green-500">Completed</Badge>
-        if (percentage > 0) return <Badge variant="secondary">In Progress</Badge>
-        return <Badge variant="outline">Not Started</Badge>
+        if (percentage === 100) return <Badge className="bg-success-500 hover:bg-success-600 text-success-50 transition-colors-fast">Completed</Badge>
+        if (percentage > 0) return <Badge variant="secondary" className="transition-colors-fast">In Progress</Badge>
+        return <Badge variant="outline" className="transition-colors-fast">Not Started</Badge>
     }
 
     const getContinueLearningCourses = () => {
@@ -137,19 +152,20 @@ function Dashboard() {
             .slice(0, 4)
     }
 
-    if (loading) {
+    // Show loading while user data is being loaded from cookies or while fetching courses
+    if (userLoading || loading) {
         return (
             <div className="p-6 space-y-6">
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     {[...Array(4)].map((_, i) => (
-                        <Card key={i} className="animate-pulse">
+                        <Card key={i} className="animate-pulse transition-colors-smooth">
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <div className="h-4 bg-gray-200 rounded w-20"></div>
-                                <div className="h-4 w-4 bg-gray-200 rounded"></div>
+                                <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-20"></div>
+                                <div className="h-4 w-4 bg-neutral-200 dark:bg-neutral-700 rounded"></div>
                             </CardHeader>
                             <CardContent>
-                                <div className="h-8 bg-gray-200 rounded w-16 mb-2"></div>
-                                <div className="h-3 bg-gray-200 rounded w-24"></div>
+                                <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded w-16 mb-2"></div>
+                                <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-24"></div>
                             </CardContent>
                         </Card>
                     ))}
@@ -158,67 +174,85 @@ function Dashboard() {
         )
     }
 
+    // User not logged in after loading completed
+    if (!userDetails?.userDetails?._id) {
+        return (
+            <div className="p-6 space-y-6 bg-neutral-50 dark:bg-neutral-950 min-h-screen transition-colors-smooth">
+                <div className="text-center py-12">
+                    <BookOpen className="h-12 w-12 text-neutral-400 dark:text-neutral-600 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2 text-neutral-900 dark:text-neutral-100">Please log in</h3>
+                    <p className="text-neutral-600 dark:text-neutral-400 mb-4">
+                        You need to be logged in to view your dashboard
+                    </p>
+                    <Link href="/authentication/login">
+                        <Button className="transition-colors-fast">Log In</Button>
+                    </Link>
+                </div>
+            </div>
+        )
+    }
+
     return (
-        <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+        <div className="p-6 space-y-6 bg-neutral-50 dark:bg-neutral-950 min-h-screen transition-colors-smooth">
             {isRatingModelOpen && <RatingModel isRatingModelOpen={isRatingModelOpen} setIsRatingModelOpen={setIsRatingModelOpen} />}
             
             {/* Header */}
             <div className="flex flex-col space-y-2">
-                <h1 className="text-3xl font-bold tracking-tight">Learning Dashboard</h1>
-                <p className="text-muted-foreground">
+                <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">Learning Dashboard</h1>
+                <p className="text-neutral-600 dark:text-neutral-400">
                     Welcome back, {userDetails?.userDetails?.username}! Continue your learning journey.
                 </p>
             </div>
 
             {/* Stats Cards */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
+                <Card className="transition-colors-smooth">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Courses</CardTitle>
-                        <BookOpen className="h-4 w-4 text-muted-foreground" />
+                        <BookOpen className="h-4 w-4 text-primary-600 dark:text-primary-400" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{stats.totalCourses}</div>
-                        <p className="text-xs text-muted-foreground">
+                        <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{stats.totalCourses}</div>
+                        <p className="text-xs text-neutral-600 dark:text-neutral-400">
                             Enrolled courses
                         </p>
                     </CardContent>
                 </Card>
                 
-                <Card>
+                <Card className="transition-colors-smooth">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Completed</CardTitle>
-                        <Trophy className="h-4 w-4 text-muted-foreground" />
+                        <Trophy className="h-4 w-4 text-success-600 dark:text-success-400" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{stats.completedCourses}</div>
-                        <p className="text-xs text-muted-foreground">
+                        <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{stats.completedCourses}</div>
+                        <p className="text-xs text-neutral-600 dark:text-neutral-400">
                             Courses finished
                         </p>
                     </CardContent>
                 </Card>
                 
-                <Card>
+                <Card className="transition-colors-smooth">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                        <TrendingUp className="h-4 w-4 text-info-600 dark:text-info-400" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{stats.inProgressCourses}</div>
-                        <p className="text-xs text-muted-foreground">
+                        <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{stats.inProgressCourses}</div>
+                        <p className="text-xs text-neutral-600 dark:text-neutral-400">
                             Currently learning
                         </p>
                     </CardContent>
                 </Card>
                 
-                <Card>
+                <Card className="transition-colors-smooth">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Avg Progress</CardTitle>
-                        <Target className="h-4 w-4 text-muted-foreground" />
+                        <Target className="h-4 w-4 text-accent-600 dark:text-accent-400" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{stats.averageProgress}%</div>
-                        <p className="text-xs text-muted-foreground">
+                        <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{stats.averageProgress}%</div>
+                        <p className="text-xs text-neutral-600 dark:text-neutral-400">
                             Overall completion
                         </p>
                     </CardContent>
@@ -227,10 +261,10 @@ function Dashboard() {
 
             {/* Continue Learning Section */}
             {getContinueLearningCourses().length > 0 && (
-                <Card>
+                <Card className="transition-colors-smooth">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <Play className="h-5 w-5" />
+                            <Play className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                             Continue Learning
                         </CardTitle>
                         <CardDescription>
@@ -240,7 +274,7 @@ function Dashboard() {
                     <CardContent>
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                             {getContinueLearningCourses().map((course, i) => (
-                                <Card key={course._id} className="hover:shadow-md transition-shadow">
+                                <Card key={course._id} className="hover:shadow-md transition-all duration-200 hover:shadow-primary-500/10">
                                     <CardContent className="p-4">
                                         <div className="flex items-start space-x-4">
                                             <img 
@@ -249,20 +283,20 @@ function Dashboard() {
                                                 className="w-16 h-16 rounded-lg object-cover"
                                             />
                                             <div className="flex-1 space-y-2">
-                                                <h4 className="font-semibold text-sm line-clamp-2">
+                                                <h4 className="font-semibold text-sm line-clamp-2 text-neutral-900 dark:text-neutral-100">
                                                     {course.landingPageDetails.title}
                                                 </h4>
-                                                <p className="text-xs text-muted-foreground">
+                                                <p className="text-xs text-neutral-600 dark:text-neutral-400">
                                                     {course.author.username}
                                                 </p>
                                                 <div className="space-y-1">
                                                     <div className="flex justify-between text-xs">
-                                                        <span>{course.percentage}% complete</span>
+                                                        <span className="text-neutral-700 dark:text-neutral-300">{course.percentage}% complete</span>
                                                     </div>
                                                     <Progress value={course.percentage} className="h-2" />
                                                 </div>
                                                 <Link href={`/coursesDetails/${course._id}/${userDetails?.userDetails?._id}`} target="_blank">
-                                                    <Button size="sm" className="w-full">
+                                                    <Button size="sm" className="w-full transition-colors-fast">
                                                         Continue
                                                     </Button>
                                                 </Link>
@@ -277,7 +311,7 @@ function Dashboard() {
             )}
 
             {/* All Courses */}
-            <Card>
+            <Card className="transition-colors-smooth">
                 <CardHeader>
                     <CardTitle>All Courses</CardTitle>
                     <CardDescription>
@@ -287,19 +321,19 @@ function Dashboard() {
                 <CardContent>
                     {learningCourses.length === 0 ? (
                         <div className="text-center py-12">
-                            <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold mb-2">No courses yet</h3>
-                            <p className="text-muted-foreground mb-4">
+                            <BookOpen className="h-12 w-12 text-neutral-400 dark:text-neutral-600 mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold mb-2 text-neutral-900 dark:text-neutral-100">No courses yet</h3>
+                            <p className="text-neutral-600 dark:text-neutral-400 mb-4">
                                 Start your learning journey by enrolling in courses
                             </p>
                             <Link href="/">
-                                <Button>Browse Courses</Button>
+                                <Button className="transition-colors-fast">Browse Courses</Button>
                             </Link>
                         </div>
                     ) : (
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                             {learningCourses.map((course, i) => (
-                                <Card key={course._id} className="hover:shadow-md transition-shadow">
+                                <Card key={course._id} className="hover:shadow-md transition-all duration-200 hover:shadow-primary-500/10">
                                     <CardContent className="p-0">
                                         <div className="relative">
                                             <img 
@@ -313,10 +347,10 @@ function Dashboard() {
                                         </div>
                                         <div className="p-4 space-y-3">
                                             <div>
-                                                <h4 className="font-semibold line-clamp-2 mb-1">
+                                                <h4 className="font-semibold line-clamp-2 mb-1 text-neutral-900 dark:text-neutral-100">
                                                     {course.landingPageDetails.title}
                                                 </h4>
-                                                <p className="text-sm text-muted-foreground">
+                                                <p className="text-sm text-neutral-600 dark:text-neutral-400">
                                                     {course.author.username}
                                                 </p>
                                             </div>
@@ -324,7 +358,7 @@ function Dashboard() {
                                             {percentages[i] > 0 && (
                                                 <div className="space-y-2">
                                                     <div className="flex justify-between text-sm">
-                                                        <span>{percentages[i]}% complete</span>
+                                                        <span className="text-neutral-700 dark:text-neutral-300">{percentages[i]}% complete</span>
                                                         <div className="flex items-center gap-1">
                                                             {ratings.filter(r => r.courseId === course._id)[0]?.rating > 0 && (
                                                                 <div className="flex items-center">
@@ -339,7 +373,7 @@ function Dashboard() {
                                             
                                             <div className="flex gap-2">
                                                 <Link href={`/coursesDetails/${course._id}/${userDetails?.userDetails?._id}`} target="_blank" className="flex-1">
-                                                    <Button className="w-full" size="sm">
+                                                    <Button className="w-full transition-colors-fast" size="sm">
                                                         {percentages[i] > 0 ? 'Continue' : 'Start Learning'}
                                                     </Button>
                                                 </Link>
@@ -347,6 +381,7 @@ function Dashboard() {
                                                     <Button 
                                                         variant="outline" 
                                                         size="sm"
+                                                        className="transition-colors-fast"
                                                         onClick={() => setIsRatingModelOpen({ 
                                                             id: course._id, 
                                                             rating: ratings.filter(r => r.courseId === course._id)[0]?.rating || 0 

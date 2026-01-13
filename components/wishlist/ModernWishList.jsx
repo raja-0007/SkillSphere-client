@@ -54,20 +54,20 @@ function ModernWishList({ from, setFrom }) {
 
     if (loading) {
         return (
-            <div className='min-h-screen bg-gray-50 p-6'>
+            <div className='min-h-screen bg-neutral-50 dark:bg-neutral-950 p-6 transition-colors-smooth'>
                 <div className='max-w-7xl mx-auto'>
                     <div className='flex items-center gap-3 mb-8'>
-                        <Heart className='h-8 w-8 text-primary' />
-                        <h1 className='text-3xl font-bold'>My Wishlist</h1>
+                        <Heart className='h-8 w-8 text-primary-600 dark:text-primary-400' />
+                        <h1 className='text-3xl font-bold text-neutral-900 dark:text-neutral-100'>My Wishlist</h1>
                     </div>
                     <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
                         {[...Array(8)].map((_, i) => (
-                            <Card key={i} className="animate-pulse">
-                                <div className="w-full h-48 bg-gray-200 rounded-t-lg" />
+                            <Card key={i} className="animate-pulse transition-colors-smooth">
+                                <div className="w-full h-48 bg-neutral-200 dark:bg-neutral-700 rounded-t-lg" />
                                 <CardContent className="p-4 space-y-3">
-                                    <div className="h-4 bg-gray-200 rounded w-3/4" />
-                                    <div className="h-3 bg-gray-200 rounded w-1/2" />
-                                    <div className="h-8 bg-gray-200 rounded" />
+                                    <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-3/4" />
+                                    <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-1/2" />
+                                    <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded" />
                                 </CardContent>
                             </Card>
                         ))}
@@ -78,27 +78,27 @@ function ModernWishList({ from, setFrom }) {
     }
 
     return (
-        <div className='min-h-screen bg-gray-50 p-6'>
+        <div className='min-h-screen bg-neutral-50 dark:bg-neutral-950 p-6 transition-colors-smooth'>
             <div className='max-w-7xl mx-auto'>
                 {/* Header */}
                 <div className='flex items-center gap-3 mb-8'>
-                    <Heart className='h-8 w-8 text-primary' />
-                    <h1 className='text-3xl font-bold'>My Wishlist</h1>
-                    <Badge variant="secondary" className="ml-2">
+                    <Heart className='h-8 w-8 text-primary-600 dark:text-primary-400' />
+                    <h1 className='text-3xl font-bold text-neutral-900 dark:text-neutral-100'>My Wishlist</h1>
+                    <Badge variant="secondary" className="ml-2 transition-colors-fast">
                         {wishList.length} {wishList.length === 1 ? 'course' : 'courses'}
                     </Badge>
                 </div>
 
                 {wishList.length === 0 ? (
-                    <Card className="text-center py-16">
+                    <Card className="text-center py-16 transition-colors-smooth">
                         <CardContent>
-                            <Heart className='h-16 w-16 text-muted-foreground mx-auto mb-4' />
-                            <h3 className='text-xl font-semibold mb-2'>Your wishlist is empty</h3>
-                            <p className='text-muted-foreground mb-6'>
+                            <Heart className='h-16 w-16 text-neutral-400 dark:text-neutral-600 mx-auto mb-4' />
+                            <h3 className='text-xl font-semibold mb-2 text-neutral-900 dark:text-neutral-100'>Your wishlist is empty</h3>
+                            <p className='text-neutral-600 dark:text-neutral-400 mb-6'>
                                 Save courses you're interested in to your wishlist and come back to them later.
                             </p>
                             <Link href="/">
-                                <Button>
+                                <Button className="transition-colors-fast">
                                     <BookOpen className="h-4 w-4 mr-2" />
                                     Browse Courses
                                 </Button>
@@ -110,7 +110,7 @@ function ModernWishList({ from, setFrom }) {
                         {wishList.map((item, i) => (
                             <Card 
                                 key={i} 
-                                className={`group hover:shadow-lg transition-all duration-200 cursor-pointer relative ${
+                                className={`group hover:shadow-lg hover:shadow-primary-500/10 transition-all duration-200 cursor-pointer relative ${
                                     itemLoading === item._id ? 'animate-pulse opacity-50' : ''
                                 }`}
                             >
@@ -124,7 +124,7 @@ function ModernWishList({ from, setFrom }) {
                                     <Button
                                         variant="secondary"
                                         size="icon"
-                                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-200"
                                         onClick={(e) => {
                                             e.stopPropagation()
                                             removeFromWishlist(item._id)
@@ -137,10 +137,10 @@ function ModernWishList({ from, setFrom }) {
                                 
                                 <CardContent className="p-4 space-y-3" onClick={() => handleCourseClick(item)}>
                                     <div>
-                                        <h3 className='font-semibold line-clamp-2 mb-1'>
+                                        <h3 className='font-semibold line-clamp-2 mb-1 text-neutral-900 dark:text-neutral-100'>
                                             {item.landingPageDetails.title}
                                         </h3>
-                                        <p className='text-sm text-muted-foreground'>
+                                        <p className='text-sm text-neutral-600 dark:text-neutral-400'>
                                             {item.author.username}
                                         </p>
                                     </div>
@@ -148,9 +148,9 @@ function ModernWishList({ from, setFrom }) {
                                     <div className="flex items-center gap-2 text-sm">
                                         {item.rating.rating && (
                                             <div className="flex items-center gap-1">
-                                                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                                                <span className="font-medium">{item.rating.rating}</span>
-                                                <span className="text-muted-foreground">
+                                                <Star className="h-3 w-3 fill-accent-400 text-accent-400" />
+                                                <span className="font-medium text-neutral-900 dark:text-neutral-100">{item.rating.rating}</span>
+                                                <span className="text-neutral-600 dark:text-neutral-400">
                                                     ({item.rating.TotalRatings || 0})
                                                 </span>
                                             </div>
@@ -158,10 +158,10 @@ function ModernWishList({ from, setFrom }) {
                                     </div>
                                     
                                     <div className="flex items-center justify-between">
-                                        <Badge variant="outline" className="text-xs">
+                                        <Badge variant="outline" className="text-xs transition-colors-fast">
                                             {item.landingPageDetails.level}
                                         </Badge>
-                                        <div className="flex items-center gap-1 text-sm font-semibold text-primary">
+                                        <div className="flex items-center gap-1 text-sm font-semibold text-primary-600 dark:text-primary-400">
                                             {item.price === 'free' ? (
                                                 <span>Free</span>
                                             ) : (
@@ -171,7 +171,7 @@ function ModernWishList({ from, setFrom }) {
                                     </div>
                                     
                                     <Button 
-                                        className="w-full" 
+                                        className="w-full transition-colors-fast" 
                                         size="sm"
                                         onClick={(e) => {
                                             e.stopPropagation()

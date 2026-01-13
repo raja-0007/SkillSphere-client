@@ -109,7 +109,7 @@ function ModernCart({ from, setFrom }) {
     }
 
     return (
-        <div className='min-h-screen bg-gray-50 p-6'>
+        <div className='min-h-screen bg-neutral-50 dark:bg-neutral-950 p-6 transition-colors-smooth'>
             <div className='max-w-7xl mx-auto'>
                 {/* Header */}
                 <div className='flex items-center gap-4 mb-8'>
@@ -117,22 +117,22 @@ function ModernCart({ from, setFrom }) {
                         <Button 
                             variant="ghost" 
                             onClick={() => {setActive(from); setFrom('')}}
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 transition-colors-fast"
                         >
                             <ArrowLeft className='h-4 w-4' />
                             Back to {from}
                         </Button>
                     )}
                     <div className='flex items-center gap-3'>
-                        <ShoppingCart className='h-8 w-8 text-primary' />
-                        <h1 className='text-3xl font-bold'>Shopping Cart</h1>
+                        <ShoppingCart className='h-8 w-8 text-primary-600 dark:text-primary-400' />
+                        <h1 className='text-3xl font-bold text-neutral-900 dark:text-neutral-100'>Shopping Cart</h1>
                     </div>
                 </div>
 
                 <div className='grid lg:grid-cols-3 gap-8'>
                     {/* Cart Items */}
                     <div className='lg:col-span-2 space-y-4'>
-                        <Card>
+                        <Card className="transition-colors-smooth">
                             <CardHeader>
                                 <CardTitle className='flex items-center gap-2'>
                                     <span>{cart?.length} {cart?.length === 1 ? 'course' : 'courses'} in cart</span>
@@ -142,31 +142,31 @@ function ModernCart({ from, setFrom }) {
                                 {cart?.length > 0 ? (
                                     <div className='space-y-4'>
                                         {cart.map((item, i) => (
-                                            <div key={i} className='flex gap-4 p-4 border rounded-lg hover:shadow-md transition-shadow'>
+                                            <div key={i} className='flex gap-4 p-4 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:shadow-md hover:shadow-primary-500/10 transition-all duration-200'>
                                                 <img 
                                                     src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${item.image}`} 
                                                     className='w-32 h-20 object-cover rounded-lg' 
                                                     alt={item.landingPageDetails.title} 
                                                 />
                                                 <div className='flex-1 space-y-2'>
-                                                    <h3 className='font-semibold text-lg line-clamp-2'>
+                                                    <h3 className='font-semibold text-lg line-clamp-2 text-neutral-900 dark:text-neutral-100'>
                                                         {item.landingPageDetails.title}
                                                     </h3>
-                                                    <p className='text-sm text-muted-foreground'>
+                                                    <p className='text-sm text-neutral-600 dark:text-neutral-400'>
                                                         By {item.author.username}
                                                     </p>
                                                     <div className='flex items-center gap-4 text-sm'>
                                                         <div className='flex items-center gap-1'>
-                                                            <span className='font-medium'>{item.rating.rating}</span>
+                                                            <span className='font-medium text-neutral-900 dark:text-neutral-100'>{item.rating.rating}</span>
                                                             <div className='flex'>{printRating(item.rating.rating)}</div>
-                                                            <span className='text-muted-foreground'>
+                                                            <span className='text-neutral-600 dark:text-neutral-400'>
                                                                 ({item.rating.TotalRatings || 0} ratings)
                                                             </span>
                                                         </div>
                                                     </div>
-                                                    <div className='flex items-center gap-4 text-sm text-muted-foreground'>
+                                                    <div className='flex items-center gap-4 text-sm text-neutral-600 dark:text-neutral-400'>
                                                         <span>{getTotalLectures(item)} lectures</span>
-                                                        <Badge variant="outline">{item.landingPageDetails.level}</Badge>
+                                                        <Badge variant="outline" className="transition-colors-fast">{item.landingPageDetails.level}</Badge>
                                                     </div>
                                                 </div>
                                                 <div className='flex flex-col items-end justify-between'>
@@ -174,11 +174,11 @@ function ModernCart({ from, setFrom }) {
                                                         variant="ghost"
                                                         size="sm"
                                                         onClick={() => removeFromCart(item._id)}
-                                                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                        className="text-error-500 hover:text-error-700 hover:bg-error-50 dark:hover:bg-error-950 transition-colors-fast"
                                                     >
                                                         <Trash2 className='h-4 w-4' />
                                                     </Button>
-                                                    <div className='flex items-center gap-1 text-lg font-bold text-primary'>
+                                                    <div className='flex items-center gap-1 text-lg font-bold text-primary-600 dark:text-primary-400'>
                                                         ₹{item.price}
                                                         <Tag className='h-4 w-4' />
                                                     </div>
@@ -188,12 +188,12 @@ function ModernCart({ from, setFrom }) {
                                     </div>
                                 ) : (
                                     <div className='text-center py-16'>
-                                        <ShoppingCart className='h-16 w-16 text-muted-foreground mx-auto mb-4' />
-                                        <h3 className='text-xl font-semibold mb-2'>Your cart is empty</h3>
-                                        <p className='text-muted-foreground mb-6'>
+                                        <ShoppingCart className='h-16 w-16 text-neutral-400 dark:text-neutral-600 mx-auto mb-4' />
+                                        <h3 className='text-xl font-semibold mb-2 text-neutral-900 dark:text-neutral-100'>Your cart is empty</h3>
+                                        <p className='text-neutral-600 dark:text-neutral-400 mb-6'>
                                             Browse our courses and add them to your cart to get started.
                                         </p>
-                                        <Button onClick={() => router.push('/')}>
+                                        <Button onClick={() => router.push('/')} className="transition-colors-fast">
                                             Browse Courses
                                         </Button>
                                     </div>
@@ -204,29 +204,29 @@ function ModernCart({ from, setFrom }) {
 
                     {/* Order Summary */}
                     <div className='space-y-4'>
-                        <Card className='sticky top-6'>
+                        <Card className='sticky top-6 transition-colors-smooth'>
                             <CardHeader>
                                 <CardTitle>Order Summary</CardTitle>
                             </CardHeader>
                             <CardContent className='space-y-4'>
                                 <div className='space-y-2'>
                                     <div className='flex justify-between text-sm'>
-                                        <span>Subtotal ({cart?.length} {cart?.length === 1 ? 'item' : 'items'})</span>
-                                        <span>₹{getTotal()}</span>
+                                        <span className="text-neutral-700 dark:text-neutral-300">Subtotal ({cart?.length} {cart?.length === 1 ? 'item' : 'items'})</span>
+                                        <span className="text-neutral-900 dark:text-neutral-100">₹{getTotal()}</span>
                                     </div>
                                     <div className='flex justify-between text-sm'>
-                                        <span>Discount</span>
-                                        <span className='text-green-600'>-₹0</span>
+                                        <span className="text-neutral-700 dark:text-neutral-300">Discount</span>
+                                        <span className='text-success-600 dark:text-success-400'>-₹0</span>
                                     </div>
-                                    <hr />
+                                    <hr className="border-neutral-200 dark:border-neutral-700" />
                                     <div className='flex justify-between text-lg font-bold'>
-                                        <span>Total</span>
-                                        <span>₹{getTotal()}</span>
+                                        <span className="text-neutral-900 dark:text-neutral-100">Total</span>
+                                        <span className="text-neutral-900 dark:text-neutral-100">₹{getTotal()}</span>
                                     </div>
                                 </div>
                                 
                                 <Button 
-                                    className='w-full' 
+                                    className='w-full transition-colors-fast' 
                                     size="lg"
                                     onClick={checkOutHandler}
                                     disabled={getTotal() === 0 || loading}
@@ -236,10 +236,10 @@ function ModernCart({ from, setFrom }) {
                                 </Button>
                                 
                                 <div className='text-center space-y-2'>
-                                    <p className='text-xs text-muted-foreground'>
+                                    <p className='text-xs text-neutral-600 dark:text-neutral-400'>
                                         30-day money-back guarantee
                                     </p>
-                                    <p className='text-xs text-muted-foreground'>
+                                    <p className='text-xs text-neutral-600 dark:text-neutral-400'>
                                         Full lifetime access
                                     </p>
                                 </div>

@@ -43,9 +43,9 @@ function LearnersReview() {
         }
     ]
     return (
-        <div className='bg-slate-50 w-full h-[max-content] mt-10 '>
+        <div className='bg-muted/50 dark:bg-slate-800/50 w-full h-[max-content] mt-10 '>
             <div className='w-[80%] mx-auto  py-20'>
-                <span className='font-bold text-2xl'>How learners like you are achieving their goals</span>
+                <span className='font-bold text-2xl text-foreground'>How learners like you are achieving their goals</span>
                 <Swiper
                 modules={[Navigation, EffectCards, Autoplay]}
                 slidesPerGroup={1}
@@ -61,14 +61,14 @@ function LearnersReview() {
                 >
                     {reviews.map((review,index)=>
                     <SwiperSlide className='py-5' key={index}>
-                        <div className='w-[600px] mx-auto flex flex-col py-5 px-10 bg-white border-[1px] border-gray-300 rounded-lg shadow-lg shadow-gray-400 gap-5 ' >
+                        <div className='w-[600px] mx-auto flex flex-col py-5 px-10 bg-card border-[1px] border-border rounded-lg shadow-lg shadow-gray-400 gap-5 ' >
                             <span className='flex flex-col gap-1 justify-center'>
-                                <span className='font-bold text-3xl '><BiSolidQuoteRight /></span>
-                                <span>{review.matter}</span>
+                                <span className='font-bold text-3xl text-primary'><BiSolidQuoteRight /></span>
+                                <span className='text-card-foreground'>{review.matter}</span>
                             </span>
-                            <span className='flex items-center gap-2 font-semibold'><FaUserCircle className='text-2xl '/>{review.user}</span>
-                            <hr className='border-gray-500'/>
-                            <span className='flex items-center gap-2 font-bold text-blue-500'><FaPlayCircle className='text-2xl'/>{review.course}</span>
+                            <span className='flex items-center gap-2 font-semibold text-card-foreground'><FaUserCircle className='text-2xl '/>{review.user}</span>
+                            <hr className='border-border'/>
+                            <span className='flex items-center gap-2 font-bold text-primary'><FaPlayCircle className='text-2xl'/>{review.course}</span>
                         </div>
                     </SwiperSlide>
                     )}

@@ -29,7 +29,7 @@ import dynamic from 'next/dynamic'
 // Lazy load heavy components
 const CourseSections = dynamic(() => import('../course overview/CourseSections'), { 
   ssr: false,
-  loading: () => <div className="animate-pulse bg-gray-200 h-64 rounded-lg" />
+  loading: () => <div className="animate-pulse bg-neutral-200 dark:bg-neutral-700 h-64 rounded-lg transition-colors-smooth" />
 })
 
 function ModernCourseOverview({ courseData }) {
@@ -116,8 +116,8 @@ function ModernCourseOverview({ courseData }) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-xl font-semibold">Loading course details...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 dark:border-primary-400 mx-auto mb-4"></div>
+          <p className="text-xl font-semibold text-neutral-700 dark:text-neutral-300">Loading course details...</p>
         </div>
       </div>
     )
@@ -125,7 +125,7 @@ function ModernCourseOverview({ courseData }) {
 
   const renderDescription = () => {
     if (typeof course.landingPageDetails.description === 'string') {
-      return <p className="text-gray-700 leading-relaxed">{course.landingPageDetails.description}</p>
+      return <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">{course.landingPageDetails.description}</p>
     }
     
     return course.landingPageDetails.description.blocks.map((block, blockI) => {
@@ -135,7 +135,7 @@ function ModernCourseOverview({ courseData }) {
             <p 
               key={blockI} 
               dangerouslySetInnerHTML={{ __html: block.data.text }} 
-              className="text-gray-700 leading-relaxed mb-4"
+              className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4"
             />
           )
         case 'header':
@@ -156,7 +156,7 @@ function ModernCourseOverview({ courseData }) {
           return (
             <ListTag key={blockI} className={`mb-4 ${block.data.style === 'ordered' ? 'list-decimal' : 'list-disc'} pl-6`}>
               {block.data.items.map((item, itemI) => (
-                <li key={itemI} dangerouslySetInnerHTML={{ __html: item.content }} className="mb-1" />
+                <li key={itemI} dangerouslySetInnerHTML={{ __html: item.content }} className="mb-1 text-neutral-700 dark:text-neutral-300" />
               ))}
             </ListTag>
           )
@@ -167,10 +167,10 @@ function ModernCourseOverview({ courseData }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 transition-colors-smooth">
       {/* Hero Section */}
-      <div className="bg-slate-900 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 opacity-90" />
+      <div className="bg-primary-900 dark:bg-primary-950 text-primary-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-900 via-primary-800 to-primary-900 dark:from-primary-950 dark:via-primary-900 dark:to-primary-950 opacity-90" />
         <div className="relative max-w-7xl mx-auto px-6 py-16">
           <div className="grid lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2 space-y-6">
@@ -181,7 +181,7 @@ function ModernCourseOverview({ courseData }) {
                 <h1 className="text-4xl font-bold mb-4 leading-tight">
                   {course.landingPageDetails.title}
                 </h1>
-                <p className="text-xl text-gray-300 leading-relaxed">
+                <p className="text-xl text-primary-200 dark:text-primary-300 leading-relaxed">
                   {course.landingPageDetails.subtitle}
                 </p>
               </div>
@@ -190,16 +190,16 @@ function ModernCourseOverview({ courseData }) {
               <div className="flex items-center gap-4">
                 {course.rating.rating !== '' ? (
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl font-bold text-yellow-400">
+                    <span className="text-2xl font-bold text-accent-400">
                       {course.rating.rating}
                     </span>
                     <printRating rating={course.rating.rating} />
-                    <span className="text-gray-300">
+                    <span className="text-primary-300 dark:text-primary-400">
                       ({course.rating.TotalRatings || 0} ratings)
                     </span>
                   </div>
                 ) : (
-                  <Badge variant="outline" className="text-yellow-400 border-yellow-400">
+                  <Badge variant="outline" className="text-accent-400 border-accent-400">
                     New Course - No ratings yet
                   </Badge>
                 )}
@@ -219,7 +219,7 @@ function ModernCourseOverview({ courseData }) {
                       <Badge variant="secondary" className="ml-2">You</Badge>
                     )}
                   </p>
-                  <p className="text-sm text-gray-400">{course.author.email}</p>
+                  <p className="text-sm text-primary-400 dark:text-primary-500">{course.author.email}</p>
                 </div>
               </div>
 
@@ -249,7 +249,7 @@ function ModernCourseOverview({ courseData }) {
 
       {/* Course Card - Fixed Position */}
       <div className="fixed top-24 right-6 w-80 z-40 hidden lg:block">
-        <Card className="shadow-2xl border-0">
+        <Card className="shadow-2xl border-0 bg-white dark:bg-neutral-900 transition-colors-smooth">
           <div className="relative">
             <Image
               src={`${process.env.NEXT_PUBLIC_IMAGES_URL}/images/${course.image}`}
@@ -261,7 +261,7 @@ function ModernCourseOverview({ courseData }) {
             <Button
               size="icon"
               variant="secondary"
-              className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-white/90 hover:bg-white"
+              className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-white/90 hover:bg-white dark:bg-neutral-800/90 dark:hover:bg-neutral-800 transition-colors-fast"
             >
               <Play className="w-6 h-6 ml-1" />
             </Button>
@@ -269,11 +269,11 @@ function ModernCourseOverview({ courseData }) {
           
           <CardContent className="p-6 space-y-4">
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">
+              <div className="text-3xl font-bold text-primary-600 dark:text-primary-400 mb-2">
                 {course.price !== 'free' ? `₹${course.price}` : 'FREE'}
               </div>
               {course.price !== 'free' && (
-                <p className="text-sm text-muted-foreground line-through">
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 line-through">
                   ₹{Math.round(course.price * 1.5)}
                 </p>
               )}
@@ -341,19 +341,19 @@ function ModernCourseOverview({ courseData }) {
 
             <div className="space-y-3 text-sm">
               <div className="flex items-center gap-2">
-                <Award className="w-4 h-4 text-green-600" />
+                <Award className="w-4 h-4 text-success-600 dark:text-success-400" />
                 <span>30-day money-back guarantee</span>
               </div>
               <div className="flex items-center gap-2">
-                <Infinity className="w-4 h-4 text-blue-600" />
+                <Infinity className="w-4 h-4 text-info-600 dark:text-info-400" />
                 <span>Full lifetime access</span>
               </div>
               <div className="flex items-center gap-2">
-                <Smartphone className="w-4 h-4 text-purple-600" />
+                <Smartphone className="w-4 h-4 text-secondary-600 dark:text-secondary-400" />
                 <span>Access on mobile and TV</span>
               </div>
               <div className="flex items-center gap-2">
-                <Download className="w-4 h-4 text-orange-600" />
+                <Download className="w-4 h-4 text-accent-600 dark:text-accent-400" />
                 <span>Downloadable resources</span>
               </div>
             </div>
@@ -362,13 +362,13 @@ function ModernCourseOverview({ courseData }) {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-6 py-12 lg:pr-96">
+      <div className="max-w-7xl mx-auto px-6 py-12 lg:pr-96">
         <div className="space-y-12">
           {/* What You'll Learn */}
-          <Card>
+          <Card className="transition-colors-smooth">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Check className="w-6 h-6 text-green-600" />
+                <Check className="w-6 h-6 text-success-600 dark:text-success-400" />
                 What you'll learn
               </CardTitle>
             </CardHeader>
@@ -376,8 +376,8 @@ function ModernCourseOverview({ courseData }) {
               <div className="grid md:grid-cols-2 gap-4">
                 {course.outcomes.map((outcome, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700">{outcome}</span>
+                    <Check className="w-5 h-5 text-success-600 dark:text-success-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-neutral-700 dark:text-neutral-300">{outcome}</span>
                   </div>
                 ))}
               </div>
@@ -385,34 +385,34 @@ function ModernCourseOverview({ courseData }) {
           </Card>
 
           {/* Course Includes */}
-          <Card>
+          <Card className="transition-colors-smooth">
             <CardHeader>
               <CardTitle>This course includes:</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="flex items-center gap-3">
-                  <Play className="w-5 h-5 text-blue-600" />
+                  <Play className="w-5 h-5 text-info-600 dark:text-info-400" />
                   <span>{courseStats.videos} video lectures</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <FileText className="w-5 h-5 text-green-600" />
+                  <FileText className="w-5 h-5 text-success-600 dark:text-success-400" />
                   <span>{courseStats.articles} articles</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Download className="w-5 h-5 text-orange-600" />
+                  <Download className="w-5 h-5 text-accent-600 dark:text-accent-400" />
                   <span>Downloadable resources</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Infinity className="w-5 h-5 text-purple-600" />
+                  <Infinity className="w-5 h-5 text-secondary-600 dark:text-secondary-400" />
                   <span>Full lifetime access</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Smartphone className="w-5 h-5 text-indigo-600" />
+                  <Smartphone className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                   <span>Access on mobile and TV</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Award className="w-5 h-5 text-yellow-600" />
+                  <Award className="w-5 h-5 text-warning-600 dark:text-warning-400" />
                   <span>Certificate of completion</span>
                 </div>
               </div>
@@ -420,10 +420,10 @@ function ModernCourseOverview({ courseData }) {
           </Card>
 
           {/* Course Content */}
-          <Card>
+          <Card className="transition-colors-smooth">
             <CardHeader>
               <CardTitle>Course content</CardTitle>
-              <p className="text-muted-foreground">
+              <p className="text-neutral-600 dark:text-neutral-400">
                 {course.sections?.length || 0} sections • {courseStats.totalLectures} lectures
               </p>
             </CardHeader>
@@ -433,7 +433,7 @@ function ModernCourseOverview({ courseData }) {
           </Card>
 
           {/* Requirements */}
-          <Card>
+          <Card className="transition-colors-smooth">
             <CardHeader>
               <CardTitle>Requirements</CardTitle>
             </CardHeader>
@@ -441,8 +441,8 @@ function ModernCourseOverview({ courseData }) {
               <ul className="space-y-2">
                 {course.requirements.map((req, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0" />
-                    <span className="text-gray-700">{req}</span>
+                    <div className="w-2 h-2 bg-neutral-400 dark:bg-neutral-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-neutral-700 dark:text-neutral-300">{req}</span>
                   </li>
                 ))}
               </ul>
@@ -450,11 +450,11 @@ function ModernCourseOverview({ courseData }) {
           </Card>
 
           {/* Description */}
-          <Card>
+          <Card className="transition-colors-smooth">
             <CardHeader>
               <CardTitle>Description</CardTitle>
             </CardHeader>
-            <CardContent className="prose max-w-none">
+            <CardContent className="prose max-w-none dark:prose-invert">
               {renderDescription()}
             </CardContent>
           </Card>

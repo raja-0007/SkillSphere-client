@@ -53,7 +53,7 @@ function CourseSidebar({ courseContent, opened, selected, setSelected, completed
                                 return (
                                     <div className={`py-3 px-3 flex items-center cursor-pointer ${selected.currId == curr.currId ? 'bg-gray-100 border-2 border-slate-700': 'border-2 border-white'} justify-between`} onClick={()=>setSelected(curr)} key={curr_i}>
                                         <div className='flex items-center'>
-                                            <div className={`p-1 inline-block rounded-full ${completed.includes(curr.currId) ? 'bg-slate-700' : 'bg-gray-300'} me-2  text-white`}>
+                                            <div className={`p-1 inline-block rounded-full ${completed.includes(curr.currId) ? 'bg-slate-700' : 'bg-neutral-500'} me-2  text-white`}>
                                                 <IoMdCheckmark />
                                             </div>
                                             {curr_i+1}. {curr.title}

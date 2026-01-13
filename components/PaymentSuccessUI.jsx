@@ -72,7 +72,7 @@ export default function PaymentSuccessUI({ initialStatus }) {
                   <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center animate-bounce-once">
                     <FaCheckCircle className="text-6xl text-green-500" />
                   </div>
-                  <MdCelebration className="absolute -top-2 -right-2 text-4xl text-yellow-500 animate-spin-slow" />
+                  <MdCelebration className="absolute -top-2 -right-2 text-4xl text-accent-500 animate-spin-slow" />
                 </div>
 
                 <h2 className="text-3xl font-bold text-gray-800 mb-2">Payment Successful!</h2>

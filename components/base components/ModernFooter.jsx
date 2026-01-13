@@ -36,30 +36,30 @@ function ModernFooter() {
     }
 
     return (
-        <footer className='bg-slate-900 text-white'>
+        <footer className='bg-neutral-900 text-neutral-100 transition-colors-smooth'>
             {/* Main Footer Content */}
             <div className='max-w-7xl mx-auto px-6 py-12'>
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8'>
                     {/* Brand Section */}
                     <div className='lg:col-span-1 space-y-4'>
                         <div className='flex items-center gap-2'>
-                            <GraduationCap className='h-8 w-8 text-primary' />
-                            <span className='text-2xl font-bold'>SkillSphere</span>
+                            <GraduationCap className='h-8 w-8 text-primary-400' />
+                            <span className='text-2xl font-bold text-neutral-50'>SkillSphere</span>
                         </div>
-                        <p className='text-gray-300 text-sm leading-relaxed'>
+                        <p className='text-neutral-300 text-sm leading-relaxed'>
                             Empowering learners worldwide with quality education and skill development opportunities.
                         </p>
                         <div className='space-y-2'>
-                            <div className='flex items-center gap-2 text-sm text-gray-300'>
-                                <Mail className='h-4 w-4' />
+                            <div className='flex items-center gap-2 text-sm text-neutral-300'>
+                                <Mail className='h-4 w-4 text-info' />
                                 <span>support@skillsphere.com</span>
                             </div>
-                            <div className='flex items-center gap-2 text-sm text-gray-300'>
-                                <Phone className='h-4 w-4' />
+                            <div className='flex items-center gap-2 text-sm text-neutral-300'>
+                                <Phone className='h-4 w-4 text-success' />
                                 <span>+1 (555) 123-4567</span>
                             </div>
-                            <div className='flex items-center gap-2 text-sm text-gray-300'>
-                                <MapPin className='h-4 w-4' />
+                            <div className='flex items-center gap-2 text-sm text-neutral-300'>
+                                <MapPin className='h-4 w-4 text-accent' />
                                 <span>San Francisco, CA</span>
                             </div>
                         </div>
@@ -67,13 +67,13 @@ function ModernFooter() {
 
                     {/* Company Links */}
                     <div className='space-y-4'>
-                        <h3 className='font-semibold text-lg'>Company</h3>
+                        <h3 className='font-semibold text-lg text-neutral-50'>Company</h3>
                         <ul className='space-y-2'>
                             {footerLinks.company.map((link, index) => (
                                 <li key={index}>
                                     <Link 
                                         href={link.href} 
-                                        className='text-gray-300 hover:text-white transition-colors text-sm'
+                                        className='text-neutral-300 hover:text-primary-400 transition-colors-fast text-sm'
                                     >
                                         {link.name}
                                     </Link>
@@ -84,13 +84,13 @@ function ModernFooter() {
 
                     {/* Community Links */}
                     <div className='space-y-4'>
-                        <h3 className='font-semibold text-lg'>Community</h3>
+                        <h3 className='font-semibold text-lg text-neutral-50'>Community</h3>
                         <ul className='space-y-2'>
                             {footerLinks.community.map((link, index) => (
                                 <li key={index}>
                                     <Link 
                                         href={link.href} 
-                                        className='text-gray-300 hover:text-white transition-colors text-sm'
+                                        className='text-neutral-300 hover:text-secondary-400 transition-colors-fast text-sm'
                                     >
                                         {link.name}
                                     </Link>
@@ -101,13 +101,13 @@ function ModernFooter() {
 
                     {/* Teaching Links */}
                     <div className='space-y-4'>
-                        <h3 className='font-semibold text-lg'>Teaching</h3>
+                        <h3 className='font-semibold text-lg text-neutral-50'>Teaching</h3>
                         <ul className='space-y-2'>
                             {footerLinks.teaching.map((link, index) => (
                                 <li key={index}>
                                     <Link 
                                         href={link.href} 
-                                        className='text-gray-300 hover:text-white transition-colors text-sm'
+                                        className='text-neutral-300 hover:text-accent transition-colors-fast text-sm'
                                     >
                                         {link.name}
                                     </Link>
@@ -118,13 +118,13 @@ function ModernFooter() {
 
                     {/* Support Links */}
                     <div className='space-y-4'>
-                        <h3 className='font-semibold text-lg'>Support</h3>
+                        <h3 className='font-semibold text-lg text-neutral-50'>Support</h3>
                         <ul className='space-y-2'>
                             {footerLinks.support.map((link, index) => (
                                 <li key={index}>
                                     <Link 
                                         href={link.href} 
-                                        className='text-gray-300 hover:text-white transition-colors text-sm'
+                                        className='text-neutral-300 hover:text-info transition-colors-fast text-sm'
                                     >
                                         {link.name}
                                     </Link>
@@ -136,11 +136,11 @@ function ModernFooter() {
             </div>
 
             {/* Bottom Bar */}
-            <div className='border-t border-gray-700'>
+            <div className='border-t border-neutral-500'>
                 <div className='max-w-7xl mx-auto px-6 py-6'>
                     <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
                         <div className='flex items-center gap-4'>
-                            <p className='text-gray-300 text-sm'>
+                            <p className='text-neutral-400 text-sm'>
                                 © 2024 SkillSphere, Inc. All rights reserved.
                             </p>
                         </div>
@@ -149,7 +149,7 @@ function ModernFooter() {
                             <Button 
                                 variant="outline" 
                                 size="sm" 
-                                className='border-gray-600 text-gray-300 hover:text-white hover:border-gray-400'
+                                className='border-neutral-400 text-neutral-300 hover:text-neutral-50 hover:border-primary-400 hover:bg-primary-400/10 transition-colors-fast'
                             >
                                 <Globe className='h-4 w-4 mr-2' />
                                 English

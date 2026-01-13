@@ -14,18 +14,18 @@ const LearningStatistics = lazy(() => import('../home components/LearningStatist
 
 // Loading components for better UX
 const CarouselSkeleton = () => (
-  <div className="w-full h-96 bg-gradient-to-r from-blue-50 to-indigo-100">
-    <Skeleton className="w-full h-full" />
+  <div className="w-full h-96 bg-gradient-to-r from-primary-50 to-secondary-50 transition-colors-smooth">
+    <Skeleton className="w-full h-full bg-muted" />
   </div>
 )
 
 const SectionSkeleton = () => (
-  <div className="py-16 px-6">
+  <div className="py-16 px-6 bg-white dark:bg-slate-900">
     <div className="max-w-7xl mx-auto">
-      <Skeleton className="h-8 w-64 mx-auto mb-8" />
+      <Skeleton className="h-8 w-64 mx-auto mb-8 bg-muted" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {[...Array(6)].map((_, i) => (
-          <Skeleton key={i} className="h-48 w-full" />
+          <Skeleton key={i} className="h-48 w-full bg-muted" />
         ))}
       </div>
     </div>
@@ -33,10 +33,8 @@ const SectionSkeleton = () => (
 )
 
 function ModernHome() {
-  const { active } = useHomeContext()
-
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-white dark:bg-slate-900 text-foreground transition-colors-smooth">
       {/* Hero Section */}
       <Suspense fallback={<CarouselSkeleton />}>
         <Carousel />

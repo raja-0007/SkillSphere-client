@@ -44,28 +44,36 @@ function isValidRoute(pathname) {
 export function middleware(request) {
   const cookie = request.cookies.get('user')
   const user = cookie ? JSON.parse(cookie.value) : null
+  const access_token = request.cookies.get('accessToken');
   const redirectUrl = request.cookies.get('redirectUrl')
   const currentPath = request.nextUrl.pathname
+  
+  console.log('Middleware check:', { 
+    hasUser: !!user, 
+    hasToken: !!access_token, 
+    currentPath,
+    isPublic: isPublicRoute(currentPath)
+  })
 
   // If user not logged in and visiting non-public route
-  if (!user && !isPublicRoute(currentPath)) {
+  if ((!user || !access_token) && !isPublicRoute(currentPath)) {
     if (isValidRoute(currentPath)) {
-      const response = NextResponse.redirect(new URL('/', request.url))
+      const response = NextResponse.redirect(new URL('/authentication/login', request.url))
       // Save valid redirect url
       response.cookies.set('redirectUrl', currentPath, { path: '/' })
       return response
     }
-    // Invalid route → just redirect to home (no cookie saved)
-    return NextResponse.redirect(new URL('/', request.url))
+    // Invalid route → redirect to login
+    console.log('not login, redirect to /authentication/login')
+    return NextResponse.redirect(new URL('/authentication/login', request.url))
   }
-
-  // If logged in and trying to visit home page, redirect to dashboard
-  if (user && currentPath === '/') {
+  else if (user && access_token && currentPath === '/') {
+    // If logged in and trying to visit home page, redirect to dashboard
+    console.log('logged in and /, redirecting to /learning')
     return NextResponse.redirect(new URL('/learning', request.url))
-  }
-
-  // If logged in and trying to visit authentication pages
-  if (user && currentPath.startsWith('/authentication')) {
+  } else if (user && access_token && currentPath.startsWith('/authentication')) {
+    // If logged in and trying to visit authentication pages
+    console.log("logged in and auth page")
     if (redirectUrl && redirectUrl.value !== '/') {
       const response = NextResponse.redirect(new URL(redirectUrl.value, request.url))
       response.cookies.delete('redirectUrl')

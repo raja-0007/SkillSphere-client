@@ -1,3 +1,4 @@
+import { hasPagePermission } from '@/lib/permissions';
 import { NextResponse } from 'next/server'
 
 // Define your app routes (static + dynamic patterns)
@@ -18,6 +19,10 @@ const publicRoutes = [
   '/search-results',
   '/course-overview/[id]',
 ];
+
+const privateRoutes = [
+  '/teacher'
+]
 
 function isPublicRoute(pathname) {
   return publicRoutes.some(route => {
@@ -48,12 +53,12 @@ export function middleware(request) {
   const redirectUrl = request.cookies.get('redirectUrl')
   const currentPath = request.nextUrl.pathname
   
-  console.log('Middleware check:', { 
-    hasUser: !!user, 
-    hasToken: !!access_token, 
-    currentPath,
-    isPublic: isPublicRoute(currentPath)
-  })
+  // console.log('Middleware check:', { 
+  //   hasUser: !!user, 
+  //   hasToken: !!access_token, 
+  //   currentPath,
+  //   isPublic: isPublicRoute(currentPath)
+  // })
 
   // If user not logged in and visiting non-public route
   if ((!user || !access_token) && !isPublicRoute(currentPath)) {
@@ -71,7 +76,8 @@ export function middleware(request) {
     // If logged in and trying to visit home page, redirect to dashboard
     console.log('logged in and /, redirecting to /learning')
     return NextResponse.redirect(new URL('/learning', request.url))
-  } else if (user && access_token && currentPath.startsWith('/authentication')) {
+  } 
+  else if (user && access_token && currentPath.startsWith('/authentication')) {
     // If logged in and trying to visit authentication pages
     console.log("logged in and auth page")
     if (redirectUrl && redirectUrl.value !== '/') {
@@ -81,6 +87,11 @@ export function middleware(request) {
     } else {
       return NextResponse.redirect(new URL('/learning', request.url))
     }
+  }
+  else if(user && access_token && privateRoutes.includes(currentPath)){
+    console.log('new validation')
+    if(hasPagePermission(currentPath, 'R', user)) return NextResponse.next()
+      else return NextResponse.redirect(new URL('/learning', request.url))
   }
 
   return NextResponse.next()

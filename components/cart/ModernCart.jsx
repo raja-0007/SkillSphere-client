@@ -193,7 +193,7 @@ function ModernCart({ from, setFrom }) {
                                         <p className='text-neutral-600 dark:text-neutral-400 mb-6'>
                                             Browse our courses and add them to your cart to get started.
                                         </p>
-                                        <Button onClick={() => router.push('/')} className="transition-colors-fast">
+                                        <Button onClick={() => router.push('/search-results')} className="transition-colors-fast">
                                             Browse Courses
                                         </Button>
                                     </div>
@@ -216,7 +216,7 @@ function ModernCart({ from, setFrom }) {
                                     </div>
                                     <div className='flex justify-between text-sm'>
                                         <span className="text-neutral-700 dark:text-neutral-300">Discount</span>
-                                        <span className='text-success-600 dark:text-success-400'>-₹0</span>
+                                        <span className='text-success-600 dark:text-success-400'>₹0</span>
                                     </div>
                                     <hr className="border-neutral-200 dark:border-neutral-700" />
                                     <div className='flex justify-between text-lg font-bold'>

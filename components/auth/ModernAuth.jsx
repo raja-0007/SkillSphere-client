@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { GraduationCap, Mail, Lock, User, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { hasPagePermission, hasPermission } from '@/lib/permissions'
 
 function ModernAuth({ type, setAuthType }) {
   const router = useRouter()
@@ -20,7 +21,7 @@ function ModernAuth({ type, setAuthType }) {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  
+
   // Form states
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -33,15 +34,16 @@ function ModernAuth({ type, setAuthType }) {
       setError('Please enter all fields')
       return
     }
-    
+
     setLoading(true)
     setError('')
-    await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/authorization`, { 
-      email: email, 
-      password: password, 
-      action: 'login' 
+    await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/authorization`, {
+      email: email,
+      password: password,
+      action: 'login'
     })
       .then(res => {
+        
         setIsLoggedIn(res.data)
         if (res.data.refreshToken) {
           Cookies.set('refreshToken', res.data.refreshToken, { expires: 7 })
@@ -52,25 +54,29 @@ function ModernAuth({ type, setAuthType }) {
         if (res.data.userDetails) {
           Cookies.set('user', JSON.stringify(res.data.userDetails), { expires: 7 })
         }
-        
+
         const redirectUrl = Cookies.get('redirectUrl')
-        if (redirectUrl) {
+
+        if (redirectUrl && !redirectUrl.includes('/authentication')) {
           Cookies.remove('redirectUrl')
-          router.push(redirectUrl)
+          if(hasPagePermission(redirectUrl, 'R')) router.push(redirectUrl)
+            else router.push('/learning')
         } else {
-          router.push('/learning')
+          Cookies.remove('redirectUrl')
+          if (res.data.userDetails.role == "teacher") router.push('/teacher')
+          else router.push('/learning')
         }
       })
       .catch(err => {
         console.log('error in sending request', err)
         setError('Login failed. Please check your credentials.')
       })
-      // .finally(() => setLoading(false))
+    // .finally(() => setLoading(false))
   }
 
   const makeRegisterPreload = async (e) => {
     e.preventDefault()
-    
+
     if (username === '' || rEmail === '' || rPassword === '') {
       setError('Please enter all fields')
       return
@@ -83,11 +89,11 @@ function ModernAuth({ type, setAuthType }) {
   const makeregister = async () => {
     setLoading(true)
     setError('')
-    await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/authorization`, { 
-      username: username, 
-      email: rEmail, 
-      password: rPassword, 
-      action: 'register' 
+    await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/authorization`, {
+      username: username,
+      email: rEmail,
+      password: rPassword,
+      action: 'register'
     })
       .then(res => {
         setIsLoggedIn(res.data)
@@ -100,7 +106,7 @@ function ModernAuth({ type, setAuthType }) {
         if (res.data.userDetails) {
           Cookies.set('user', JSON.stringify(res.data.userDetails), { expires: 7 })
         }
-        
+
         const redirectUrl = Cookies.get('redirectUrl')
         if (redirectUrl) {
           Cookies.remove('redirectUrl')
@@ -113,7 +119,7 @@ function ModernAuth({ type, setAuthType }) {
         console.log('error in sending request', err)
         setError('Registration failed. Please try again.')
       })
-      // .finally(() => setLoading(false))
+    // .finally(() => setLoading(false))
   }
 
   useEffect(() => {
@@ -156,9 +162,9 @@ function ModernAuth({ type, setAuthType }) {
         setRPassword('')
         setUsername('')
       }
-      else if (isLoggedIn.status === false) { 
+      else if (isLoggedIn.status === false) {
         setError('Invalid email ID')
-        setIsOtpVerify(false) 
+        setIsOtpVerify(false)
       }
     }
   }, [isLoggedIn])
@@ -186,13 +192,13 @@ function ModernAuth({ type, setAuthType }) {
               {type === 'login' ? 'Welcome back' : 'Create account'}
             </CardTitle>
             <CardDescription className="text-center text-muted-foreground">
-              {type === 'login' 
-                ? 'Enter your credentials to access your account' 
+              {type === 'login'
+                ? 'Enter your credentials to access your account'
                 : 'Sign up to start your learning journey'
               }
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent className="space-y-4">
             {error && (
               <div className="flex items-center gap-2 p-3 rounded-md bg-destructive/10 border border-destructive/20">
@@ -200,7 +206,7 @@ function ModernAuth({ type, setAuthType }) {
                 <p className="text-sm text-destructive">{error}</p>
               </div>
             )}
-            
+
             {type === 'login' ? (
               <form onSubmit={(e) => { e.preventDefault(); makeLogin(); }} className="space-y-4">
                 <div className="space-y-2">
@@ -218,7 +224,7 @@ function ModernAuth({ type, setAuthType }) {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <label htmlFor="password" className="text-sm font-medium text-card-foreground">Password</label>
                   <div className="relative">
@@ -243,7 +249,7 @@ function ModernAuth({ type, setAuthType }) {
                     </Button>
                   </div>
                 </div>
-                
+
                 <Button type="submit" className="w-full bg-primary hover:bg-primary-600 text-primary-foreground" disabled={loading}>
                   {loading ? 'Signing in...' : 'Sign in'}
                 </Button>
@@ -265,7 +271,7 @@ function ModernAuth({ type, setAuthType }) {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <label htmlFor="register-email" className="text-sm font-medium text-card-foreground">Email</label>
                   <div className="relative">
@@ -281,7 +287,7 @@ function ModernAuth({ type, setAuthType }) {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <label htmlFor="register-password" className="text-sm font-medium text-card-foreground">Password</label>
                   <div className="relative">
@@ -306,13 +312,13 @@ function ModernAuth({ type, setAuthType }) {
                     </Button>
                   </div>
                 </div>
-                
+
                 <Button type="submit" className="w-full bg-primary hover:bg-primary-600 text-primary-foreground" disabled={loading}>
                   {loading ? 'Creating account...' : 'Create account'}
                 </Button>
               </form>
             )}
-            
+
             <div className="text-center">
               <p className="text-sm text-muted-foreground">
                 {type === 'login' ? "Don't have an account? " : "Already have an account? "}
@@ -325,7 +331,7 @@ function ModernAuth({ type, setAuthType }) {
                 </Button>
               </p>
             </div>
-            
+
             {type === 'register' && (
               <p className="text-xs text-muted-foreground text-center border-t border-border pt-4">
                 By signing up, you agree to our Terms of Use and Privacy Policy.

@@ -1,13 +1,14 @@
 'use client'
 
 import axios from 'axios'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import Cookies from 'js-cookie';
 
 const homeContext = createContext()
 function HomeProvider({ children }) {
   const router = useRouter()
+  const pathname = usePathname()
   const [active, setActive] = useState('home')
   const [userDetails, setUserDetails] = useState({})
   const [userLoading, setUserLoading] = useState(true) // Track if user data is being loaded from cookies
@@ -124,13 +125,15 @@ function HomeProvider({ children }) {
 
   const logout = () => {
     sessionStorage.removeItem('userdetails')
-    router.push('/')
     setActive('home')
     setCart([])
+    console.log('pathname>>>>>>>>>>>>>>', pathname, typeof pathname)
+    Cookies.set('redirectUrl', pathname)
     Cookies.remove('user')
-    Cookies.remove('access_token')
-    Cookies.remove('refresh_token')
+    Cookies.remove('accessToken')
+    Cookies.remove('refreshToken')
     setUserDetails({})
+    router.push('/')
   }
 
 

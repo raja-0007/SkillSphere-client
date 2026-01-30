@@ -9,6 +9,7 @@ import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Badge } from "../ui/badge"
 import { Card, CardContent } from "../ui/card"
+import { hasPagePermission } from "@/lib/permissions"
 
 function ModernNavbar({ setAuthType, onFocusNavigate }) {
   const [isCategories, setIsCategories] = useState(false)
@@ -262,7 +263,7 @@ function ModernNavbar({ setAuthType, onFocusNavigate }) {
       {/* Navigation Items */}
       <div className="flex items-center gap-4">
         {/* Teacher Mode */}
-        <Button
+        {Object.keys(userDetails).length > 0 && hasPagePermission('/teacher', 'R') && <Button
           variant="ghost"
           className="hidden lg:flex text-muted-foreground hover:text-primary hover:bg-primary/10"
           onClick={() => {
@@ -274,7 +275,7 @@ function ModernNavbar({ setAuthType, onFocusNavigate }) {
           }}
         >
           Teach
-        </Button>
+        </Button>}
 
         {/* My Learning */}
         <Button
